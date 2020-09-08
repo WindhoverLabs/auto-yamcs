@@ -1,0 +1,3 @@
+[submodule "juicer"]
+	path = juicer
+	url = https://github.com/WindhoverLabs/juicer.git
