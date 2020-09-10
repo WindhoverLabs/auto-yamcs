@@ -1,0 +1,21 @@
+Airliner:
+  modules:
+    CI:
+      telemetry:
+        CFE_SB_HKMsg_t:
+          message_id: '0x1806'
+          symbol: 'CFE_ES_MemHandle_t'
+          macro: 'CFE_ES_CMD_MID'
+        CFE_ES_ResetCmd:
+          message_id: '0x1806'
+          symbol: 'CFE_ES_EarlyInitFuncPtr_t'
+          macro: 'CFE_ES_CMD_MID'
+      commands:
+        CFE_ES_NoopCmd:
+          message_id: '0x1806'
+          symbol: 'CFE_ES_MemHandle_t'
+          macro: 'CFE_ES_CMD_MID'
+        CFE_ES_ResetCmd:
+          message_id: '0x1806'
+          symbol: 'CFE_ES_EarlyInitFuncPtr_t'
+          macro: 'CFE_ES_CMD_MID'
