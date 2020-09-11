@@ -1,21 +1,42 @@
-Airliner:
-  modules:
-    CI:
-      telemetry:
-        CFE_SB_HKMsg_t:
-          message_id: '0x1806'
-          symbol: 'CFE_ES_MemHandle_t'
-          macro: 'CFE_ES_CMD_MID'
-        CFE_ES_ResetCmd:
-          message_id: '0x1806'
-          symbol: 'CFE_ES_EarlyInitFuncPtr_t'
-          macro: 'CFE_ES_CMD_MID'
-      commands:
-        CFE_ES_NoopCmd:
-          message_id: '0x1806'
-          symbol: 'CFE_ES_MemHandle_t'
-          macro: 'CFE_ES_CMD_MID'
-        CFE_ES_ResetCmd:
-          message_id: '0x1806'
-          symbol: 'CFE_ES_EarlyInitFuncPtr_t'
-          macro: 'CFE_ES_CMD_MID'
+modules:
+  CFE:
+    telemetry:
+      CFE_SB_HKMsg_t:
+        message_id: 0x1806
+        symbol: 'CFE_SB_HKMsg_t'
+        macro: 'CFE_SB_HK_TLM_MID'
+      CFE_SB_StatMsg_t:
+        message_id: 0x080A
+        symbol: 'CFE_ES_EarlyInitFuncPtr_t'
+        macro: 'CFE_SB_STATS_TLM_MID'
+
+    commands:
+      CFE_ES_NoopCmd:
+        message_id: 0x1806
+        command_code: 0
+        symbol: 'CFE_SB_CmdHdr_t'
+        macro: 'CFE_ES_CMD_MID'
+      CFE_ES_ResetCmd:
+        message_id: 0x1806
+        command_code: 1
+        symbol: 'CFE_SB_CmdHdr_t'
+        macro: 'CFE_ES_CMD_MID'
+
+    events:
+      1:
+        event_type: 'INFO'
+        macro: 'CFE_ES_INIT_INF_EID'
+      7:
+        event_type: 'DEBUG'
+        macro: 'CFE_ES_STOP_DBG_EID'
+
+    configurations:
+      OS_MAX_NUM_OPEN_FILES:
+        value: 50
+        macro: 'SOME_MACRO'
+
+    perf_ids:
+      cfe_perf:
+        name: 'cfe_perf'
+        macro: 'CFE_ES_CMD_MID'
+        perf_id: 1
