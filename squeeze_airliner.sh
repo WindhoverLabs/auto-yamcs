@@ -4,7 +4,7 @@
 cd juicer
 rm build/new_db.sqlite
 make
-build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/airliner --module "cfe" --mode SQLITE --output build/new_db.sqlite -v4
+build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/airliner --module "CFE" --mode SQLITE --output build/new_db.sqlite -v4
 build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/cf/apps/CFS_LIB.so --module "CFS_LIB" --mode SQLITE --output build/new_db.sqlite -v4
 build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/cf/apps/CF.so --module "CF" --mode SQLITE --output build/new_db.sqlite -v4
 build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/cf/apps/CI.so --module "CI" --mode SQLITE --output build/new_db.sqlite -v4
