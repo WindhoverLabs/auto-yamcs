@@ -1,4 +1,4 @@
-# cmd_msg_merger
+# tlm_cmd_merger
 
 ## Dependencies
 `python>=3.5.2`
