@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Tue Sep 15 11:52:27 2020 by generateDS.py version 2.36.2.
+# Generated Mon Sep 14 16:23:36 2020 by generateDS.py version 2.36.2.
 # Python 3.5.2 (default, Jul 17 2020, 14:04:10)  [GCC 5.4.0 20160609]
 #
 # Command line options:
-#   ('-o', 'xtce_namespace.py')
-#   ('-a', 'xtce:')
+#   ('-o', 'xtce.py')
 #
 # Command line arguments:
 #   /home/vagrant/SpaceSystem.xsd
 #
 # Command line:
-#   /home/vagrant/.local/bin/generateDS -o "xtce_namespace.py" -a "xtce:" /home/vagrant/SpaceSystem.xsd
+#   /home/vagrant/.local/bin/generateDS -o "xtce.py" /home/vagrant/SpaceSystem.xsd
 #
 # Current working directory (os.getcwd()):
 #   xtce_classes
@@ -40977,7 +40976,7 @@ class SpaceSystemType(NameDescriptionType):
     def set_TelemetryMetaData(self, TelemetryMetaData):
         self.TelemetryMetaData = TelemetryMetaData
 
-    def get_CommandMetaData(self):
+    def get_CommandMetaData(self) -> 'CommandMetaDataType':
         return self.CommandMetaData
 
     def set_CommandMetaData(self, CommandMetaData):
@@ -48148,8 +48147,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from xtce_namespace import *\n\n')
-        sys.stdout.write('import xtce_namespace as model_\n\n')
+        sys.stdout.write('#from xtce import *\n\n')
+        sys.stdout.write('import xtce as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
