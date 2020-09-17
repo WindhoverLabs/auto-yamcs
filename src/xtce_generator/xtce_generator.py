@@ -20,7 +20,7 @@ class XTCEManager:
         """
         Instantiates a XTCEManager instance. An XTCEManager is a class that manages a xtce class internally
         and provides utilities such as serialization tools(through the write_to_file method) and a functionality
-        to add namespaces, basetypes, etc to our root spacesystem.
+        to add namespaces, BaseType, etc to our root spacesystem.
         :param root_space_system:
         :param file_path:
         """
@@ -34,7 +34,7 @@ class XTCEManager:
         self.root.set_TelemetryMetaData(self.telemetry_metadata)
         self.root.set_CommandMetaData(self.command_metadata)
 
-        self.__namesapce_dict = dict({root_space_system: self.root})
+        self.__namespace_dict = dict({root_space_system: self.root})
 
     def __get_int_paramtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
         """
@@ -144,13 +144,13 @@ class XTCEManager:
     def __add_telemetry_base_types(self):
         """
         Adds all supported base types for our ground system to the TelemetryMetaData element of
-        the namesapce 'BaseTypes', which is created to hold all of the base types. Base types are the types tha are not
+        the namespace 'BaseType', which is created to hold all of the base types. Base types are the types tha are not
         user-defined such as int16, int32, etc. Check our docs for more details on base types. Please note that these
         base types are stored as *ParameterTypes on the xtce.
         :return:
         """
         base_set = xtce.ParameterTypeSetType()
-        base_space_system = self['BaseTypes']
+        base_space_system = self['BaseType']
         base_space_system.set_TelemetryMetaData(xtce.TelemetryMetaDataType())
 
         # Add int types
@@ -189,13 +189,13 @@ class XTCEManager:
     def __add_commands_base_types(self):
         """
         Adds all supported base types for our ground system to the CommandMetaData element of
-        the namesapce 'BaseTypes', which is created to hold all of the base types. Base types are the types tha are not
+        the namespace 'BaseType', which is created to hold all of the base types. Base types are the types tha are not
         user-defined such as int16, int32, etc. Check our docs for more details on base types. Please note that these
         base types are stored as *ArgumentTypes on the xtce.
         :return:
         """
         base_set = xtce.ArgumentTypeSetType()
-        base_space_system = self['BaseTypes']
+        base_space_system = self['BaseType']
         base_space_system.set_CommandMetaData(xtce.CommandMetaDataType())
 
         # Add int types
@@ -237,48 +237,47 @@ class XTCEManager:
         in our ground system.
         :return:
         """
-        self.add_namespace('BaseTypes')
+        self.add_namespace('BaseType')
         self.__add_telemetry_base_types()
         self.__add_commands_base_types()
 
 
     def __get_aggregate_paramtype(self, telemetry_id:str, db_cursor: sqlite3.Cursor, ):
         """
-        Add a new telemetery container with the name of telemetry_id.
+        Add a new telemetry container with the name of telemetry_id.
         :param telemetry_id:
         :return:
         """
     #     FIXME: Implement
 
 
-
     def add_namespace(self, namespace_name: str):
         """
-        Add a namespace to the root SpaceSystem. Please note that namesapce is a synonym for SpaceSystem;
+        Add a namespace to the root SpaceSystem. Please note that namespace is a synonym for SpaceSystem;
         they are the same thing in the xtce-speak.
-        :param namespace_name: The name of the new namesapce.
+        :param namespace_name: The name of the new namespace.
         :return:
         """
         new_namespace = xtce.SpaceSystemType(name=namespace_name)
         self.root.add_SpaceSystem(new_namespace)
 
-        self.__namesapce_dict[namespace_name] = new_namespace
+        self.__namespace_dict[namespace_name] = new_namespace
 
-    def get_namesapce(self, namespace_name: str) -> xtce.SpaceSystemType:
+    def get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:
         """
         Returns a namespace SpaceSystemType object that has the name of namespace_name.
         :param namespace_name:
         :return:
         """
-        return self.__namesapce_dict[namespace_name]
+        return self.__namespace_dict[namespace_name]
 
     def __getitem__(self, key: str) -> xtce.SpaceSystemType:
         """
         Returns a reference to the namespace with the name of key.
-        :param key: The name of the namesapce.
+        :param key: The name of the namespace.
         :return:
         """
-        return self.get_namesapce(key)
+        return self.get_namespace(key)
 
     def write_to_file(self):
         """
