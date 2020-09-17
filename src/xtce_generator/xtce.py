@@ -1458,7 +1458,7 @@ class CommandMetaDataType(GeneratedsSuper):
     def set_ParameterSet(self, ParameterSet):
         self.ParameterSet = ParameterSet
 
-    def get_ArgumentTypeSet(self):
+    def get_ArgumentTypeSet(self)->'ArgumentTypeSetType':
         return self.ArgumentTypeSet
 
     def set_ArgumentTypeSet(self, ArgumentTypeSet):
@@ -1675,7 +1675,7 @@ class TelemetryMetaDataType(GeneratedsSuper):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_ParameterTypeSet(self):
+    def get_ParameterTypeSet(self)->'ParameterTypeSetType':
         return self.ParameterTypeSet
 
     def set_ParameterTypeSet(self, ParameterTypeSet):
@@ -40970,7 +40970,7 @@ class SpaceSystemType(NameDescriptionType):
     def set_Header(self, Header):
         self.Header = Header
 
-    def get_TelemetryMetaData(self):
+    def get_TelemetryMetaData(self)-> 'TelemetryMetaDataType':
         return self.TelemetryMetaData
 
     def set_TelemetryMetaData(self, TelemetryMetaData):
