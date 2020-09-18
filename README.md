@@ -6,9 +6,9 @@ We follow the XTCE specifications desribed on **XTCE Verison 1.2** as per OMG do
 ## Dependencies
 `six>=1.15.0`
 
-**NOTE:** If you have issues running venv for python3.8 on Ubuntu 16, you should be able to fix it with this:
+**NOTE:** If you have issues running venv for python3.6 on Ubuntu 16, you should be able to fix it with this:
 ```
-sudo apt install python3.8-venv python3.8-dev
+sudo apt install python3.6-venv python3.6-dev
 ```
 
 ## XTCE compliace
