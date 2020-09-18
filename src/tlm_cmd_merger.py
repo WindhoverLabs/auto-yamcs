@@ -26,7 +26,7 @@ def add_tables(db_cursor: sqlite3.Cursor):
                       'name TEXT NOT NULL,'
                       'command_code INTEGER NOT NULL,'
                       'message_id INTEGER NOT NULL,'
-                      'macro TEXT,'
+                      'macro TEXT,' 
                       'symbol INTEGER NOT NULL, '
                       'module INTEGER NOT NULL,'
                       'FOREIGN KEY (symbol) REFERENCES symbols(id),'
@@ -36,7 +36,7 @@ def add_tables(db_cursor: sqlite3.Cursor):
     db_cursor.execute('create table if not exists events('
                       'id INTEGER primary key,'
                       'event_id INTEGER,'
-                      'macro TEXT,'
+                      'name TEXT,'
                       'module INTEGER,'
                       'FOREIGN KEY (module) REFERENCES modules(id),'
                       'UNIQUE (event_id, module));')
@@ -45,16 +45,14 @@ def add_tables(db_cursor: sqlite3.Cursor):
                       'id INTEGER primary key,'
                       'name TEXT NOT NULL,'
                       'value INTEGER,'
-                      'macro TEXT,'
                       'module INTEGER NOT NULL,'
                       'FOREIGN KEY (module) REFERENCES modules(id),'
                       'UNIQUE (name, module));')
 
-    db_cursor.execute('create table if not exists perf_ids('
+    db_cursor.execute('create table if not exists performance_ids('
                       'id INTEGER primary key,'
-                      'name INTEGER NOT NULL,'
+                      'name TEXT,'
                       'perf_id INTEGER NOT NULL,'
-                      'macro TEXT,'
                       'module INTEGER NOT NULL,'
                       'FOREIGN KEY (module) REFERENCES modules(id),'
                       'UNIQUE (name, perf_id, module));')
@@ -291,7 +289,7 @@ def write_perf_id_records(perf_id_data: dict, db_cursor: sqlite3.Cursor):
                 perf_id = perf_dict['id']
 
                 # Write our event record to the database.
-                db_cursor.execute('INSERT INTO perf_ids(name, perf_id ,module) '
+                db_cursor.execute('INSERT INTO performance_ids(name, perf_id ,module) '
                                   'VALUES (?, ?, ?)',
                                   (name, perf_id, module_id))
 
