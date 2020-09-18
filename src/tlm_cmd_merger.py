@@ -43,7 +43,7 @@ def add_tables(db_cursor: sqlite3.Cursor):
 
     db_cursor.execute('create table if not exists configurations('
                       'id INTEGER primary key,'
-                      'name INTEGER NOT NULL,'
+                      'name TEXT NOT NULL,'
                       'value INTEGER,'
                       'macro TEXT,'
                       'module INTEGER NOT NULL,'
