@@ -9,7 +9,7 @@ from enum import Enum
 class BaseType(int, Enum):
     """
     Used by XTCEManager to distinguish what kind of argument or parameter types to add to Space Systems.
-    This is especially useful for adding base(or instrinsic) types to a space system.
+    This is especially useful for adding base(or intrinsic) types to a space system.
     """
     INTEGER = 0
     STRUCT = 1
@@ -44,32 +44,9 @@ class XTCEManager:
 
         self.db_cursor = db_handle.cursor()
 
-    def __get_int_paramtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
-        """
-        Factory function to construct a IntegerParameterType.
-        :param bit_size:
-        :param little_endian:
-        :return:
-        """
-        base_type_name = 'int' + str(bit_size) + ('_LE' if little_endian else '_BE')
-
-        param_type = xtce.IntegerParameterType(name=base_type_name, signed=True)
-        bit_size = bit_size
-        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
-            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
-
-        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
-            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
-
-        base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
-                                                               bitOrder=bit_order,
-                                                               byteOrder=byte_order,
-                                                               encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT
-                                                               )
-
-        param_type.set_IntegerDataEncoding(base_type_data_encoding)
-
-        return param_type
+    def __get_endianness(self, bit_size: int, little_endian: bool):
+        endianness = '_LE' if little_endian else '_BE'
+        return endianness
 
     def __get_int_argtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
         """
@@ -78,9 +55,111 @@ class XTCEManager:
         :param little_endian:
         :return:
         """
-        base_type_name = 'int' + str(bit_size) + ('_LE' if little_endian else '_BE')
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = 'int' + str(bit_size) + endianness
 
         arg_type = xtce.IntegerArgumentType(name=base_type_name, signed=True)
+
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        if bit_size > 8:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   byteOrder=byte_order,
+                                                                   encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT
+                                                                   )
+        else:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT
+                                                                   )
+
+        arg_type.set_IntegerDataEncoding(base_type_data_encoding)
+
+        return arg_type
+
+    def __get_uint_argtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
+        """
+        Factory function to construct a IntegerArgumentType.
+        :param bit_size:
+        :param little_endian:
+        :return:
+        """
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = 'uint' + str(bit_size) + endianness
+
+        arg_type = xtce.IntegerArgumentType(name=base_type_name, signed=False)
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        if bit_size > 8:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   byteOrder=byte_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+        else:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+
+        arg_type.set_IntegerDataEncoding(base_type_data_encoding)
+
+        return arg_type
+
+    def __get_float_argtype(self, bit_size: int, little_endian: bool) -> xtce.FloatDataType:
+        """
+        Factory function to construct a IntegerParameterType.
+        :param bit_size:
+        :param little_endian:
+        :return:
+        """
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = 'float' + str(bit_size) + endianness
+
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        if bit_size > 8:
+            encoding = xtce.FloatDataEncodingType(sizeInBits=str(bit_size),
+                                                  bitOrder=bit_order,
+                                                  byteOrder=byte_order)
+        else:
+            encoding = xtce.FloatDataEncodingType(sizeInBits=str(bit_size),
+                                                  bitOrder=bit_order)
+
+        param_type = xtce.FloatArgumentType(name=base_type_name, sizeInBits=str(bit_size))
+        param_type.set_FloatDataEncoding(encoding)
+
+        return param_type
+
+    def __get_int_paramtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
+        """
+        Factory function to construct a IntegerParameterType.
+        :param bit_size:
+        :param little_endian:
+        :return:
+        """
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = 'int' + str(bit_size) + endianness
+
+        param_type = xtce.IntegerParameterType(name=base_type_name, signed=True)
+
         bit_size = bit_size
         bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
             xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
@@ -88,15 +167,21 @@ class XTCEManager:
         byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
             xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
 
-        base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
-                                                               bitOrder=bit_order,
-                                                               byteOrder=byte_order,
-                                                               encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT
-                                                               )
+        if bit_size > 8:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   byteOrder=byte_order,
+                                                                   encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT
+                                                                   )
+        else:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT
+                                                                   )
 
-        arg_type.set_IntegerDataEncoding(base_type_data_encoding)
+        param_type.set_IntegerDataEncoding(base_type_data_encoding)
 
-        return arg_type
+        return param_type
 
     def __get_uint_paramtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
         """
@@ -105,21 +190,29 @@ class XTCEManager:
         :param little_endian:
         :return:
         """
-        base_type_name = 'uint' + str(bit_size) + ('_LE' if little_endian else '_BE')
+        endianness = self.__get_endianness(bit_size, little_endian)
 
-        param_type = xtce.IntegerParameterType(name=base_type_name, signed=False)
-        bit_size = bit_size
+        base_type_name = 'uint' + str(bit_size) + endianness
+
+        param_type = xtce.IntegerParameterType(name=base_type_name, signed=False, sizeInBits=bit_size)
+
         bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
             xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
 
         byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
             xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
 
-        base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
-                                                               bitOrder=bit_order,
-                                                               byteOrder=byte_order,
-                                                               encoding=xtce.IntegerEncodingType.UNSIGNED
-                                                               )
+        if bit_size > 8:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   byteOrder=byte_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+        else:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
 
         param_type.set_IntegerDataEncoding(base_type_data_encoding)
 
@@ -132,17 +225,23 @@ class XTCEManager:
         :param little_endian:
         :return:
         """
-        base_type_name = 'float' + str(bit_size) + ('_LE' if little_endian else '_BE')
-        bit_size = bit_size
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = 'float' + str(bit_size) + endianness
+
         bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
             xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
 
         byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
             xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
 
-        encoding = xtce.FloatDataEncodingType(sizeInBits=str(bit_size),
-                                              bitOrder=bit_order,
-                                              byteOrder=byte_order)
+        if bit_size > 8:
+            encoding = xtce.FloatDataEncodingType(sizeInBits=str(bit_size),
+                                                  bitOrder=bit_order,
+                                                  byteOrder=byte_order)
+        else:
+            encoding = xtce.FloatDataEncodingType(sizeInBits=str(bit_size),
+                                                  bitOrder=bit_order)
 
         param_type = xtce.FloatDataType(name=base_type_name, sizeInBits=str(bit_size))
         param_type.set_FloatDataEncoding(encoding)
@@ -173,6 +272,7 @@ class XTCEManager:
         # NOTE: For right now, only singed little-endian 32-bit floating types are supported
         # Add floating types
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, True))
+        base_set.add_IntegerParameterType(xtce.IntegerParameterType(name='UNKNOWN', signed=False, sizeInBits='32'))
 
         # Add char types
         # #FIXME: We have to decide what to do about strings
@@ -210,14 +310,14 @@ class XTCEManager:
         for bit in range(1, 65):
             if bit > 1:
                 base_set.add_IntegerArgumentType(self.__get_int_argtype(bit, True))
-                # base_set.add_IntegerArgumentType(self.__get_int_paramtype(bit, False))
+                base_set.add_IntegerArgumentType(self.__get_int_argtype(bit, False))
 
-            # base_set.add_IntegerParameterType(self.__get_uint_paramtype(bit, True))
-            # base_set.add_IntegerParameterType(self.__get_uint_paramtype(bit, False))
+            base_set.add_IntegerArgumentType(self.__get_uint_argtype(bit, True))
+            base_set.add_IntegerArgumentType(self.__get_uint_argtype(bit, False))
 
         # NOTE: For right now, only singed little-endian 32-bit floating types are supported
-        # Add floating types
-        # base_set.add_FloatParameterType(self.__get_float_paramtype(32, True))
+        base_set.add_FloatArgumentType(self.__get_float_argtype(32, True))
+        base_set.add_IntegerArgumentType(xtce.IntegerParameterType(name='UNKNOWN', signed=False, sizeInBits='32'))
 
         # Add char types
         # #FIXME: We have to decide what to do about strings
@@ -279,45 +379,83 @@ class XTCEManager:
         return self.db_cursor.execute('SELECT little_endian FROM elfs where module=?',
                                       (module_id,)).fetchone()[0] == 1
 
-    def __get_aggregate_paramtype(self, symbol_record: tuple):
+    def __handle_array(self, symbol_id: int, multiplicity):
+        # for index in range(multiplicity):
+        pass
+
+    def __get_aggregate_paramtype(self, symbol_record: tuple) -> xtce.AggregateParameterType:
         """
         A factory function to create an aggregateParamType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
         (id, module, name, byte_size)
-        :return:
+        :return: If the symbol is processed successfully, an AggregateParameterType representing that symbol(struct).
+        Otherwise, None is returned.
         """
-        out_param = xtce.AggregateParameterType(name=symbol_record[2])
-        member_list = xtce.MemberListType()
-        out_param.set_MemberList(member_list)
+        out_param = None
+
+        print(f'symbol record-->{symbol_record}')
+
         symbol_id = str(symbol_record[0])
 
         fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                         (symbol_id,)).fetchall()
 
-        if fields:
-            for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian \
-                    in fields:
-                symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
-                                                     (field_type,)).fetchone()
+        print(f'root fields-->{fields}')
 
-                # The symbol_type is expected, as per our schema, to have the form of (id, module ,name, byte_size)
-                if symbol_type:
+        if fields:
+            out_param = xtce.AggregateParameterType(name=symbol_record[2])
+            member_list = xtce.MemberListType()
+            out_param.set_MemberList(member_list)
+            symbol_id = str(symbol_record[0])
+            for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian in fields:
+                if field_type == field_symbol and field_multiplicity > 0:
+                    for index in range(field_multiplicity):
+                        child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                              (field_type,)).fetchone()
+
+                        # FIXME: This entire function needs to be decoupled
+                        print(f'field_symbol id on array:{field_symbol}')
+                        print('child symbol-->', child_symbol)
+                        # child = self.__get_aggregate_paramtype(child_symbol)
+                        member = xtce.MemberType()
+                        member.set_name(f'{field_name}[{index}]')
+                        member.set_typeRef('BaseType/UNKNOWN')
+                        # self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
+
+                else:
                     member = xtce.MemberType()
                     member.set_name(field_name)
+                    symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                         (field_type,)).fetchone()
+                    # The symbol_type is expected, as per our schema, to have the form of (id, module ,name, byte_size)
+                    if symbol_type:
+                        print(f'symbol_type$$$$-->{symbol_type}')
 
-                    if symbol_type[2] == 'int64' \
-                            or symbol_type[2] == 'int32' \
-                            or symbol_type[2] == 'int16' \
-                            or symbol_type[2] == 'int8' \
-                            or symbol_type[2] == 'int':
-                        type_ref_name = self.__get_basetype_name('int', symbol_type[3] * 8,
-                                                                 self.is_little_endian(symbol_type[1]))
-                        member.set_typeRef(type_ref_name)
-                    member_list.add_Member(member)
+                        if symbol_type[2] == 'int64' \
+                                or symbol_type[2] == 'int32' \
+                                or symbol_type[2] == 'int16' \
+                                or symbol_type[2] == 'int8' \
+                                or symbol_type[2] == 'uint8' \
+                                or symbol_type[2] == 'uint16' \
+                                or symbol_type[2] == 'uint32' \
+                                or symbol_type[2] == 'uint64' \
+                                or symbol_type[2] == 'int':
+                            type_ref_name = self.__get_basetype_name('int', symbol_type[3] * 8,
+                                                                     self.is_little_endian(symbol_type[1]))
+                        else:
+                            print(f'field type-->{field_type}')
+                            child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                                  (field_type,)).fetchone()
 
-            # else:
-        #         Another aggregate type
+                            print(f'field_symbol id:{field_symbol}')
+                            print('child symbol-->', child_symbol)
+                            child = self.__get_aggregate_paramtype(child_symbol)
+                            self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
+                    else:
+                        type_ref_name = 'BaseType/UNKNOWN'
 
+                member.set_typeRef(type_ref_name)
+                member_list.add_Member(member)
         return out_param
 
     def add_namespace(self, namespace_name: str):
@@ -338,9 +476,24 @@ class XTCEManager:
         CommandMetaDataType children of our root SpaceSystem.
         :return:
         """
-        base_set = self.root.get_TelemetryMetaData().get_ParameterTypeSet()
-        for symbol in self.db_cursor.execute('select * from symbols').fetchall():
-            base_set.add_AggregateParameterType(self.__get_aggregate_paramtype(symbol))
+
+        # Iterate through all of the rows of telemetry
+        for tlm in self.db_cursor.execute('select * from telemetry').fetchall():
+            tlm_name = tlm[1]
+            tlm_message_id = tlm[2]
+            tlm_macro = tlm[3]
+            tlm_symbol_id = tlm[4]
+            tlm_module = tlm[5]
+
+            base_set = self.root.get_TelemetryMetaData().get_ParameterTypeSet()
+            for symbol in self.db_cursor.execute('select * from symbols where id=?',
+                                                 (tlm_symbol_id,)).fetchall():
+                print(f'symbol{symbol} for tlm:{tlm_name}')
+
+                aggregeate_type = self.__get_aggregate_paramtype(symbol)
+
+                if aggregeate_type:
+                    base_set.add_AggregateParameterType(aggregeate_type)
 
     def get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:
         """
@@ -389,6 +542,7 @@ def main():
 
     xtce_obj.add_base_types()
 
+    # FIXME:add_symbols does not work properly as of now.
     xtce_obj.add_symbols()
 
     xtce_obj.write_to_file()
