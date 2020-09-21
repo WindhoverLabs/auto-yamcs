@@ -3,12 +3,17 @@ import argparse
 import yaml
 import logging
 
+
 def add_tables(db_cursor: sqlite3.Cursor):
     """
     Creates the telemetry and commands tables needed for the database.
     :param db_cursor: The cursor database handle.
     :return:
     """
+    db_cursor.execute('create table if not exists modules('
+                      'id INTEGER primary key,'
+                      'name TEXT UNIQUE NOT NULL);')
+
     db_cursor.execute('create table if not exists telemetry('
                       'id INTEGER primary key, '
                       'name TEXT UNIQUE NOT NULL, '
@@ -26,7 +31,7 @@ def add_tables(db_cursor: sqlite3.Cursor):
                       'name TEXT NOT NULL,'
                       'command_code INTEGER NOT NULL,'
                       'message_id INTEGER NOT NULL,'
-                      'macro TEXT,' 
+                      'macro TEXT,'
                       'symbol INTEGER NOT NULL, '
                       'module INTEGER NOT NULL,'
                       'FOREIGN KEY (symbol) REFERENCES symbols(id),'
@@ -81,69 +86,70 @@ def get_module_id(module_name: str, db_cursor: sqlite3.Cursor) -> tuple:
     #                       (module_name,))
     #     logging.warning(f'{module_name} module was added to the database.')
 
-        # module_id = db_cursor.execute('SELECT * FROM modules where name =?',
-        #                               (module_name,)).fetchone()
+    # module_id = db_cursor.execute('SELECT * FROM modules where name =?',
+    #                               (module_name,)).fetchone()
 
     return module_id.fetchone()
 
 
-def get_symbol_id(symbol_name: str, module_id: int, db_cursor: sqlite3.Cursor) -> tuple:
+def get_symbol_id(symbol_name: str, db_cursor: sqlite3.Cursor) -> tuple:
     """
     Fetches the id of the symbol whose name symbol_name
     :param symbol_name: The name of the module as it appears in the database.
     :param db_cursor: The cursor that points to the databse.
     :return: The module id.
     """
-    symbol_id = db_cursor.execute('SELECT * FROM symbols where name =? and module=?',
-                                  (symbol_name, module_id))
+    symbol_id = db_cursor.execute('SELECT * FROM symbols where name =?',
+                                  (symbol_name,))
     return symbol_id.fetchone()
 
 
-def write_telemetry_records(telemetry_data: dict, db_cursor: sqlite3.Cursor):
+def write_module_records(module_data: dict, db_cursor: sqlite3.Cursor):
+    """
+    Scans module_data and writes each module to the database..
+    :param module_data:
+    :param db_cursor:
+    :return:
+    """
+    for module in module_data['modules'].keys():
+        db_cursor.execute('insert into modules(name) values(?)', (module,))
+
+
+def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
     """
     Scans telemetry_data and writes it to the database. Pleas note that the database changes are not committed. Thus
     it is the responsibility of the caller to commit these changes to the database.
     :param telemetry_data:
     :param db_cursor:
+    :param modules_dict: A dictionary of the form {module_id: module_name}
     :return:
     """
     name = None
     message_id = None
     macro = None
     symbol_id = None
-    module_id = None
-    modules = telemetry_data['modules']
-    # print(f'modules-->{modules}')
 
-    for module_name in modules:
-        module = get_module_id(module_name, db_cursor)
+    for module_name in telemetry_data['modules']:
+        for message in telemetry_data['modules'][module_name]['telemetry']:
+            message_dict = telemetry_data['modules'][module_name]['telemetry'][message]
+            name = message
+            message_id = message_dict['msgID']
+            symbol = get_symbol_id(message_dict['struct'], db_cursor)
 
-        # If the module exists in the database, then we process it in the yaml file. Otherwise, we ignore it.
-        if module:
-            module_id = module[0]
-            for message in modules[module_name]['telemetry']:
-                message_dict = modules[module_name]['telemetry'][message]
-                name = message
-                message_id = message_dict['msgID']
-                symbol = get_symbol_id(message_dict['struct'],
-                                          module_id, db_cursor)
+            # If the symbol does not exist, we skip it
+            if symbol:
+                symbol_id = symbol[0]
 
-                # If the symbol does not exist, we skip it
-                if symbol:
-                    print(f'module-->{module}')
+                # FIXME: Not sure if we'll read the macro in this step of the chain
+                # macro = message_dict['macro']
 
-                    symbol_id = symbol[0]
-
-                    # FIXME: Not sure if we'll read the macro in step of the chain
-                    # macro = message_dict['macro']
-
-                    # Write our telemetry record to the database.
-                    db_cursor.execute('INSERT INTO telemetry(name, message_id, symbol ,module) '
-                                      'VALUES (?, ?, ?, ?)',
-                                      (name, message_id, symbol_id, module_id,))
+                # Write our telemetry record to the database.
+                db_cursor.execute('INSERT INTO telemetry(name, message_id, symbol ,module) '
+                                  'VALUES (?, ?, ?, ?)',
+                                  (name, message_id, symbol_id, modules_dict[module_name],))
 
 
-def write_command_records(command_data: dict, db_cursor: sqlite3.Cursor):
+def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
     """
     Scans command_data and writes it to the database. Pleas note that the database changes are not committed. Thus
     it is the responsibility of the caller to commit these changes to the database.
@@ -155,47 +161,35 @@ def write_command_records(command_data: dict, db_cursor: sqlite3.Cursor):
     message_id = None
     macro = None
     symbol_id = None
-    module_id = None
     command_code = None
 
     for module_name in command_data['modules']:
-        module = get_module_id(module_name, db_cursor)
+        for command in command_data['modules'][module_name]['commands']:
+            command_dict = command_data['modules'][module_name]['commands'][command]
+            message_id = command_dict['msgID']
+            sub_commands = command_data['modules'][module_name]['commands']
 
-        # If the module exists in the database, then we process it in the yaml file. Otherwise, we ignore it.
-        if module:
-            module_id = module[0]
+            for sub_command in sub_commands[command]['commands']:
+                sub_command_dict = sub_commands[command]['commands']
+                name = sub_command
 
-            for command in command_data['modules'][module_name]['commands']:
-                command_dict = command_data['modules'][module_name]['commands'][command]
-                message_id = command_dict['msgID']
-                sub_commands = command_data['modules'][module_name]['commands']
-                print(f'sub_command-->{sub_commands[command]}')
+                symbol = get_symbol_id(sub_command_dict[name]['struct'], db_cursor)
 
-                for sub_command in sub_commands[command]['commands']:
-                    sub_command_dict = sub_commands[command]['commands']
-                    name = sub_command
+                # If the symbol does not exist, we skip it
+                if symbol:
+                    symbol_id = symbol[0]
+                    command_code = sub_command_dict[name]['cc']
 
-                    print(f'sub_command-->{sub_command}')
-                    symbol = get_symbol_id(sub_command_dict[name]['struct'],
-                                              module_id, db_cursor)
+                    # FIXME: Not sure if we'll read the macro in step of the chain
+                    # macro = command_dict['macro']
 
-                    # If the symbol does not exist, we skip it
-                    if symbol:
-                        print(f'module-->{module}')
-
-                        symbol_id = symbol[0]
-                        command_code = sub_command_dict[name]['cc']
-
-                        # FIXME: Not sure if we'll read the macro in step of the chain
-                        # macro = command_dict['macro']
-
-                        # Write our command record to the database.
-                        db_cursor.execute('INSERT INTO commands(name, command_code, message_id, symbol ,module) '
-                                          'VALUES (?, ?, ?, ?, ?)',
-                                          (name, command_code, message_id, symbol_id, module_id,))
+                    # Write our command record to the database.
+                    db_cursor.execute('INSERT INTO commands(name, command_code, message_id, symbol ,module) '
+                                      'VALUES (?, ?, ?, ?, ?)',
+                                      (name, command_code, message_id, symbol_id, modules_dict[module_name],))
 
 
-def write_event_records(event_data: dict, db_cursor: sqlite3.Cursor):
+def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
     """
     Scans event_data and writes it to the database. Pleas note that the database changes are not committed. Thus
     it is the responsibility of the caller to commit these changes to the database.
@@ -205,29 +199,22 @@ def write_event_records(event_data: dict, db_cursor: sqlite3.Cursor):
     """
     event_id = None
     macro = None
-    module_id = None
 
     for module_name in event_data['modules']:
-        module = get_module_id(module_name, db_cursor)
+        for event in event_data['modules'][module_name]['events']:
+            event_dict = event_data['modules'][module_name]['events'][event]
+            event_id = event
 
-        # If the module exists in the database, then we process it in the yaml file. Otherwise, we ignore it.
-        if module:
-            module_id = module[0]
+            # FIXME: Not sure if we'll read the macro in step of the chain
+            # macro = event_dict['macro']
 
-            for event in event_data['modules'][module_name]['events']:
-                event_dict = event_data['modules'][module_name]['events'][event]
-                event_id = event
-
-                # FIXME: Not sure if we'll red the macro in step of the chain
-                # macro = event_dict['macro']
-
-                # Write our event record to the database.
-                db_cursor.execute('INSERT INTO events(event_id, module) '
-                                  'VALUES (?, ?)',
-                                  (event_id, module_id,))
+            # Write our event record to the database.
+            db_cursor.execute('INSERT INTO events(event_id, module) '
+                              'VALUES (?, ?)',
+                              (event_id, modules_dict[module_name],))
 
 
-def write_configuration_records(config_data: dict, db_cursor: sqlite3.Cursor):
+def write_configuration_records(config_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
     """
     Scans config_data and writes it to the database. Pleas note that the database changes are not committed. Thus
     it is the responsibility of the caller to commit these changes to the database.
@@ -237,31 +224,23 @@ def write_configuration_records(config_data: dict, db_cursor: sqlite3.Cursor):
     """
     name = None
     macro = None
-    module_id = None
     value = None
 
     for module_name in config_data['modules']:
-        module = get_module_id(module_name, db_cursor)
+        for config in config_data['modules'][module_name]['config']:
+            config_dict = config_data['modules'][module_name]['config'][config]
+            name = config
+            # FIXME: Not sure if we'll read the macro in step of the chain
+            # macro = event_dict['macro']
+            value = config_dict['value']
 
-        # If the module exists in the database, then we process it in the yaml file. Otherwise, we ignore it.
-        if module:
-            print(f'module for config:{module}')
-            module_id = module[0]
-
-            for config in config_data['modules'][module_name]['config']:
-                config_dict = config_data['modules'][module_name]['config'][config]
-                name = config
-                # FIXME: Not sure if we'll red the macro in step of the chain
-                # macro = event_dict['macro']
-                value = config_dict['value']
-
-                # Write our event record to the database.
-                db_cursor.execute('INSERT INTO configurations(name, value ,module) '
-                                  'VALUES (?, ?, ?)',
-                                  (name, value, module_id))
+            # Write our event record to the database.
+            db_cursor.execute('INSERT INTO configurations(name, value ,module) '
+                              'VALUES (?, ?, ?)',
+                              (name, value, modules_dict[module_name]))
 
 
-def write_perf_id_records(perf_id_data: dict, db_cursor: sqlite3.Cursor):
+def write_perf_id_records(perf_id_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
     """
     Scans perf_id_data and writes it to the database. Pleas note that the database changes are not committed. Thus
     it is the responsibility of the caller to commit these changes to the database.
@@ -275,23 +254,32 @@ def write_perf_id_records(perf_id_data: dict, db_cursor: sqlite3.Cursor):
     perf_id = None
 
     for module_name in perf_id_data['modules']:
-        module = get_module_id(module_name, db_cursor)
+        for perf_name in perf_id_data['modules'][module_name]['perfids']:
+            perf_dict = perf_id_data['modules'][module_name]['perfids'][perf_name]
+            name = perf_name
+            # FIXME: Not sure if we'll read the macro in step of the chain
+            # macro = event_dict['macro']
+            perf_id = perf_dict['id']
 
-        # If the module exists in the database, then we process it in the yaml file. Otherwise, we ignore it.
-        if module:
-            module_id = module[0]
+            # Write our event record to the database.
+            db_cursor.execute('INSERT INTO performance_ids(name, perf_id ,module) '
+                              'VALUES (?, ?, ?)',
+                              (name, perf_id, modules_dict[module_name]))
 
-            for perf_name in perf_id_data['modules'][module_name]['perfids']:
-                perf_dict = perf_id_data['modules'][module_name]['perfids'][perf_name]
-                name = perf_name
-                # FIXME: Not sure if we'll red the macro in step of the chain
-                # macro = event_dict['macro']
-                perf_id = perf_dict['id']
 
-                # Write our event record to the database.
-                db_cursor.execute('INSERT INTO performance_ids(name, perf_id ,module) '
-                                  'VALUES (?, ?, ?)',
-                                  (name, perf_id, module_id))
+def write_tlm_cmd_data(yaml_data: dict, db_cursor: sqlite3.Cursor):
+    write_module_records(yaml_data, db_cursor)
+
+    # Get all modules needed now that they are on the database.
+    modules_dict = {}
+    for module_id, module_name in db_cursor.execute('select * from modules').fetchall():
+        modules_dict[module_name] = module_id
+
+    write_telemetry_records(yaml_data, modules_dict, db_cursor)
+    write_command_records(yaml_data, modules_dict, db_cursor)
+    write_event_records(yaml_data, modules_dict, db_cursor)
+    write_configuration_records(yaml_data, modules_dict, db_cursor)
+    write_perf_id_records(yaml_data, modules_dict, db_cursor)
 
 
 def parse_cli() -> argparse.Namespace:
@@ -320,11 +308,7 @@ def main():
     yaml_data = read_yaml(args.yaml_path)
 
     # Write all the data to the database.
-    write_telemetry_records(yaml_data, db_cursor)
-    write_command_records(yaml_data, db_cursor)
-    write_event_records(yaml_data, db_cursor)
-    write_configuration_records(yaml_data, db_cursor)
-    write_perf_id_records(yaml_data, db_cursor)
+    write_tlm_cmd_data(yaml_data, db_cursor)
 
     # Save our changes to the database.
     db_handle.commit()
