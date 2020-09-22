@@ -2,7 +2,7 @@
 #This script runs juicer on airliner
 
 cd juicer
-#rm build/new_db.sqlite
+rm build/new_db.sqlite
 make
 build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/airliner  --mode SQLITE --output build/new_db.sqlite -v4
 build/juicer --input /home/vagrant/airliner/build/tutorial/cfs/target/exe/cf/apps/CFS_LIB.so --mode SQLITE --output build/new_db.sqlite -v4
