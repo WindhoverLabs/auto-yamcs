@@ -370,18 +370,19 @@ class XTCEManager:
         typename = basename + str(bit_size) + '_LE' if little_endian else '_BE'
         all_basetypes = self.__get_all_basetypes()
         if typename in all_basetypes:
-            return typename
+            # TODO: I think the BaseType string should be stored on its own variable.
+            return 'BaseType/'+typename
         else:
             logging.warning(f'{typename} is being used as a type, but it was not found in the BaseType namespace. ')
-            return typename
+            return 'BaseType/'+typename
 
-    def is_little_endian(self, module_id: str):
-        return self.db_cursor.execute('SELECT little_endian FROM elfs where module=?',
-                                      (module_id,)).fetchone()[0] == 1
+    def is_little_endian(self, elf_id: str):
+        return self.db_cursor.execute('SELECT little_endian FROM elfs where id=?',
+                                      (elf_id,)).fetchone()[0] == 1
 
-    def __handle_array(self, symbol_id: int, multiplicity):
-        # for index in range(multiplicity):
-        pass
+    def __handle_array(self, symbol_record: tuple, multiplicity):
+        for index in range(multiplicity):
+            self.__get_aggregate_paramtype()
 
     def __get_aggregate_paramtype(self, symbol_record: tuple) -> xtce.AggregateParameterType:
         """
@@ -391,7 +392,7 @@ class XTCEManager:
         :return: If the symbol is processed successfully, an AggregateParameterType representing that symbol(struct).
         Otherwise, None is returned.
         """
-        out_param = None
+        out_param = xtce.AggregateParameterType(name=symbol_record[2])
 
         print(f'symbol record-->{symbol_record}')
 
@@ -402,13 +403,55 @@ class XTCEManager:
 
         print(f'root fields-->{fields}')
 
+        type_ref_name = None
+
         if fields:
-            out_param = xtce.AggregateParameterType(name=symbol_record[2])
+            # out_param = xtce.AggregateParameterType(name=symbol_record[2])
             member_list = xtce.MemberListType()
             out_param.set_MemberList(member_list)
             symbol_id = str(symbol_record[0])
             for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian in fields:
-                if field_type == field_symbol and field_multiplicity > 0:
+                if field_type == field_symbol:
+                    continue
+                elif field_multiplicity > 0 and field_type != field_symbol:
+
+                    print(f'comparing{field_type} and {field_symbol}')
+                    # self.__handle_array(member_list)
+                    # continue
+
+                    symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                         (field_type,)).fetchone()
+                    # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
+                    if symbol_type:
+                        print(f'symbol_type$$$$-->{symbol_type}')
+
+                        if symbol_type[2] == 'int64' \
+                                or symbol_type[2] == 'int32' \
+                                or symbol_type[2] == 'int16' \
+                                or symbol_type[2] == 'int8' \
+                                or symbol_type[2] == 'uint8' \
+                                or symbol_type[2] == 'uint16' \
+                                or symbol_type[2] == 'uint32' \
+                                or symbol_type[2] == 'uint64' \
+                                or symbol_type[2] == 'int' \
+                                or symbol_type[2] == 'char'\
+                                or symbol_type[2] == 'boolean':
+                            #     TODO: Make a distinction between unsigned and int types
+                            type_ref_name = self.__get_basetype_name('int', symbol_type[3] * 8,
+                                                                     self.is_little_endian(symbol_type[1]))
+                        else:
+                            print(f'field type-->{field_type}')
+                            child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                                  (field_type,)).fetchone()
+
+                            print(f'field_symbol id:{field_symbol}')
+                            print('child symbol-->', child_symbol)
+                            child = self.__get_aggregate_paramtype(child_symbol)
+                            self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
+                            type_ref_name = child.get_name()
+                    else:
+                        type_ref_name = 'BaseType/UNKNOWN'
+
                     for index in range(field_multiplicity):
                         child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
                                                               (field_type,)).fetchone()
@@ -419,10 +462,12 @@ class XTCEManager:
                         # child = self.__get_aggregate_paramtype(child_symbol)
                         member = xtce.MemberType()
                         member.set_name(f'{field_name}[{index}]')
-                        member.set_typeRef('BaseType/UNKNOWN')
+                        member.set_typeRef(type_ref_name)
+                        member_list.add_Member(member)
                         # self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
 
                 else:
+                    print('else block')
                     member = xtce.MemberType()
                     member.set_name(field_name)
                     symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
@@ -439,7 +484,8 @@ class XTCEManager:
                                 or symbol_type[2] == 'uint16' \
                                 or symbol_type[2] == 'uint32' \
                                 or symbol_type[2] == 'uint64' \
-                                or symbol_type[2] == 'int':
+                                or symbol_type[2] == 'int' \
+                                or symbol_type[2] == 'char':
                             type_ref_name = self.__get_basetype_name('int', symbol_type[3] * 8,
                                                                      self.is_little_endian(symbol_type[1]))
                         else:
@@ -449,13 +495,17 @@ class XTCEManager:
 
                             print(f'field_symbol id:{field_symbol}')
                             print('child symbol-->', child_symbol)
+                            print('field id-->', field_id)
                             child = self.__get_aggregate_paramtype(child_symbol)
                             self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
+                            type_ref_name = child.get_name()
                     else:
                         type_ref_name = 'BaseType/UNKNOWN'
 
-                member.set_typeRef(type_ref_name)
-                member_list.add_Member(member)
+                    member.set_typeRef(type_ref_name)
+                    member_list.add_Member(member)
+
+        print(f'out_param--> {out_param.get_name()}')
         return out_param
 
     def add_namespace(self, namespace_name: str):
