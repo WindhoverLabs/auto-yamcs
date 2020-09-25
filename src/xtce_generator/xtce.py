@@ -4970,7 +4970,7 @@ class ParameterTypeSetType(GeneratedsSuper):
         self.BooleanParameterType[index] = value
 
     def get_RelativeTimeParameterType(self):
-        return self.RelativeTimeParameterType
+        return self.RelativeTimeParameterTypeF
 
     def set_RelativeTimeParameterType(self, RelativeTimeParameterType):
         self.RelativeTimeParameterType = RelativeTimeParameterType
@@ -5014,7 +5014,7 @@ class ParameterTypeSetType(GeneratedsSuper):
     def replace_ArrayParameterType_at(self, index, value):
         self.ArrayParameterType[index] = value
 
-    def get_AggregateParameterType(self):
+    def get_AggregateParameterType(self) -> list:
         return self.AggregateParameterType
 
     def set_AggregateParameterType(self, AggregateParameterType):

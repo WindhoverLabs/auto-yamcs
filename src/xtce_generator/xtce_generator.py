@@ -243,7 +243,7 @@ class XTCEManager:
             encoding = xtce.FloatDataEncodingType(sizeInBits=str(bit_size),
                                                   bitOrder=bit_order)
 
-        param_type = xtce.FloatDataType(name=base_type_name, sizeInBits=str(bit_size))
+        param_type = xtce.FloatParameterType(name=base_type_name, sizeInBits=str(bit_size))
         param_type.set_FloatDataEncoding(encoding)
 
         return param_type
@@ -272,7 +272,10 @@ class XTCEManager:
         # NOTE: For right now, only singed little-endian 32-bit floating types are supported
         # Add floating types
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, True))
+        base_set.add_FloatParameterType(self.__get_float_paramtype(32, False))
         base_set.add_IntegerParameterType(xtce.IntegerParameterType(name='UNKNOWN', signed=False, sizeInBits='32'))
+        base_set.add_BooleanParameterType(xtce.BooleanParameterType(name='boolean8_LE'))
+
 
         # Add char types
         # #FIXME: We have to decide what to do about strings
@@ -353,13 +356,18 @@ class XTCEManager:
         # Maybe I should opt for a more readable solution (?)
         return set([name.get_name() for name in
                     self['BaseType'].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() +
-                    self['BaseType'].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType()])
+                    self['BaseType'].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() +
+                    self['BaseType'].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() +
+                    self['BaseType'].get_CommandMetaData().get_ArgumentTypeSet().get_FloatArgumentType() +
+                    self['BaseType'].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() +
+                    self['BaseType'].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType()
+                    ])
 
     def __get_basetype_name(self, basename: str, bit_size: int, little_endian: bool):
         """
         A factory function that constructs the base type name.
         :param basename: The basename of this type. Please note that we mean by this is a name like 'int'. NOT 'int32',
-        'int32_t', etc. The caller should pass just 'int' for basetype and pass in the bit size as a seperate argument
+        'int32_t', etc. The caller should pass just 'int' for basetype and pass in the bit size as a separate argument
         to bit_size.
         :param bit_size: How many bits does this base type contain.
         :param little_endian: A bool describing whether the type is encoded using Little Endian or big Endian.
@@ -369,30 +377,82 @@ class XTCEManager:
         """
         typename = basename + str(bit_size) + '_LE' if little_endian else '_BE'
         all_basetypes = self.__get_all_basetypes()
+        print(f'all base types-->{all_basetypes}')
+        print(f'basename:{basename}')
         if typename in all_basetypes:
             # TODO: I think the BaseType string should be stored on its own variable.
-            return 'BaseType/'+typename
+            return 'BaseType/' + typename
         else:
             logging.warning(f'{typename} is being used as a type, but it was not found in the BaseType namespace. ')
-            return 'BaseType/'+typename
+            return 'BaseType/' + typename
 
     def is_little_endian(self, elf_id: str):
         return self.db_cursor.execute('SELECT little_endian FROM elfs where id=?',
                                       (elf_id,)).fetchone()[0] == 1
 
+    # FIXME: Finish implementation
     def __handle_array(self, symbol_record: tuple, multiplicity):
         for index in range(multiplicity):
             self.__get_aggregate_paramtype()
+
+    def __is_base_type(self, type_name: str) -> tuple:
+        """
+        Checks if type_name is a base type as it appears in the database.
+        :return: A tuple of the form (bool, str), where the bool is whether this is a basetype or not and what the
+        base type maps to in our BaseType namespace. Please note that this function does not pre-append the BaseType
+        namespace to the type, that is the responsibility of the caller.
+        """
+        out_base_type = (False, '')
+
+        if type_name == 'int64' \
+                or type_name == 'int32' \
+                or type_name == 'int16' \
+                or type_name == 'int8' \
+                or type_name == 'int':
+            out_base_type = (True, 'int')
+        elif type_name == 'uint8' \
+                or type_name == 'uint16' \
+                or type_name == 'uint32' \
+                or type_name == 'uint64':
+            out_base_type = (True, 'uint')
+        # FIXME: char and boolean types need to be handled properly
+        elif type_name == 'char':
+            out_base_type = (True, 'int')
+        elif type_name == 'boolean':
+            out_base_type = (True, 'boolean')
+
+        return out_base_type
+
+    def __aggrregate_paramtype_exists(self, type_name: str):
+        """
+        Checks if the aggregate type with type_name exists in the telemetry child of our root space system.
+        :return:
+        """
+        does_aggregate_exist = False
+        types = [aggregate_name.get_name for aggregate_name in
+                 self.root.get_TelemetryMetaData().get_ParameterTypeSet().get_AggregateParameterType() if
+                 aggregate_name.get_name() == type_name]
+
+        if len(types) > 0:
+            does_aggregate_exist = True
+            print(f'true for{type_name}')
+
+        return does_aggregate_exist
 
     def __get_aggregate_paramtype(self, symbol_record: tuple) -> xtce.AggregateParameterType:
         """
         A factory function to create an aggregateParamType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
         (id, module, name, byte_size)
-        :return: If the symbol is processed successfully, an AggregateParameterType representing that symbol(struct).
-        Otherwise, None is returned.
+        :return: If the symbol is processed successfully, an AggregateParameterType representing that symbol(struct) is returned.
+        If the symbol already exists, then None is returned.
         """
+
         out_param = xtce.AggregateParameterType(name=symbol_record[2])
+
+        # If the symbol exists already in our xtce, we don't need to explore it any further
+        if self.__aggrregate_paramtype_exists(symbol_record[2]):
+            return None
 
         print(f'symbol record-->{symbol_record}')
 
@@ -424,20 +484,10 @@ class XTCEManager:
                     # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
                     if symbol_type:
                         print(f'symbol_type$$$$-->{symbol_type}')
-
-                        if symbol_type[2] == 'int64' \
-                                or symbol_type[2] == 'int32' \
-                                or symbol_type[2] == 'int16' \
-                                or symbol_type[2] == 'int8' \
-                                or symbol_type[2] == 'uint8' \
-                                or symbol_type[2] == 'uint16' \
-                                or symbol_type[2] == 'uint32' \
-                                or symbol_type[2] == 'uint64' \
-                                or symbol_type[2] == 'int' \
-                                or symbol_type[2] == 'char'\
-                                or symbol_type[2] == 'boolean':
+                        base_type_val = self.__is_base_type(symbol_type[2])
+                        if base_type_val[0]:
                             #     TODO: Make a distinction between unsigned and int types
-                            type_ref_name = self.__get_basetype_name('int', symbol_type[3] * 8,
+                            type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                      self.is_little_endian(symbol_type[1]))
                         else:
                             print(f'field type-->{field_type}')
@@ -447,8 +497,15 @@ class XTCEManager:
                             print(f'field_symbol id:{field_symbol}')
                             print('child symbol-->', child_symbol)
                             child = self.__get_aggregate_paramtype(child_symbol)
-                            self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
-                            type_ref_name = child.get_name()
+                            # If the symbol did not exists in our xtce, we add it to our telemetry types
+                            if child:
+                                self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
+                                    child)
+                                type_ref_name = child.get_name()
+                            # If the symbol does exist in our telemetry in our telemetry object, we all we need
+                            # is its name
+                            else:
+                                type_ref_name = child_symbol[2]
                     else:
                         type_ref_name = 'BaseType/UNKNOWN'
 
@@ -459,7 +516,7 @@ class XTCEManager:
                         # FIXME: This entire function needs to be decoupled
                         print(f'field_symbol id on array:{field_symbol}')
                         print('child symbol-->', child_symbol)
-                        # child = self.__get_aggregate_paramtype(child_symbol)
+
                         member = xtce.MemberType()
                         member.set_name(f'{field_name}[{index}]')
                         member.set_typeRef(type_ref_name)
@@ -475,18 +532,10 @@ class XTCEManager:
                     # The symbol_type is expected, as per our schema, to have the form of (id, module ,name, byte_size)
                     if symbol_type:
                         print(f'symbol_type$$$$-->{symbol_type}')
-
-                        if symbol_type[2] == 'int64' \
-                                or symbol_type[2] == 'int32' \
-                                or symbol_type[2] == 'int16' \
-                                or symbol_type[2] == 'int8' \
-                                or symbol_type[2] == 'uint8' \
-                                or symbol_type[2] == 'uint16' \
-                                or symbol_type[2] == 'uint32' \
-                                or symbol_type[2] == 'uint64' \
-                                or symbol_type[2] == 'int' \
-                                or symbol_type[2] == 'char':
-                            type_ref_name = self.__get_basetype_name('int', symbol_type[3] * 8,
+                        base_type_val = self.__is_base_type(symbol_type[2])
+                        if base_type_val[0]:
+                            #     TODO: Make a distinction between unsigned and int types
+                            type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                      self.is_little_endian(symbol_type[1]))
                         else:
                             print(f'field type-->{field_type}')
@@ -497,8 +546,17 @@ class XTCEManager:
                             print('child symbol-->', child_symbol)
                             print('field id-->', field_id)
                             child = self.__get_aggregate_paramtype(child_symbol)
-                            self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
-                            type_ref_name = child.get_name()
+
+                            # If the symbol did not exists in our xtce, we add it to our telemetry types
+                            if child:
+                                self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
+                                type_ref_name = child.get_name()
+                            # If the symbol does exist in our telemetry in our telemetry object, we all we need
+                            # is its name
+                            else:
+                                print(f'symbol exists for {child_symbol[2]}')
+                                type_ref_name = child_symbol[2]
+
                     else:
                         type_ref_name = 'BaseType/UNKNOWN'
 
@@ -566,7 +624,10 @@ class XTCEManager:
         Writes the current xtce spacesystem to a file.
         :return:
         """
-        self.root.export(self.output_file, 0, namespacedef_='xmlns:xtce="http://www.omg.org/spec/XTCE/20180204"',
+        self.root.export(self.output_file, 0, namespacedef_='xmlns:xml="http://www.w3.org/XML/1998/namespace" '
+                                                            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                                                            'xmlns:xtce="http://www.omg.org/spec/XTCE/20180204" '
+                                                            'xsi:schemaLocation="http://www.omg.org/spec/XTCE/20180204 SpaceSystem.xsd "',
                          namespaceprefix_='xtce:')
 
 
@@ -586,15 +647,22 @@ def parse_cli() -> argparse.Namespace:
 
 
 def main():
+    logging.getLogger().setLevel(logging.INFO)
+
+    logging.info('Parsing CLI arguments...')
     args = parse_cli()
 
+    logging.info('Building xtce object...')
     xtce_obj = XTCEManager(args.spacesystem, args.spacesystem, args.sqlite_path)
 
+    logging.info('Adding base_types to xtce...')
     xtce_obj.add_base_types()
 
-    # FIXME:add_symbols does not work properly as of now.
+    # FIXME:add_symbols is not complete yet.
+    logging.info('Adding symbols...')
     xtce_obj.add_symbols()
 
+    logging.info('Writing xtce object to file...')
     xtce_obj.write_to_file()
 
 
