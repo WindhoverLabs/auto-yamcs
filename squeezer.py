@@ -17,7 +17,7 @@ file_paths = ['target/exe/airliner',
               'target/exe/cf/apps/MM.so',
               'target/exe/cf/apps/SCH.so',
               'target/exe/cf/apps/SC.so',
-              'target/exe/cf/apps/TO.so',]
+              'target/exe/cf/apps/TO.so']
 
 
 def parse_cli() -> argparse.Namespace:
