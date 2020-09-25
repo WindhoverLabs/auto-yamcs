@@ -17,6 +17,8 @@ class BaseType(int, Enum):
 
 
 class XTCEManager:
+    UNKNOWN_TYPE = 'UNKNOWN'  # A type for anything that, for some reason, we don't understand from the database
+
     def __init__(self, root_space_system: str, file_path: str, sqlite_path: str):
         """
         Instantiates a XTCEManager instance. An XTCEManager is a class that manages a xtce class internally
@@ -259,7 +261,7 @@ class XTCEManager:
         :return:
         """
         base_set = xtce.ParameterTypeSetType()
-        base_space_system = self['BaseType']
+        base_space_system = self[self.base_type_namespace]
         base_space_system.set_TelemetryMetaData(xtce.TelemetryMetaDataType())
 
         # Add int types
@@ -271,11 +273,11 @@ class XTCEManager:
             base_set.add_IntegerParameterType(self.__get_uint_paramtype(bit, True))
             base_set.add_IntegerParameterType(self.__get_uint_paramtype(bit, False))
 
-        # NOTE: For right now, only singed little-endian 32-bit floating types are supported
+        # NOTE: For right now, only singed 32-bit floating types are supported
         # Add floating types
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, True))
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, False))
-        base_set.add_IntegerParameterType(xtce.IntegerParameterType(name='UNKNOWN', signed=False, sizeInBits='32'))
+        base_set.add_IntegerParameterType(xtce.IntegerParameterType(name=XTCEManager.UNKNOWN_TYPE, signed=False, sizeInBits='32'))
         base_set.add_BooleanParameterType(xtce.BooleanParameterType(name='boolean8_LE'))
 
         # Add char types
@@ -321,7 +323,9 @@ class XTCEManager:
 
         # NOTE: For right now, only singed little-endian 32-bit floating types are supported
         base_set.add_FloatArgumentType(self.__get_float_argtype(32, True))
+        base_set.add_FloatArgumentType(self.__get_float_argtype(32, False))
         base_set.add_IntegerArgumentType(xtce.IntegerParameterType(name='UNKNOWN', signed=False, sizeInBits='32'))
+        base_set.add_BooleanArgumentType(xtce.BooleanParameterType(name='boolean8_LE'))
 
         # Add char types
         # #FIXME: We have to decide what to do about strings
@@ -357,11 +361,15 @@ class XTCEManager:
     def __get_all_basetypes(self):
         # Maybe I should opt for a more readable solution (?)
         return set([name.get_name() for name in
-                    self[self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() +
-                    self[self.base_type_namespace].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() +
-                    self[self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() +
+                    self[
+                        self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() +
+                    self[
+                        self.base_type_namespace].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() +
+                    self[
+                        self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() +
                     self[self.base_type_namespace].get_CommandMetaData().get_ArgumentTypeSet().get_FloatArgumentType() +
-                    self[self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() +
+                    self[
+                        self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() +
                     self[self.base_type_namespace].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType()
                     ])
 
@@ -445,9 +453,11 @@ class XTCEManager:
         """
         A factory function to create an aggregateParamType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
-        (id, module, name, byte_size)
+        (id, elf, name, byte_size)
         :return: If the symbol is processed successfully, an AggregateParameterType representing that symbol(struct) is returned.
-        If the symbol already exists, then None is returned.
+        If the symbol already exists, then None is returned. Beware that if this function finds a field of the symbol record
+        whose type does not exist(sucha as a field that has a struct type not defined in our xtce), then function takes
+        the liberty of adding it to the telemetry object in the xtce object.
         """
 
         out_param = xtce.AggregateParameterType(name=symbol_record[2])
@@ -467,104 +477,100 @@ class XTCEManager:
 
         type_ref_name = None
 
-        if fields:
-            # out_param = xtce.AggregateParameterType(name=symbol_record[2])
-            member_list = xtce.MemberListType()
-            out_param.set_MemberList(member_list)
-            symbol_id = str(symbol_record[0])
-            for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian in fields:
-                if field_type == field_symbol:
-                    continue
-                elif field_multiplicity > 0 and field_type != field_symbol:
+        member_list = xtce.MemberListType()
+        out_param.set_MemberList(member_list)
+        symbol_id = str(symbol_record[0])
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian in fields:
+            if field_type == field_symbol:
+                continue
+            elif field_multiplicity > 0 and field_type != field_symbol:
 
-                    logging.debug(f'comparing{field_type} and {field_symbol}')
-                    # self.__handle_array(member_list)
-                    # continue
+                logging.debug(f'comparing{field_type} and {field_symbol}')
 
-                    symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
-                                                         (field_type,)).fetchone()
-                    # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
-                    if symbol_type:
-                        logging.debug(f'symbol_type$$$$-->{symbol_type}')
-                        base_type_val = self.__is_base_type(symbol_type[2])
-                        if base_type_val[0]:
-                            #     TODO: Make a distinction between unsigned and int types
-                            type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
-                                                                     self.is_little_endian(symbol_type[1]))
-                        else:
-                            logging.debug(f'field type-->{field_type}')
-                            child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
-                                                                  (field_type,)).fetchone()
-
-                            logging.debug(f'field_symbol id:{field_symbol}')
-                            logging.debug('child symbol-->', child_symbol)
-                            child = self.__get_aggregate_paramtype(child_symbol)
-                            # If the symbol did not exists in our xtce, we add it to our telemetry types
-                            if child:
-                                self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
-                                    child)
-                                type_ref_name = child.get_name()
-                            # If the symbol does exist in our telemetry in our telemetry object, we all we need
-                            # is its name
-                            else:
-                                type_ref_name = child_symbol[2]
+                symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                     (field_type,)).fetchone()
+                # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
+                if symbol_type:
+                    logging.debug(f'symbol_type$$$$-->{symbol_type}')
+                    base_type_val = self.__is_base_type(symbol_type[2])
+                    if base_type_val[0]:
+                        #     TODO: Make a distinction between unsigned and int types
+                        type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
+                                                                 self.is_little_endian(symbol_type[1]))
                     else:
-                        type_ref_name = 'BaseType/UNKNOWN'
-
-                    for index in range(field_multiplicity):
+                        logging.debug(f'field type-->{field_type}')
                         child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
                                                               (field_type,)).fetchone()
 
-                        # FIXME: This entire function needs to be decoupled
-                        logging.debug(f'field_symbol id on array:{field_symbol}')
-                        logging.debug(f'child symbol-->{child_symbol}')
-
-                        member = xtce.MemberType()
-                        member.set_name(f'{field_name}[{index}]')
-                        member.set_typeRef(type_ref_name)
-                        member_list.add_Member(member)
-                        # self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(child)
-
-                else:
-                    logging.debug('else block')
-                    member = xtce.MemberType()
-                    member.set_name(field_name)
-                    symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
-                                                         (field_type,)).fetchone()
-                    # The symbol_type is expected, as per our schema, to have the form of (id, module ,name, byte_size)
-                    if symbol_type:
-                        logging.debug(f'symbol_type$$$$-->{symbol_type}')
-                        base_type_val = self.__is_base_type(symbol_type[2])
-                        if base_type_val[0]:
-                            #     TODO: Make a distinction between unsigned and int types
-                            type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
-                                                                     self.is_little_endian(symbol_type[1]))
+                        logging.debug(f'field_symbol id:{field_symbol}')
+                        logging.debug('child symbol-->', child_symbol)
+                        child = self.__get_aggregate_paramtype(child_symbol)
+                        # If the symbol did not exists in our xtce, we add it to our telemetry types
+                        if child:
+                            self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
+                                child)
+                            type_ref_name = child.get_name()
+                        # If the symbol does exist in our telemetry in our telemetry object, we all we need
+                        # is its name
                         else:
-                            logging.debug(f'field type-->{field_type}')
-                            child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
-                                                                  (field_type,)).fetchone()
+                            type_ref_name = child_symbol[2]
+                else:
+                    type_ref_name = 'BaseType/UNKNOWN'
+                    logging.warning('BaseType/UNKNOWN is being used as array type')
 
-                            logging.debug(f'field_symbol id:{field_symbol}')
-                            logging.debug('child symbol-->', child_symbol)
-                            logging.debug(f'field id-->{field_id})')
-                            child = self.__get_aggregate_paramtype(child_symbol)
+                for index in range(field_multiplicity):
+                    child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                          (field_type,)).fetchone()
 
-                            # If the symbol did not exists in our xtce, we add it to our telemetry types
-                            if child:
-                                self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
-                                    child)
-                                type_ref_name = child.get_name()
-                            # If the symbol does exist in our telemetry in our telemetry object, we all we need
-                            # is its name
-                            else:
-                                logging.debug(f'symbol exists for {child_symbol[2]}')
-                                type_ref_name = child_symbol[2]
+                    # FIXME: This entire function needs to be decoupled (?)
+                    logging.debug(f'field_symbol id on array:{field_symbol}')
+                    logging.debug(f'child symbol-->{child_symbol}')
 
-                    else:
-                        type_ref_name = 'BaseType/UNKNOWN'
-
+                    member = xtce.MemberType()
+                    member.set_name(f'{field_name}[{index}]')
                     member.set_typeRef(type_ref_name)
                     member_list.add_Member(member)
+
+            else:
+                logging.debug('else block')
+                member = xtce.MemberType()
+                member.set_name(field_name)
+                symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                     (field_type,)).fetchone()
+                # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
+                if symbol_type:
+                    logging.debug(f'symbol_type$$$$-->{symbol_type}')
+                    base_type_val = self.__is_base_type(symbol_type[2])
+                    if base_type_val[0]:
+                        #     TODO: Make a distinction between unsigned and int types
+                        type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
+                                                                 self.is_little_endian(symbol_type[1]))
+                    else:
+                        logging.debug(f'field type-->{field_type}')
+                        child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
+                                                              (field_type,)).fetchone()
+
+                        logging.debug(f'field_symbol id:{field_symbol}')
+                        logging.debug('child symbol-->', child_symbol)
+                        logging.debug(f'field id-->{field_id})')
+                        child = self.__get_aggregate_paramtype(child_symbol)
+
+                        # If the symbol did not exists in our xtce, we add it to our telemetry types
+                        if child:
+                            self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
+                                child)
+                            type_ref_name = child.get_name()
+                        # If the symbol does exist in our telemetry in our telemetry object, we all we need
+                        # is its name
+                        else:
+                            logging.debug(f'symbol exists for {child_symbol[2]}')
+                            type_ref_name = child_symbol[2]
+
+                else:
+                    type_ref_name = 'BaseType/UNKNOWN'
+
+                member.set_typeRef(type_ref_name)
+                member_list.add_Member(member)
 
         logging.debug(f'out_param--> {out_param.get_name()}')
         return out_param
@@ -663,7 +669,6 @@ logging_map = {'DEBUG': logging.DEBUG,
 
 
 def main():
-
     logging.info('Parsing CLI arguments...')
     args = parse_cli()
 
