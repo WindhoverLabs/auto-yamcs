@@ -1681,7 +1681,7 @@ class TelemetryMetaDataType(GeneratedsSuper):
     def set_ParameterTypeSet(self, ParameterTypeSet):
         self.ParameterTypeSet = ParameterTypeSet
 
-    def get_ParameterSet(self):
+    def get_ParameterSet(self)->'ParameterSetType':
         return self.ParameterSet
 
     def set_ParameterSet(self, ParameterSet):

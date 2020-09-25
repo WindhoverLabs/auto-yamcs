@@ -277,7 +277,8 @@ class XTCEManager:
         # Add floating types
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, True))
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, False))
-        base_set.add_IntegerParameterType(xtce.IntegerParameterType(name=XTCEManager.UNKNOWN_TYPE, signed=False, sizeInBits='32'))
+        base_set.add_IntegerParameterType(
+            xtce.IntegerParameterType(name=XTCEManager.UNKNOWN_TYPE, signed=False, sizeInBits='32'))
         base_set.add_BooleanParameterType(xtce.BooleanParameterType(name='boolean8_LE'))
 
         # Add char types
@@ -503,14 +504,14 @@ class XTCEManager:
                                                               (field_type,)).fetchone()
 
                         logging.debug(f'field_symbol id:{field_symbol}')
-                        logging.debug('child symbol-->', child_symbol)
+                        logging.debug(f'child symbol-->{child_symbol}')
                         child = self.__get_aggregate_paramtype(child_symbol)
                         # If the symbol did not exists in our xtce, we add it to our telemetry types
                         if child:
                             self.root.get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
                                 child)
                             type_ref_name = child.get_name()
-                        # If the symbol does exist in our telemetry in our telemetry object, we all we need
+                        # If the symbol does exist in our telemetry in our telemetry object, all we need
                         # is its name
                         else:
                             type_ref_name = child_symbol[2]
@@ -551,7 +552,7 @@ class XTCEManager:
                                                               (field_type,)).fetchone()
 
                         logging.debug(f'field_symbol id:{field_symbol}')
-                        logging.debug('child symbol-->', child_symbol)
+                        logging.debug(f'child symbol-->{child_symbol}')
                         logging.debug(f'field id-->{field_id})')
                         child = self.__get_aggregate_paramtype(child_symbol)
 
@@ -595,6 +596,12 @@ class XTCEManager:
         """
 
         # Iterate through all of the rows of telemetry
+        container_set = xtce.ContainerSetType()
+        base_paramtype_set = self.root.get_TelemetryMetaData().get_ParameterTypeSet()
+        base_param_set = xtce.ParameterSetType()
+        self.root.get_TelemetryMetaData().set_ParameterSet(base_param_set)
+        self.root.get_TelemetryMetaData().set_ContainerSet(container_set)
+
         for tlm in self.db_cursor.execute('select * from telemetry').fetchall():
             tlm_name = tlm[1]
             tlm_message_id = tlm[2]
@@ -602,7 +609,12 @@ class XTCEManager:
             tlm_symbol_id = tlm[4]
             tlm_module = tlm[5]
 
-            base_set = self.root.get_TelemetryMetaData().get_ParameterTypeSet()
+            seq_container = xtce.SequenceContainerType(name=str(tlm_message_id))
+            container_entry_list = xtce.EntryListType()
+            seq_container.set_EntryList(container_entry_list)
+
+            logging.debug(f'message id:{tlm_message_id}')
+
             for symbol in self.db_cursor.execute('select * from symbols where id=?',
                                                  (tlm_symbol_id,)).fetchall():
                 logging.debug(f'symbol{symbol} for tlm:{tlm_name}')
@@ -610,7 +622,16 @@ class XTCEManager:
                 aggregeate_type = self.__get_aggregate_paramtype(symbol)
 
                 if aggregeate_type:
-                    base_set.add_AggregateParameterType(aggregeate_type)
+                    base_paramtype_set.add_AggregateParameterType(aggregeate_type)
+                    telemetry_param = xtce.ParameterType(name=aggregeate_type.get_name() + '_param',
+                                                         parameterTypeRef=aggregeate_type.get_name())
+
+                    container_param_ref = xtce.ParameterRefEntryType(parameterRef=telemetry_param.get_name())
+
+                    base_param_set.add_Parameter(telemetry_param)
+                    container_entry_list.add_ParameterRefEntry(container_param_ref)
+                    container_set.add_SequenceContainer(seq_container)
+
 
     def get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:
         """
