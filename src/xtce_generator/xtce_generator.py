@@ -3,6 +3,7 @@ import src.xtce_generator.xtce as xtce
 import argparse
 import sqlite3
 import logging
+import yaml
 from enum import Enum
 
 
@@ -35,7 +36,7 @@ class BaseType(int, Enum):
 class XTCEManager:
     UNKNOWN_TYPE = 'UNKNOWN'  # A type for anything that, for some reason, we don't understand from the database
 
-    def __init__(self, root_space_system: str, file_path: str, sqlite_path: str):
+    def __init__(self, root_space_system: str, file_path: str, sqlite_path: str, config: dict):
         """
         Instantiates a XTCEManager instance. An XTCEManager is a class that manages an xtce class internally
         and provides utilities such as serialization tools(through the write_to_file method) and functionality
@@ -66,6 +67,8 @@ class XTCEManager:
         self.db_cursor = db_handle.cursor()
 
         self.base_type_namespace = 'BaseType'
+
+        self.custom_config = config
 
     def __get_endianness(self, bit_size: int, little_endian: bool):
         endianness = '_LE' if little_endian else '_BE'
@@ -298,7 +301,7 @@ class XTCEManager:
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, False))
         base_set.add_IntegerParameterType(
             xtce.IntegerParameterType(name=XTCEManager.UNKNOWN_TYPE, signed=False, sizeInBits='32'))
-        base_set.add_BooleanParameterType(xtce.BooleanParameterType(name='boolean8_LE'))
+        base_set.add_BooleanParameterType(xtce.BooleanParameterType(name='boolean8_LE', IntegerDataEncoding=xtce.IntegerDataEncodingType()))
 
         # Add char types
         # #FIXME: We have to decide what to do about strings
@@ -453,6 +456,27 @@ class XTCEManager:
 
         return out_base_type
 
+
+    def __is_type_in_config(self, spacesystem: str, type_name: str):
+        """
+        Check if the type with name of type_name which is part of spacesystem in the config file provided by the user,
+        that is if a configuration file was provided by the user. For now, our configuration only supports mapping
+        to BaseTypes.
+        :param spacesystem: 
+        :param type_name: The reference to the type. The namespace of the type must be explicitly stated, meaning
+        that types such as 'int16_LE' MUST be passed as 'BaseType/int16_LE'
+        :return: A tuple of the form (bool, typeref). If the type_name is not found in the configuration dict, then the
+        tuple is returned as (False, XTCEManager.UNKNOWN_TYPE)
+        """
+        does_type_exist = (False, self.UNKNOWN_TYPE)
+
+        if self.custom_config and spacesystem in self.__namespace_dict:
+            if spacesystem in self.custom_config['spacesystems'] and \
+                    type_name in self.custom_config['spacesystems'][spacesystem]['remap'].keys():
+                does_type_exist = (True, self.custom_config['spacesystems'][spacesystem]['remap'][type_name])
+
+        return does_type_exist
+
     def __aggrregate_paramtype_exists(self, type_name: str, namespace: str):
         """
         Checks if the aggregate type with type_name exists in the telemetry child of our root space system.
@@ -482,10 +506,12 @@ class XTCEManager:
         the liberty of adding it to the telemetry object in the xtce object.
         """
 
+        # FIXME: This entire function needs to be decoupled; it's far too big
         out_param = xtce.AggregateParameterType(name=symbol_record[2])
 
         # If the symbol exists already in our xtce, we don't need to explore it any further
-        if self.__aggrregate_paramtype_exists(symbol_record[2], module_name):
+        if self.__aggrregate_paramtype_exists(symbol_record[2], module_name) \
+                or self.__is_type_in_config(module_name, symbol_record[2])[0]:
             return None
 
         logging.debug(f'symbol record-->{symbol_record}')
@@ -519,7 +545,11 @@ class XTCEManager:
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
                     base_type_val = self.__is_base_type(symbol_type[2])
-                    if base_type_val[0]:
+                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
+
+                    if is_type_in_config_val[0]:
+                        type_ref_name = is_type_in_config_val[1]
+                    elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                  self.is_little_endian(symbol_type[1]))
@@ -566,8 +596,12 @@ class XTCEManager:
                 # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
+                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
                     base_type_val = self.__is_base_type(symbol_type[2])
-                    if base_type_val[0]:
+
+                    if is_type_in_config_val[0]:
+                        type_ref_name = is_type_in_config_val[1]
+                    elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                  self.is_little_endian(symbol_type[1]))
@@ -872,7 +906,7 @@ class XTCEManager:
                     meta_command.set_CommandContainer(command_container)
                     meta_command_set.add_MetaCommand(meta_command)
 
-    def add_symbols(self):
+    def add_aggregate_types(self):
         """
         Iterate through all of the symbols in the database and add them to the TelemetryMetaDataType and
         CommandMetaDataType children of our root SpaceSystem.
@@ -881,7 +915,7 @@ class XTCEManager:
         for module_id in set(self.db_cursor.execute('select module from telemetry').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             # logging.debug()
-            self.add_telemetry_containers(module[1], module[0], 'cfs-ccsds')
+            self.add_telemetry_containers(module[1], module[0], self.custom_config['global']['TelemetryMetaData']['BaseContainer'])
         # self.add_command_containers()
 
     def __get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:
@@ -937,8 +971,17 @@ def parse_cli() -> argparse.Namespace:
                         help='The name of the root spacesystem of the xtce file. Note that spacesystem is a synonym '
                              'for namespace')
 
+    parser.add_argument('--config_yaml', type=str, default=None,
+                        help='An option to pass in a config file to apply extra settings to the xtce generation such as'
+                             'mapping an Aggregate Type to a base type, or to another aggregate type altogether')
+
     return parser.parse_args()
 
+
+def read_yaml(yaml_file: str) -> dict:
+    yaml_data = yaml.load(open(yaml_file, 'r'),
+                          Loader=yaml.FullLoader)
+    return yaml_data
 
 logging_map = {'DEBUG': logging.DEBUG,
                'INFO': logging.INFO,
@@ -959,18 +1002,24 @@ def main():
         logging.getLogger().setLevel(logging_map[args.log_level])
 
     logging.info('Building xtce object...')
-    xtce_obj = XTCEManager(args.spacesystem, args.spacesystem, args.sqlite_path)
+
+    if args.config_yaml:
+        config_data = read_yaml(args.config_yaml)
+    else:
+        config_data = None
+
+    xtce_obj = XTCEManager(args.spacesystem, args.spacesystem, args.sqlite_path, config_data)
 
     logging.info('Adding base_types to xtce...')
     xtce_obj.add_base_types()
 
     # FIXME:add_symbols is not complete yet.
     logging.info('Adding symbols...')
-    xtce_obj.add_symbols()
+
+    xtce_obj.add_aggregate_types()
 
     logging.info('Writing xtce object to file...')
     xtce_obj.write_to_file(namespace=args.spacesystem)
-
 
 if __name__ == '__main__':
     main()
