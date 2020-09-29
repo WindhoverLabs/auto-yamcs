@@ -6,7 +6,7 @@ global:
   TelemetryMetaData:
     BaseContainer: 'cfs-ccsds/cfs-tlm-hdr'
   CommandContainer:
-    BaseContainer: ''
+    BaseContainer: 'cfs-ccsds/cfs-cmd'
 
 # Custom Mappings
 # Beware that our configuration only supports mapping to types in our BaseType spacesystem such as BaseType/int16_LE

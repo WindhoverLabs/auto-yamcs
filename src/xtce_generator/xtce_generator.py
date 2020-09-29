@@ -21,8 +21,6 @@ from enum import Enum
 #     def __getitem__(self, key: str):
 
 
-
-
 class BaseType(int, Enum):
     """
     Used by XTCEManager to distinguish what kind of argument or parameter types to add to Space Systems.
@@ -301,7 +299,8 @@ class XTCEManager:
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, False))
         base_set.add_IntegerParameterType(
             xtce.IntegerParameterType(name=XTCEManager.UNKNOWN_TYPE, signed=False, sizeInBits='32'))
-        base_set.add_BooleanParameterType(xtce.BooleanParameterType(name='boolean8_LE', IntegerDataEncoding=xtce.IntegerDataEncodingType()))
+        base_set.add_BooleanParameterType(
+            xtce.BooleanParameterType(name='boolean8_LE', IntegerDataEncoding=xtce.IntegerDataEncodingType()))
 
         # Add char types
         # #FIXME: We have to decide what to do about strings
@@ -456,7 +455,6 @@ class XTCEManager:
 
         return out_base_type
 
-
     def __is_type_in_config(self, spacesystem: str, type_name: str):
         """
         Check if the type with name of type_name which is part of spacesystem in the config file provided by the user,
@@ -486,7 +484,7 @@ class XTCEManager:
 
         if namespace in self.__namespace_dict:
             if self[namespace].get_TelemetryMetaData().get_ParameterTypeSet():
-                types = [aggregate_name.get_name for aggregate_name in
+                types = [aggregate_name.get_name() for aggregate_name in
                          self[namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_AggregateParameterType() if
                          aggregate_name.get_name() == type_name]
 
@@ -495,7 +493,8 @@ class XTCEManager:
 
         return does_aggregate_exist
 
-    def __get_aggregate_paramtype(self, symbol_record: tuple, module_name: str, header_present: bool = True) -> xtce.AggregateParameterType:
+    def __get_aggregate_paramtype(self, symbol_record: tuple, module_name: str,
+                                  header_present: bool = True) -> xtce.AggregateParameterType:
         """
         A factory function to create an aggregateParamType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
@@ -520,7 +519,7 @@ class XTCEManager:
 
         if header_present:
             fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
-                                            (symbol_id,)).fetchall())[1:]
+                                                   (symbol_id,)).fetchall())[1:]
         else:
             fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                             (symbol_id,)).fetchall()
@@ -562,6 +561,7 @@ class XTCEManager:
                         logging.debug(f'child symbol-->{child_symbol}')
                         child = self.__get_aggregate_paramtype(child_symbol, module_name)
                         # If the symbol did not exists in our xtce, we add it to our telemetry types
+
                         if child:
                             self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
                                 child)
@@ -641,16 +641,24 @@ class XTCEManager:
         :return:
         """
         does_aggregate_exist = False
-        types = [aggregate_name.get_name for aggregate_name in
-                 self[namespace].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType() if
-                 aggregate_name.get_name() == type_name]
 
-        if len(types) > 0:
-            does_aggregate_exist = True
+        if namespace in self.__namespace_dict:
+            if self[namespace].get_CommandMetaData().get_ArgumentTypeSet():
+                types = [aggregate_name.get_name() for aggregate_name in
+                         self[namespace].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType() if
+                         aggregate_name.get_name() == type_name]
+
+                var = self[namespace].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
+
+                print('var:', var)
+
+                if len(types) > 0:
+                    does_aggregate_exist = True
 
         return does_aggregate_exist
 
-    def __get_aggregate_argtype(self, symbol_record: tuple, namespace: str) -> xtce.AggregateArgumentType:
+    def __get_aggregate_argtype(self, symbol_record: tuple, module_name: str,
+                                header_present: bool = True) -> xtce.AggregateArgumentType:
         """
         A factory function to create an aggregateArgumentType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
@@ -661,18 +669,23 @@ class XTCEManager:
         the liberty of adding it to the telemetry object in the xtce object.
         """
 
-        out_param = xtce.AggregateParameterType(name=symbol_record[2])
+        out_param = xtce.AggregateArgumentType(name=symbol_record[2])
 
         # If the symbol exists already in our xtce, we don't need to explore it any further
-        if self.__aggrregate_argtype_exists(symbol_record[2]):
+        if self.__aggrregate_argtype_exists(symbol_record[2], module_name) or \
+                self.__is_type_in_config(module_name, symbol_record[2])[0]:
             return None
 
         logging.debug(f'symbol record-->{symbol_record}')
 
         symbol_id = str(symbol_record[0])
 
-        fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
-                                        (symbol_id,)).fetchall()
+        if header_present:
+            fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                                   (symbol_id,)).fetchall())[1:]
+        else:
+            fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                            (symbol_id,)).fetchall()
 
         logging.debug(f'root fields-->{fields}')
 
@@ -694,7 +707,11 @@ class XTCEManager:
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
                     base_type_val = self.__is_base_type(symbol_type[2])
-                    if base_type_val[0]:
+                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
+
+                    if is_type_in_config_val[0]:
+                        type_ref_name = is_type_in_config_val[1]
+                    elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                  self.is_little_endian(symbol_type[1]))
@@ -705,10 +722,10 @@ class XTCEManager:
 
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
-                        child = self.__get_aggregate_argtype(child_symbol)
+                        child = self.__get_aggregate_argtype(child_symbol, module_name, False)
                         # If the symbol did not exists in our xtce, we add it to our telemetry types
                         if child:
-                            self[namespace].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
+                            self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
                                 child)
                             type_ref_name = child.get_name()
                         # If the symbol does exist in our telemetry in our telemetry object, all we need
@@ -741,8 +758,12 @@ class XTCEManager:
                 # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
+                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
                     base_type_val = self.__is_base_type(symbol_type[2])
-                    if base_type_val[0]:
+
+                    if is_type_in_config_val[0]:
+                        type_ref_name = is_type_in_config_val[1]
+                    elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                  self.is_little_endian(symbol_type[1]))
@@ -754,11 +775,13 @@ class XTCEManager:
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
                         logging.debug(f'field id-->{field_id})')
-                        child = self.__get_aggregate_argtype(child_symbol)
+                        child = self.__get_aggregate_argtype(child_symbol, module_name, False)
 
                         # If the symbol did not exists in our xtce, we add it to our telemetry types
                         if child:
-                            self[namespace].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
+                            # FIXME:In telemetry we don't seem to have to do this. Will investigate.
+                            # self[module_name].get_CommandMetaData().set_ArgumentTypeSet(xtce.ArgumentTypeSetType())
+                            self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
                                 child)
                             type_ref_name = child.get_name()
                         # If the symbol does exist in our telemetry in our command object, we all we need
@@ -795,7 +818,7 @@ class XTCEManager:
         Calculate the the size of the telemetry header inside of the struct with id of symbol_id in the database.
         :return: The size of the telemetry header in bits.
         """
-        offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?',(symblold_id,)).fetchall()
+        offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?', (symblold_id,)).fetchall()
         offsets.sort()
         return offsets[1]
 
@@ -849,7 +872,8 @@ class XTCEManager:
                     base_param_set.add_Parameter(telemetry_param)
                     container_entry_list.add_ParameterRefEntry(container_param_ref)
                     if parent_container:
-                        seq_container.set_BaseContainer(xtce.BaseContainerType(containerRef=parent_container + '/cfs-tlm-hdr'))
+                        seq_container.set_BaseContainer(
+                            xtce.BaseContainerType(containerRef=parent_container + '/cfs-tlm-hdr'))
                         comparison = xtce.ComparisonType()
                         comparison.set_parameterRef(parent_container + '/ccsds-apid')
                         comparison.set_value(self.__get_apid(tlm_message_id))
@@ -861,18 +885,40 @@ class XTCEManager:
 
                     container_set.add_SequenceContainer(seq_container)
 
-    # FIXME: Ask Matt how we handle base containers; do we get from those at this step from the database or at a later step?
-    def add_command_containers(self, namespace: str):
+    def __get_command_argument_assigment_list(self, apid: tuple, command_code: tuple, command_length: tuple):
+        """
+        Factory function that creates a ArgumentAssignmentListType containing three ArgumentAssignment objects;
+        one for apid, one for command_code and another one for command_length.
+        :param apid: A tuple of the form (arg_name: str, arg_value: int)
+        :param command_code:A tuple of the form (arg_name: str, arg_value: int)
+        :param command_length:A tuple of the form (arg_name: str, arg_value: int)
+        :return:
+        """
+        out_argument_list = xtce.ArgumentAssignmentListType()
+
+        apid_arg = xtce.ArgumentAssignmentType(argumentName=apid[0], argumentValue=apid[1])
+        command_code_arg = xtce.ArgumentAssignmentType(argumentName=command_code[0], argumentValue=command_code[1])
+        command_length_arg = xtce.ArgumentAssignmentType(argumentName=command_length[0],
+                                                         argumentValue=command_length[1])
+
+        out_argument_list.add_ArgumentAssignment(apid_arg)
+        out_argument_list.add_ArgumentAssignment(command_code_arg)
+        out_argument_list.add_ArgumentAssignment(command_length_arg)
+
+        return out_argument_list
+
+    def add_command_containers(self, module_name: str, module_id: int, parent_command: str = None):
         """
         Iterate through all of the rows of the commands table and build our containers for each command in the database.
         :return:
         """
         meta_command_set = xtce.MetaCommandSetType()
-        base_argtype_set = self[namespace].get_CommandMetaData().get_ArgumentTypeSet()
-        # self[namespace].get_CommandMetaData().set_ArgumentTypeSet(base_arg_set)
-        self[namespace].get_CommandMetaData().set_MetaCommandSet(meta_command_set)
+        base_argtype_set = xtce.ArgumentTypeSetType()
+        self[module_name].get_CommandMetaData().set_ArgumentTypeSet(base_argtype_set)
+        self[module_name].get_CommandMetaData().set_MetaCommandSet(meta_command_set)
 
-        for command in self.db_cursor.execute('select * from commands').fetchall():
+        for command in self.db_cursor.execute('select * from commands where module=?',
+                                              (module_id,)).fetchall():
             command_name = command[1]
             command_code = command[2]
             command_message_id = command[3]
@@ -880,8 +926,9 @@ class XTCEManager:
             command_symbol_id = command[5]
             command_module = command[6]
 
-            meta_command = xtce.MetaCommandType(name=command_name + '-' + str(command_message_id))
-            command_container = xtce.CommandContainerType(name=command_name + '-' + str(command_message_id) + '-container')
+            meta_command = xtce.MetaCommandType(name=command_name)
+            command_container = xtce.CommandContainerType(
+                name=command_name + '-' + str(command_message_id) + '-container')
             container_entry_list = xtce.EntryListType()
             # command_container.set_EntryList(container_entry_list)
 
@@ -892,7 +939,7 @@ class XTCEManager:
                                                  (command_symbol_id,)).fetchall():
                 logging.debug(f'symbol{symbol} for tlm:{command_name}')
 
-                aggregeate_type = self.__get_aggregate_argtype(symbol)
+                aggregeate_type = self.__get_aggregate_argtype(symbol, module_name)
 
                 if aggregeate_type:
                     base_argtype_set.add_AggregateArgumentType(aggregeate_type)
@@ -903,6 +950,21 @@ class XTCEManager:
 
                     base_arg_set.add_Argument(command_arg)
                     # container_entry_list.setA('container_arg_ref')
+
+                    # NOTE: It is assumed that the arguments to be set on the base command are apid, command_code and
+                    # command_length
+                    if parent_command:
+                        base_command = xtce.BaseMetaCommandType(metaCommandRef=parent_command)
+                        # FIXME:Length needs to be calculated properly
+                        argument_assigment_list = self.__get_command_argument_assigment_list(
+                            ('ccsds-apid', self.__get_apid(command_message_id)),
+                            ('cfs-cmd-code', command_code),
+                            ('ccsds-length', 1))
+
+                        base_command.set_ArgumentAssignmentList(argument_assigment_list)
+
+                        meta_command.set_BaseMetaCommand(base_command)
+
                     meta_command.set_CommandContainer(command_container)
                     meta_command_set.add_MetaCommand(meta_command)
 
@@ -915,8 +977,14 @@ class XTCEManager:
         for module_id in set(self.db_cursor.execute('select module from telemetry').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             # logging.debug()
-            self.add_telemetry_containers(module[1], module[0], self.custom_config['global']['TelemetryMetaData']['BaseContainer'])
-        # self.add_command_containers()
+            self.add_telemetry_containers(module[1], module[0],
+                                          self.custom_config['global']['TelemetryMetaData']['BaseContainer'])
+
+        for module_id in set(self.db_cursor.execute('select module from commands').fetchall()):
+            module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
+            # logging.debug()
+            self.add_command_containers(module[1], module[0],
+                                        self.custom_config['global']['CommandContainer']['BaseContainer'])
 
     def __get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:
         """
@@ -948,10 +1016,10 @@ class XTCEManager:
         :return:
         """
         self[namespace].export(self.output_file, 0, namespacedef_='xmlns:xml="http://www.w3.org/XML/1998/namespace" '
-                                                            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
-                                                            'xmlns:xtce="http://www.omg.org/spec/XTCE/20180204" '
-                                                            'xsi:schemaLocation="http://www.omg.org/spec/XTCE/20180204 SpaceSystem.xsd "',
-                         namespaceprefix_='xtce:')
+                                                                  'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                                                                  'xmlns:xtce="http://www.omg.org/spec/XTCE/20180204" '
+                                                                  'xsi:schemaLocation="http://www.omg.org/spec/XTCE/20180204 SpaceSystem.xsd "',
+                               namespaceprefix_='xtce:')
 
 
 def parse_cli() -> argparse.Namespace:
@@ -982,6 +1050,7 @@ def read_yaml(yaml_file: str) -> dict:
     yaml_data = yaml.load(open(yaml_file, 'r'),
                           Loader=yaml.FullLoader)
     return yaml_data
+
 
 logging_map = {'DEBUG': logging.DEBUG,
                'INFO': logging.INFO,
@@ -1020,6 +1089,7 @@ def main():
 
     logging.info('Writing xtce object to file...')
     xtce_obj.write_to_file(namespace=args.spacesystem)
+
 
 if __name__ == '__main__':
     main()
