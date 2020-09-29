@@ -471,14 +471,14 @@ class XTCEManager:
 
         return does_aggregate_exist
 
-    def __get_aggregate_paramtype(self, symbol_record: tuple, module_name: str) -> xtce.AggregateParameterType:
+    def __get_aggregate_paramtype(self, symbol_record: tuple, module_name: str, header_present: bool = True) -> xtce.AggregateParameterType:
         """
         A factory function to create an aggregateParamType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
         (id, elf, name, byte_size)
         :return: If the symbol is processed successfully, an AggregateParameterType representing that symbol(struct) is returned.
         If the symbol already exists, then None is returned. Beware that if this function finds a field of the symbol record
-        whose type does not exist(sucha as a field that has a struct type not defined in our xtce), then function takes
+        whose type does not exist(such as a field that has a struct type not defined in our xtce), then this function takes
         the liberty of adding it to the telemetry object in the xtce object.
         """
 
@@ -492,8 +492,12 @@ class XTCEManager:
 
         symbol_id = str(symbol_record[0])
 
-        fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
-                                        (symbol_id,)).fetchall()
+        if header_present:
+            fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                            (symbol_id,)).fetchall())[1:]
+        else:
+            fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                            (symbol_id,)).fetchall()
 
         logging.debug(f'root fields-->{fields}')
 
@@ -752,7 +756,21 @@ class XTCEManager:
 
         self.__namespace_dict[namespace_name] = new_namespace
 
-    def add_telemetry_containers(self, module_name: str, module_id: int, parent_container: str):
+    def __get_telemetry_header_length(self, symblold_id):
+        """
+        Calculate the the size of the telemetry header inside of the struct with id of symbol_id in the database.
+        :return: The size of the telemetry header in bits.
+        """
+        offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?',(symblold_id,)).fetchall()
+        offsets.sort()
+        return offsets[1]
+
+    def __get_apid(self, message_id: int, offset: int = 11):
+        bits = bin(message_id)
+        apid = int(bits[len(bits) - offset: len(bits)], 2)
+        return apid
+
+    def add_telemetry_containers(self, module_name: str, module_id: int, parent_container: str = None):
         """
         Iterate through all of the rows of telemetry and build our containers for each message in the database.
         :return:
@@ -785,6 +803,8 @@ class XTCEManager:
 
                 aggregeate_type = self.__get_aggregate_paramtype(symbol, module_name)
 
+                self.__get_telemetry_header_length(tlm_symbol_id)
+
                 if aggregeate_type:
                     base_paramtype_set.add_AggregateParameterType(aggregeate_type)
                     telemetry_param = xtce.ParameterType(name=aggregeate_type.get_name() + '_param',
@@ -794,6 +814,17 @@ class XTCEManager:
 
                     base_param_set.add_Parameter(telemetry_param)
                     container_entry_list.add_ParameterRefEntry(container_param_ref)
+                    if parent_container:
+                        seq_container.set_BaseContainer(xtce.BaseContainerType(containerRef=parent_container + '/cfs-tlm-hdr'))
+                        comparison = xtce.ComparisonType()
+                        comparison.set_parameterRef(parent_container + '/ccsds-apid')
+                        comparison.set_value(self.__get_apid(tlm_message_id))
+                        base_container_restriction = xtce.RestrictionCriteriaType()
+                        comparison_list = xtce.ComparisonListType()
+                        comparison_list.add_Comparison(comparison)
+                        base_container_restriction.set_ComparisonList(comparison_list)
+                        seq_container.get_BaseContainer().set_RestrictionCriteria(base_container_restriction)
+
                     container_set.add_SequenceContainer(seq_container)
 
     # FIXME: Ask Matt how we handle base containers; do we get from those at this step from the database or at a later step?
@@ -850,7 +881,7 @@ class XTCEManager:
         for module_id in set(self.db_cursor.execute('select module from telemetry').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             # logging.debug()
-            self.add_telemetry_containers(module[1], module[0])
+            self.add_telemetry_containers(module[1], module[0], 'cfs-ccsds')
         # self.add_command_containers()
 
     def __get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:

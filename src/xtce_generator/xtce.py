@@ -47676,7 +47676,7 @@ class SequenceContainerType(ContainerType):
     def set_EntryList(self, EntryList):
         self.EntryList = EntryList
 
-    def get_BaseContainer(self):
+    def get_BaseContainer(self)->BaseContainerType:
         return self.BaseContainer
 
     def set_BaseContainer(self, BaseContainer):
