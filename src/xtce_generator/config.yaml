@@ -4,9 +4,17 @@
 # data, which can be done by passing a BaseContainer reference.
 global:
   TelemetryMetaData:
-    BaseContainer: 'cfs-ccsds/cfs-tlm-hdr'
-  CommandContainer:
-    BaseContainer: 'cfs-ccsds/cfs-cmd'
+    BaseContainer:
+      container_ref: 'cfs-ccsds/cfs-tlm-hdr'
+      #size is in bits
+      size: 96
+
+  CommandMetaData:
+    # This is equivalent to a BaseCommand
+    BaseContainer:
+      container_ref: 'cfs-ccsds/cfs-cmd'
+      # size is in bits
+      size: 64
 
 # Custom Mappings
 # Beware that our configuration only supports mapping to types in our BaseType spacesystem such as BaseType/int16_LE

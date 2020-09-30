@@ -32661,7 +32661,7 @@ class AggregateDataType(NameDescriptionType):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_MemberList(self):
+    def get_MemberList(self) -> 'MemberListType':
         return self.MemberList
 
     def set_MemberList(self, MemberList):

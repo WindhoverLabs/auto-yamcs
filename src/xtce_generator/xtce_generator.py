@@ -7,7 +7,7 @@ import yaml
 from enum import Enum
 
 
-# TODO:Implementation to enable nesting of spacesystems beyond root+1
+# TODO:Implementation to enable nesting of spacesystems beyond depth of root+1
 # class NameSpace(xtce.SpaceSystemType):
 #     def __init__(self, shortDescription=None, LongDescription=None, AliasSet=None, AncillaryDataSet=None, name=None,
 #                  operationalStatus=None, base=None, Header=None, TelemetryMetaData=None, CommandMetaData=None,
@@ -66,7 +66,40 @@ class XTCEManager:
 
         self.base_type_namespace = 'BaseType'
 
+        # FIXME: We need a validator for our yaml config
         self.custom_config = config
+
+    def __get_telemetry_base_container_length(self) -> int:
+        """
+        Retrieves the length of our telemetry base container from the user-provided yaml configuration file, if it is
+        provided.
+        :return: The length of the base container in bits. If it cannot be retrieved, None is returned.
+        """
+        out_length = None
+
+        if self.custom_config:
+            if 'global' in self.custom_config.keys():
+                if 'TelemetryMetaData' in self.custom_config['global'].keys():
+                    if 'BaseContainer' in self.custom_config['global']['TelemetryMetaData']:
+                        if 'size' in self.custom_config['global']['TelemetryMetaData']['BaseContainer']:
+                            out_length = self.custom_config['global']['TelemetryMetaData']['BaseContainer']['size']
+        return out_length
+
+    def __get_command_base_container_length(self):
+        """
+        Retrieves the length of our commmand base container from the user-provided yaml configuration file, if it is
+        provided.
+        :return: The length of the base container in bits. If it cannot be retrieved, None is returned.
+        """
+        out_length = None
+
+        if self.custom_config:
+            if 'global' in self.custom_config.keys():
+                if 'CommandMetaData' in self.custom_config['global'].keys():
+                    if 'BaseContainer' in self.custom_config['global']['CommandMetaData']:
+                        if 'size' in self.custom_config['global']['CommandMetaData']['BaseContainer']:
+                            out_length = self.custom_config['global']['CommandMetaData']['BaseContainer']['size']
+        return out_length
 
     def __get_endianness(self, bit_size: int, little_endian: bool):
         endianness = '_LE' if little_endian else '_BE'
@@ -422,7 +455,7 @@ class XTCEManager:
         return self.db_cursor.execute('SELECT little_endian FROM elfs where id=?',
                                       (elf_id,)).fetchone()[0] == 1
 
-    # FIXME: Finish implementation
+    # FIXME: Finish implementation. This is for stand-alone arrays
     def __handle_array(self, symbol_record: tuple, multiplicity):
         for index in range(multiplicity):
             self.__get_aggregate_paramtype()
@@ -475,6 +508,99 @@ class XTCEManager:
 
         return does_type_exist
 
+    def __is__symbol_enum(self, symbol_id: int):
+        """
+        Checks the database to see if the symbol id is actually an enum or not.
+        :param symbol_id:
+        :return: True if the symbol is an enum. Otherwise, False is returned.
+        """
+        return len(self.db_cursor.execute('SELECT * FROM enumerations where symbol=?',
+                                          (symbol_id,)).fetchall()) > 0
+
+    def __get_enum_param_type(self, symbol_id: int) -> xtce.EnumeratedParameterType:
+        """
+        Factory function that creates a EnumeratedParameterType that is described by the symbol with symbol_id
+        in the database. This function assumes that the caller has ensured that there is an enumeration
+        associated to the symbol_id in the database.
+        :param symbol_id: id of symbol that points to this enumeration type in the database.
+        :return:
+        """
+        symbol_elf, symbol_name, byte_size = self.db_cursor.execute(
+            'SELECT elf, name,byte_size FROM symbols where id=?',
+            (symbol_id,)).fetchone()
+        out_enum = xtce.EnumeratedParameterType(name=symbol_name)
+        enum_list = xtce.EnumerationListType()
+
+        bit_size = byte_size * 8
+
+        little_endian = self.is_little_endian(symbol_elf)
+
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        for value, name in self.db_cursor.execute('SELECT value, name FROM enumerations where symbol=?',
+                                                  (symbol_id,)).fetchall():
+            enum_list.add_Enumeration(xtce.ValueEnumerationType(label=name, value=value))
+
+        out_enum.set_EnumerationList(enum_list)
+
+        if bit_size > 8:
+            out_enum.set_IntegerDataEncoding(xtce.IntegerDataEncodingType(encoding=xtce.IntegerEncodingType.UNSIGNED,
+                                                                          sizeInBits=bit_size,
+                                                                          bitOrder=bit_order,
+                                                                          byteOrder=byte_order))
+        else:
+            out_enum.set_IntegerDataEncoding(xtce.IntegerDataEncodingType(encoding=xtce.IntegerEncodingType.UNSIGNED,
+                                                                          sizeInBits=bit_size,
+                                                                          bitOrder=bit_order, ))
+
+        return out_enum
+
+    def __get_enum_arg_type(self, symbol_id: int) -> xtce.EnumeratedArgumentType:
+        """
+        Factory function that creates a EnumeratedArgumentrType that is described by the symbol with symbol_id
+        in the database. This function assumes that the caller has ensured that there is an enumeration
+        associated to the symbol_id in the database.
+        :param symbol_id: id of symbol that points to this enumeration type in the database.
+        :return:
+        """
+        symbol_elf, symbol_name, byte_size = self.db_cursor.execute(
+            'SELECT elf, name,byte_size FROM symbols where id=?',
+            (symbol_id,)).fetchone()
+        out_enum = xtce.EnumeratedArgumentType(name=symbol_name)
+        enum_list = xtce.EnumerationListType()
+
+        bit_size = byte_size * 8
+
+        little_endian = self.is_little_endian(symbol_elf)
+
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        for value, name in self.db_cursor.execute('SELECT value, name FROM enumerations where symbol=?',
+                                                  (symbol_id,)).fetchall():
+            enum_list.add_Enumeration(xtce.ValueEnumerationType(label=name, value=value))
+
+        out_enum.set_EnumerationList(enum_list)
+
+        if bit_size > 8:
+            out_enum.set_IntegerDataEncoding(xtce.IntegerDataEncodingType(encoding=xtce.IntegerEncodingType.UNSIGNED,
+                                                                          sizeInBits=bit_size,
+                                                                          bitOrder=bit_order,
+                                                                          byteOrder=byte_order))
+        else:
+            out_enum.set_IntegerDataEncoding(xtce.IntegerDataEncodingType(encoding=xtce.IntegerEncodingType.UNSIGNED,
+                                                                          sizeInBits=bit_size,
+                                                                          bitOrder=bit_order, ))
+
+        return out_enum
+
     def __aggrregate_paramtype_exists(self, type_name: str, namespace: str):
         """
         Checks if the aggregate type with type_name exists in the telemetry child of our root space system.
@@ -494,7 +620,7 @@ class XTCEManager:
         return does_aggregate_exist
 
     def __get_aggregate_paramtype(self, symbol_record: tuple, module_name: str,
-                                  header_present: bool = True) -> xtce.AggregateParameterType:
+                                  header_present: bool = True, header_size: int = 0) -> xtce.AggregateParameterType:
         """
         A factory function to create an aggregateParamType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
@@ -518,8 +644,9 @@ class XTCEManager:
         symbol_id = str(symbol_record[0])
 
         if header_present:
-            fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
-                                                   (symbol_id,)).fetchall())[1:]
+            fields = list(filter(lambda record: record[3] >= header_size / 8,
+                                 self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                                        (symbol_id,)).fetchall()))
         else:
             fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                             (symbol_id,)).fetchall()
@@ -548,6 +675,13 @@ class XTCEManager:
 
                     if is_type_in_config_val[0]:
                         type_ref_name = is_type_in_config_val[1]
+
+                    elif self.__is__symbol_enum(field_type):
+                        new_enum = self.__get_enum_param_type(field_type)
+                        self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
+                            new_enum)
+                        type_ref_name = new_enum.get_name()
+
                     elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
@@ -601,6 +735,13 @@ class XTCEManager:
 
                     if is_type_in_config_val[0]:
                         type_ref_name = is_type_in_config_val[1]
+
+                    elif self.__is__symbol_enum(field_type):
+                        new_enum = self.__get_enum_param_type(field_type)
+                        self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
+                            new_enum)
+                        type_ref_name = new_enum.get_name()
+
                     elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
@@ -650,15 +791,13 @@ class XTCEManager:
 
                 var = self[namespace].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
 
-                print('var:', var)
-
                 if len(types) > 0:
                     does_aggregate_exist = True
 
         return does_aggregate_exist
 
     def __get_aggregate_argtype(self, symbol_record: tuple, module_name: str,
-                                header_present: bool = True) -> xtce.AggregateArgumentType:
+                                header_present: bool = True, header_size: int = 0) -> xtce.AggregateArgumentType:
         """
         A factory function to create an aggregateArgumentType type pointed to by symbol_id.
         :param symbol_record: A tuple containing the symbol record of the database in the form of
@@ -681,8 +820,9 @@ class XTCEManager:
         symbol_id = str(symbol_record[0])
 
         if header_present:
-            fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
-                                                   (symbol_id,)).fetchall())[1:]
+            fields = list(filter(lambda record: record[3] >= header_size / 8,
+                                 self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                                        (symbol_id,)).fetchall()))
         else:
             fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                             (symbol_id,)).fetchall()
@@ -711,6 +851,13 @@ class XTCEManager:
 
                     if is_type_in_config_val[0]:
                         type_ref_name = is_type_in_config_val[1]
+
+                    elif self.__is__symbol_enum(field_type):
+                        new_enum = self.__get_enum_arg_type(field_type)
+                        self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
+                            new_enum)
+                        type_ref_name = new_enum.get_name()
+
                     elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
@@ -723,7 +870,7 @@ class XTCEManager:
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
                         child = self.__get_aggregate_argtype(child_symbol, module_name, False)
-                        # If the symbol did not exists in our xtce, we add it to our telemetry types
+                        # If the symbol did not exist in our xtce, we add it to our telemetry types
                         if child:
                             self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
                                 child)
@@ -763,6 +910,13 @@ class XTCEManager:
 
                     if is_type_in_config_val[0]:
                         type_ref_name = is_type_in_config_val[1]
+
+                    elif self.__is__symbol_enum(field_type):
+                        new_enum = self.__get_enum_arg_type(field_type)
+                        self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
+                            new_enum)
+                        type_ref_name = new_enum.get_name()
+
                     elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
@@ -779,8 +933,6 @@ class XTCEManager:
 
                         # If the symbol did not exists in our xtce, we add it to our telemetry types
                         if child:
-                            # FIXME:In telemetry we don't seem to have to do this. Will investigate.
-                            # self[module_name].get_CommandMetaData().set_ArgumentTypeSet(xtce.ArgumentTypeSetType())
                             self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
                                 child)
                             type_ref_name = child.get_name()
@@ -858,19 +1010,21 @@ class XTCEManager:
                                                  (tlm_symbol_id,)).fetchall():
                 logging.debug(f'symbol{symbol} for tlm:{tlm_name}')
 
-                aggregeate_type = self.__get_aggregate_paramtype(symbol, module_name)
+                aggregeate_type = self.__get_aggregate_paramtype(symbol, module_name,
+                                                                 header_size=self.__get_telemetry_base_container_length())
 
                 self.__get_telemetry_header_length(tlm_symbol_id)
 
                 if aggregeate_type:
-                    base_paramtype_set.add_AggregateParameterType(aggregeate_type)
-                    telemetry_param = xtce.ParameterType(name=aggregeate_type.get_name() + '_param',
-                                                         parameterTypeRef=aggregeate_type.get_name())
+                    if len(aggregeate_type.get_MemberList().get_Member()) > 0:
+                        base_paramtype_set.add_AggregateParameterType(aggregeate_type)
+                        telemetry_param = xtce.ParameterType(name=aggregeate_type.get_name() + '_param',
+                                                             parameterTypeRef=aggregeate_type.get_name())
 
-                    container_param_ref = xtce.ParameterRefEntryType(parameterRef=telemetry_param.get_name())
+                        container_param_ref = xtce.ParameterRefEntryType(parameterRef=telemetry_param.get_name())
 
-                    base_param_set.add_Parameter(telemetry_param)
-                    container_entry_list.add_ParameterRefEntry(container_param_ref)
+                        base_param_set.add_Parameter(telemetry_param)
+                        container_entry_list.add_ParameterRefEntry(container_param_ref)
                     if parent_container:
                         seq_container.set_BaseContainer(
                             xtce.BaseContainerType(containerRef=parent_container + '/cfs-tlm-hdr'))
@@ -907,6 +1061,22 @@ class XTCEManager:
 
         return out_argument_list
 
+    def __get_command_length(self, symbol_id: int):
+        """
+        Calculate the size of a command(in bytes) that uses the struct that has symbol_id as its id on the database.
+        This function assumes the fields table schema is (id,symbol, name, byte_offset, multiplicity, little_endian).
+        This function ALWAYS substract 7 from the total size.
+        :param symbol_id: The id of the struct used to calculate the size(length) of a command.
+        :return:
+        """
+        sorted_fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                                      (symbol_id,)).fetchall(), key=lambda record: record[3])
+
+        size_of_last_field = self.db_cursor.execute('SELECT byte_size from symbols where id=?',
+                                                    (sorted_fields[-1][1],)).fetchone()[0]
+
+        return sorted_fields[len(sorted_fields) - 1][3] + size_of_last_field - 7
+
     def add_command_containers(self, module_name: str, module_id: int, parent_command: str = None):
         """
         Iterate through all of the rows of the commands table and build our containers for each command in the database.
@@ -929,8 +1099,8 @@ class XTCEManager:
             meta_command = xtce.MetaCommandType(name=command_name)
             command_container = xtce.CommandContainerType(
                 name=command_name + '-' + str(command_message_id) + '-container')
-            container_entry_list = xtce.EntryListType()
-            # command_container.set_EntryList(container_entry_list)
+            container_entry_list = xtce.CommandContainerEntryListType()
+            command_container.set_EntryList(container_entry_list)
 
             base_arg_set = xtce.ArgumentListType()
             logging.debug(f'message id:{command_message_id}')
@@ -939,34 +1109,39 @@ class XTCEManager:
                                                  (command_symbol_id,)).fetchall():
                 logging.debug(f'symbol{symbol} for tlm:{command_name}')
 
-                aggregeate_type = self.__get_aggregate_argtype(symbol, module_name)
+                aggregeate_type = self.__get_aggregate_argtype(symbol, module_name,
+                                                               header_size=self.__get_telemetry_base_container_length())
 
                 if aggregeate_type:
-                    base_argtype_set.add_AggregateArgumentType(aggregeate_type)
-                    command_arg = xtce.ArgumentType(name=aggregeate_type.get_name() + '_arg',
-                                                    argumentTypeRef=aggregeate_type.get_name())
+                    if len(aggregeate_type.get_MemberList().get_Member()) > 0:
+                        base_argtype_set.add_AggregateArgumentType(aggregeate_type)
+                        command_arg = xtce.ArgumentType(name=aggregeate_type.get_name() + '_arg',
+                                                        argumentTypeRef=aggregeate_type.get_name())
+                        container_entry_list.add_ArgumentRefEntry(
+                            xtce.ArgumentArgumentRefEntryType(argumentRef=command_arg.get_name()))
 
-                    # container_arg_ref = xtcparameterRef=command_arg.get_name())
+                        # container_arg_ref = xtcparameterRef=command_arg.get_name())
 
-                    base_arg_set.add_Argument(command_arg)
-                    # container_entry_list.setA('container_arg_ref')
+                        base_arg_set.add_Argument(command_arg)
+                        # container_entry_list.setA('container_arg_ref')
+                        meta_command.set_ArgumentList(base_arg_set)
 
                     # NOTE: It is assumed that the arguments to be set on the base command are apid, command_code and
                     # command_length
                     if parent_command:
                         base_command = xtce.BaseMetaCommandType(metaCommandRef=parent_command)
-                        # FIXME:Length needs to be calculated properly
                         argument_assigment_list = self.__get_command_argument_assigment_list(
                             ('ccsds-apid', self.__get_apid(command_message_id)),
                             ('cfs-cmd-code', command_code),
-                            ('ccsds-length', 1))
+                            ('ccsds-length', self.__get_command_length(command_symbol_id)))
 
                         base_command.set_ArgumentAssignmentList(argument_assigment_list)
 
                         meta_command.set_BaseMetaCommand(base_command)
-
                     meta_command.set_CommandContainer(command_container)
                     meta_command_set.add_MetaCommand(meta_command)
+                else:
+                    pass
 
     def add_aggregate_types(self):
         """
@@ -978,13 +1153,15 @@ class XTCEManager:
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             # logging.debug()
             self.add_telemetry_containers(module[1], module[0],
-                                          self.custom_config['global']['TelemetryMetaData']['BaseContainer'])
+                                          self.custom_config['global']['TelemetryMetaData']['BaseContainer'][
+                                              'container_ref'])
 
         for module_id in set(self.db_cursor.execute('select module from commands').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             # logging.debug()
             self.add_command_containers(module[1], module[0],
-                                        self.custom_config['global']['CommandContainer']['BaseContainer'])
+                                        self.custom_config['global']['CommandMetaData']['BaseContainer'][
+                                            'container_ref'])
 
     def __get_namespace(self, namespace_name: str) -> xtce.SpaceSystemType:
         """
