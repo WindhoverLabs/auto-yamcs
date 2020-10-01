@@ -1,0 +1,6 @@
+
+# You can remap database symbols in this config file
+remaps:
+  CFE_SB_MsgId_t: uint16
+
+
