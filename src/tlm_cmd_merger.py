@@ -36,7 +36,7 @@ def add_tables(db_cursor: sqlite3.Cursor):
                       'module INTEGER NOT NULL,'
                       'FOREIGN KEY (symbol) REFERENCES symbols(id),'
                       'FOREIGN KEY (module) REFERENCES modules(id),'
-                      'UNIQUE (name, command_code, module));')
+                      'UNIQUE (name, command_code, module, message_id));')
 
     db_cursor.execute('create table if not exists events('
                       'id INTEGER primary key,'
