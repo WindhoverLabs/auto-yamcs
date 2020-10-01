@@ -22,4 +22,7 @@ spacesystems:
   SCH:
     remap:
       CFE_SB_MsgId_t: 'BaseType/uint16_LE'
+  TO:
+    remap:
+      CFE_SB_MsgId_t: 'BaseType/uint16_LE'
 

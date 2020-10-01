@@ -21,14 +21,13 @@ from enum import Enum
 #     def __getitem__(self, key: str):
 
 
-class BaseType(int, Enum):
+class RefType(int, Enum):
     """
-    Used by XTCEManager to distinguish what kind of argument or parameter types to add to Space Systems.
-    This is especially useful for adding base(or intrinsic) types to a space system.
+    Used by XTCEManager to resolve different types based on typeref values.
     """
-    INTEGER = 0
-    STRUCT = 1
-    STRING = 2
+    BaseType = 0
+    AGGREGATE = 1
+    ENUM = 2
 
 
 class XTCEManager:
@@ -1065,17 +1064,83 @@ class XTCEManager:
         """
         Calculate the size of a command(in bytes) that uses the struct that has symbol_id as its id on the database.
         This function assumes the fields table schema is (id,symbol, name, byte_offset, multiplicity, little_endian).
-        This function ALWAYS substract 7 from the total size.
+        This function ALWAYS subtract 7 from the total size.
         :param symbol_id: The id of the struct used to calculate the size(length) of a command.
         :return:
         """
-        sorted_fields = sorted(self.db_cursor.execute('SELECT * FROM fields where symbol=?',
-                                                      (symbol_id,)).fetchall(), key=lambda record: record[3])
 
-        size_of_last_field = self.db_cursor.execute('SELECT byte_size from symbols where id=?',
-                                                    (sorted_fields[-1][1],)).fetchone()[0]
+        out_length = 0
+        fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
+                                        (symbol_id,)).fetchall()
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplcity, field_little_endian in \
+                fields:
+            size_of_symbol = self.db_cursor.execute('SELECT byte_size from symbols where id=?',
+                                                    (field_type,)).fetchone()[0]
+            if field_multiplcity > 0:
+                size_of_symbol *= field_multiplcity
+            out_length += size_of_symbol
 
-        return sorted_fields[len(sorted_fields) - 1][3] + size_of_last_field - 7
+            if symbol_id == 688:
+                print(f'length{out_length}')
+
+        if out_length < self.custom_config['global']['CommandMetaData']['BaseContainer']['size'] / 8:
+            out_length += int(self.custom_config['global']['CommandMetaData']['BaseContainer']['size'] / 8 - out_length)
+
+
+
+        return out_length - 7
+
+    def __get_argtype_from_typeref(self, type_ref: str, namesapce: str):
+        out_arg_type = self.UNKNOWN_TYPE
+        if self.base_type_namespace in type_ref:
+            out_arg_type = RefType.BaseType
+        elif type_ref in [aggregate_type.get_name() for aggregate_type in
+                          self[namesapce].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
+                          if aggregate_type.get_name() == type_ref]:
+            out_arg_type = RefType.AGGREGATE
+        elif type_ref in [enum_type.get_name() for enum_type in
+                          self[namesapce].get_CommandMetaData().get_ArgumentTypeSet().get_EnumeratedArgumentType()
+                          if enum_type.get_name() == type_ref]:
+            out_arg_type = RefType.ENUM
+
+        return out_arg_type
+
+    def __extract_members_from_aggregate_argtype(self, aggregate: xtce.AggregateArgumentType, namesapce: str):
+        """
+        Returns a list of the members inside of a xtce.AggregateArgumentType, essentially flattening the
+        entire Aggregate. This is especially useful when populating an ArgumentList in CommandMetaData
+        objects.
+        :return:
+        """
+        out_members = xtce.MemberListType()
+        for member in aggregate.get_MemberList().get_Member():
+            type_ref = member.get_typeRef()
+            new_member = xtce.MemberType()
+            arg_type = self.__get_argtype_from_typeref(type_ref, namesapce)
+            if arg_type == RefType.BaseType:
+                new_member.set_name(member.get_name())
+                new_member.set_typeRef(type_ref)
+
+                out_members.add_Member(new_member)
+            elif arg_type == RefType.ENUM:
+                new_member.set_name(member.get_name())
+                new_member.set_typeRef(type_ref)
+
+                out_members.add_Member(new_member)
+            elif arg_type == RefType.AGGREGATE:
+                aggregate_members = self.__extract_members_from_aggregate_argtype(
+                    [aggregate_type for aggregate_type in self[namesapce].
+                    get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
+                     if aggregate_type.get_name() == type_ref][0], namesapce)
+                for aggregate_member in aggregate_members.get_Member():
+                    new_member = xtce.MemberType()
+
+                    new_member.set_name(member.get_name() + '.' + aggregate_member.get_name())
+                    new_member.set_typeRef(aggregate_member.get_typeRef())
+
+                    out_members.add_Member(new_member)
+
+        return out_members
 
     def add_command_containers(self, module_name: str, module_id: int, parent_command: str = None):
         """
@@ -1096,7 +1161,7 @@ class XTCEManager:
             command_symbol_id = command[5]
             command_module = command[6]
 
-            meta_command = xtce.MetaCommandType(name=command_name)
+            meta_command = xtce.MetaCommandType(name=command_name + '-' + str(command_message_id))
             command_container = xtce.CommandContainerType(
                 name=command_name + '-' + str(command_message_id) + '-container')
             container_entry_list = xtce.CommandContainerEntryListType()
@@ -1110,20 +1175,24 @@ class XTCEManager:
                 logging.debug(f'symbol{symbol} for tlm:{command_name}')
 
                 aggregeate_type = self.__get_aggregate_argtype(symbol, module_name,
-                                                               header_size=self.__get_telemetry_base_container_length())
+                                                               header_size=self.__get_command_base_container_length())
 
                 if aggregeate_type:
                     if len(aggregeate_type.get_MemberList().get_Member()) > 0:
                         base_argtype_set.add_AggregateArgumentType(aggregeate_type)
-                        command_arg = xtce.ArgumentType(name=aggregeate_type.get_name() + '_arg',
-                                                        argumentTypeRef=aggregeate_type.get_name())
-                        container_entry_list.add_ArgumentRefEntry(
-                            xtce.ArgumentArgumentRefEntryType(argumentRef=command_arg.get_name()))
 
-                        # container_arg_ref = xtcparameterRef=command_arg.get_name())
+                        for member in self.__extract_members_from_aggregate_argtype(aggregeate_type,
+                                                                                    module_name).get_Member():
+                            # for memeber in aggregeate_type.get_MemberList().get_Member():
+                            command_arg = xtce.ArgumentType(name=member.get_name() + '_arg',
+                                                            argumentTypeRef=member.get_typeRef())
+                            container_entry_list.add_ArgumentRefEntry(
+                                xtce.ArgumentArgumentRefEntryType(argumentRef=command_arg.get_name()))
 
-                        base_arg_set.add_Argument(command_arg)
-                        # container_entry_list.setA('container_arg_ref')
+                            # container_arg_ref = xtcparameterRef=command_arg.get_name())
+
+                            base_arg_set.add_Argument(command_arg)
+                            # container_entry_list.setA('container_arg_ref')
                         meta_command.set_ArgumentList(base_arg_set)
 
                     # NOTE: It is assumed that the arguments to be set on the base command are apid, command_code and
