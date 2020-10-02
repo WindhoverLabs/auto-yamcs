@@ -2,7 +2,7 @@
 config_base: ".."
 core:
   elf_files:
-    - /home/vagrant/airliner/build/tutorial/cfs
+    - /home/vagrant/airliner/build/tutorial/cfs/target/exe/airliner
 
   osal:
     config:        
