@@ -156,7 +156,7 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
     for module in telemetry_data['core']['cfe'].keys():
         if module != 'config':
             for message in telemetry_data['core']['cfe'][module]['telemetry']:
-                message_dict = telemetry_data['core']['cfe'][module_name]['telemetry'][message]
+                message_dict = telemetry_data['core']['cfe'][module]['telemetry'][message]
                 name = message
                 message_id = message_dict['msgID']
                 symbol = get_symbol_id(message_dict['struct'], db_cursor)
