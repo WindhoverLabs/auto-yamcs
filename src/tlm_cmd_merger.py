@@ -171,7 +171,7 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                     # Write our telemetry record to the database.
                     db_cursor.execute('INSERT INTO telemetry(name, message_id, symbol ,module) '
                                       'VALUES (?, ?, ?, ?)',
-                                      (name, message_id, symbol_id, modules_dict[module_name],))
+                                      (name, message_id, symbol_id, modules_dict[module],))
 
 
 def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
