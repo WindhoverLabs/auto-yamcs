@@ -581,70 +581,70 @@ core:
       commands:
         CFE_EVS_CMD_MID:
          msgID: 0x1801
-          commands:
-            Noop:
-              cc: 0
-              struct: CFE_SB_CmdHdr_t
-            Reset:
-              cc: 1
-              struct: CFE_SB_CmdHdr_t
-            EnableEventType:
-              cc: 2
-              struct: CFE_EVS_BitMaskCmd_t
-            DisableEventType:
-              cc: 3
-              struct: CFE_EVS_BitMaskCmd_t
-            SetEventFormatMode:
-              cc: 4
-              struct: CFE_EVS_ModeCmd_t
-            EnableAppEventType:
-              cc: 5
-              struct: CFE_EVS_AppNameBitMaskCmd_t
-            DisableAppEventType:
-              cc: 6
-              struct: CFE_EVS_AppNameBitMaskCmd_t
-            EnableAppEvents:
-              cc: 7
-              struct: CFE_EVS_AppNameCmd_t
-            DisableAppEvents:
-              cc: 8
-              struct: CFE_EVS_AppNameCmd_t
-            ResetAppEventCounters:
-              cc: 9
-              struct: CFE_EVS_AppNameCmd_t
-            SetAppEventFilter:
-              cc: 10
-              struct: CFE_EVS_AppNameEventIDMaskCmd_t
-            EnablePorts:
-              cc: 11
-              struct: CFE_EVS_BitMaskCmd_t
-            DisablePorts:
-              cc: 12
-              struct: CFE_EVS_BitMaskCmd_t
-            ResetAppEventFilter:
-              cc: 13
-              struct: CFE_EVS_AppNameEventIDCmd_t
-            ResetAppFilters:
-              cc: 14
-              struct: CFE_EVS_AppNameCmd_t
-            AddAppEventFilter:
-              cc: 15
-              struct: CFE_EVS_AppNameEventIDMaskCmd_t
-            DeleteAppEventFilter:
-              cc: 16
-              struct: CFE_EVS_AppNameEventIDCmd_t
-            AppData:
-              cc: 17
-              struct: CFE_EVS_AppDataCmd_t
-            LogFile:
-              cc: 18
-              struct: CFE_EVS_LogFileCmd_t
-            SetLogMode:
-              cc: 19
-              struct: CFE_EVS_ModeCmd_t
-            ClearLog:
-              cc: 20
-              struct: CFE_SB_CmdHdr_t
+         commands:
+          Noop:
+            cc: 0
+            struct: CFE_SB_CmdHdr_t
+          Reset:
+            cc: 1
+            struct: CFE_SB_CmdHdr_t
+          EnableEventType:
+            cc: 2
+            struct: CFE_EVS_BitMaskCmd_t
+          DisableEventType:
+            cc: 3
+            struct: CFE_EVS_BitMaskCmd_t
+          SetEventFormatMode:
+            cc: 4
+            struct: CFE_EVS_ModeCmd_t
+          EnableAppEventType:
+            cc: 5
+            struct: CFE_EVS_AppNameBitMaskCmd_t
+          DisableAppEventType:
+            cc: 6
+            struct: CFE_EVS_AppNameBitMaskCmd_t
+          EnableAppEvents:
+            cc: 7
+            struct: CFE_EVS_AppNameCmd_t
+          DisableAppEvents:
+            cc: 8
+            struct: CFE_EVS_AppNameCmd_t
+          ResetAppEventCounters:
+            cc: 9
+            struct: CFE_EVS_AppNameCmd_t
+          SetAppEventFilter:
+            cc: 10
+            struct: CFE_EVS_AppNameEventIDMaskCmd_t
+          EnablePorts:
+            cc: 11
+            struct: CFE_EVS_BitMaskCmd_t
+          DisablePorts:
+            cc: 12
+            struct: CFE_EVS_BitMaskCmd_t
+          ResetAppEventFilter:
+            cc: 13
+            struct: CFE_EVS_AppNameEventIDCmd_t
+          ResetAppFilters:
+            cc: 14
+            struct: CFE_EVS_AppNameCmd_t
+          AddAppEventFilter:
+            cc: 15
+            struct: CFE_EVS_AppNameEventIDMaskCmd_t
+          DeleteAppEventFilter:
+            cc: 16
+            struct: CFE_EVS_AppNameEventIDCmd_t
+          AppData:
+            cc: 17
+            struct: CFE_EVS_AppDataCmd_t
+          LogFile:
+            cc: 18
+            struct: CFE_EVS_LogFileCmd_t
+          SetLogMode:
+            cc: 19
+            struct: CFE_EVS_ModeCmd_t
+          ClearLog:
+            cc: 20
+            struct: CFE_SB_CmdHdr_t
         CFE_EVS_SEND_HK_MID:
           msgID: 0x1809
           commands:
@@ -957,7 +957,7 @@ core:
       telemetry:
         CFE_TBL_HK_TLM_MID:
           msgID: 0x0804
-         struct: CFE_TBL_HkPacket_t
+          struct: CFE_TBL_HkPacket_t
         CFE_TBL_REG_TLM_MID:
           msgID: 0x080C
           struct: CFE_TBL_TblRegPacket_t
@@ -1172,19 +1172,19 @@ core:
             SendCmd:
               cc: 0
               struct: CFE_TIME_NoArgsCmd_t
-      perfids: {}
-        CFE_TIME_MAIN_PERF_ID:
+      perfids:
+      CFE_TIME_MAIN_PERF_ID:
           id: 6
-        CFE_TIME_TONE1HZISR_PERF_ID:
-          id: 7
-        CFE_TIME_LOCAL1HZISR_PERF_ID:
-          id: 8
-        CFE_TIME_SENDMET_PERF_ID:
-          id: 9
-        CFE_TIME_LOCAL1HZTASK_PERF_ID:
-          id: 10
-        CFE_TIME_TONE1HZTASK_PERF_ID:
-          id: 11
+      CFE_TIME_TONE1HZISR_PERF_ID:
+        id: 7
+      CFE_TIME_LOCAL1HZISR_PERF_ID:
+        id: 8
+      CFE_TIME_SENDMET_PERF_ID:
+        id: 9
+      CFE_TIME_LOCAL1HZTASK_PERF_ID:
+        id: 10
+      CFE_TIME_TONE1HZTASK_PERF_ID:
+        id: 11
       config:
         CFE_TIME_CFG_DEFAULT_TAI:
           name: CFE_TIME_CFG_DEFAULT_TAI
@@ -1317,7 +1317,7 @@ core:
           value: 8
         CFE_TIME_MAX_NUM_SYNCH_FUNCS:
             name: CFE_TIME_MAX_NUM_SYNCH_FUNCS
-          value: 4
+            value: 4
         CFE_TIME_ENA_1HZ_CMD_PKT:
           name: CFE_TIME_ENA_1HZ_CMD_PKT
           value: true
