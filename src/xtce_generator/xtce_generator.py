@@ -1161,9 +1161,9 @@ class XTCEManager:
             command_symbol_id = command[5]
             command_module = command[6]
 
-            meta_command = xtce.MetaCommandType(name=command_name + '-' + str(command_message_id))
+            meta_command = xtce.MetaCommandType(name=command_name)
             command_container = xtce.CommandContainerType(
-                name=command_name + '-' + str(command_message_id) + '-container')
+                name=command_name + '-container')
             container_entry_list = xtce.CommandContainerEntryListType()
             command_container.set_EntryList(container_entry_list)
 
@@ -1221,6 +1221,7 @@ class XTCEManager:
         for module_id in set(self.db_cursor.execute('select module from telemetry').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             # logging.debug()
+            logging.debug(f'current module{module}')
             self.add_telemetry_containers(module[1], module[0],
                                           self.custom_config['global']['TelemetryMetaData']['BaseContainer'][
                                               'container_ref'])
