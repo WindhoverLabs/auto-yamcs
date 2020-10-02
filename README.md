@@ -60,6 +60,13 @@ this is the result of `juicer` not supporting typedef'd types intrinsic types su
 For now this issue is no of high priority, but this workaround should fix issues if your code base has typedefs like the
 aforementioned one.
 
+Here is the workaround:
+
+```
+python3 remap_symbols.py --database path_to_database --yaml_path config_remap.yaml
+```
+
+This will remap all of the symbols specified in the config_remap.yaml on the database.
 
 Documentation updated on October 2, 2020
 
