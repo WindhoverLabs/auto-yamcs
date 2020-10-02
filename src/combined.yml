@@ -1173,18 +1173,18 @@ core:
               cc: 0
               struct: CFE_TIME_NoArgsCmd_t
       perfids:
-      CFE_TIME_MAIN_PERF_ID:
-          id: 6
-      CFE_TIME_TONE1HZISR_PERF_ID:
-        id: 7
-      CFE_TIME_LOCAL1HZISR_PERF_ID:
-        id: 8
-      CFE_TIME_SENDMET_PERF_ID:
-        id: 9
-      CFE_TIME_LOCAL1HZTASK_PERF_ID:
-        id: 10
-      CFE_TIME_TONE1HZTASK_PERF_ID:
-        id: 11
+        CFE_TIME_MAIN_PERF_ID:
+            id: 6
+        CFE_TIME_TONE1HZISR_PERF_ID:
+          id: 7
+        CFE_TIME_LOCAL1HZISR_PERF_ID:
+          id: 8
+        CFE_TIME_SENDMET_PERF_ID:
+          id: 9
+        CFE_TIME_LOCAL1HZTASK_PERF_ID:
+          id: 10
+        CFE_TIME_TONE1HZTASK_PERF_ID:
+          id: 11
       config:
         CFE_TIME_CFG_DEFAULT_TAI:
           name: CFE_TIME_CFG_DEFAULT_TAI
