@@ -153,6 +153,26 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                                   'VALUES (?, ?, ?, ?)',
                                   (name, message_id, symbol_id, modules_dict[module_name],))
 
+    for module in telemetry_data['core']['cfe'].keys():
+        if module != 'config':
+            for message in telemetry_data['core']['cfe']['telemetry']:
+                message_dict = telemetry_data['core']['cfe'][module_name]['telemetry'][message]
+                name = message
+                message_id = message_dict['msgID']
+                symbol = get_symbol_id(message_dict['struct'], db_cursor)
+
+                # If the symbol does not exist, we skip it
+                if symbol:
+                    symbol_id = symbol[0]
+
+                    # FIXME: Not sure if we'll read the macro in this step of the chain
+                    # macro = message_dict['macro']
+
+                    # Write our telemetry record to the database.
+                    db_cursor.execute('INSERT INTO telemetry(name, message_id, symbol ,module) '
+                                      'VALUES (?, ?, ?, ?)',
+                                      (name, message_id, symbol_id, modules_dict[module_name],))
+
 
 def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
     """
@@ -162,12 +182,6 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
     :param db_cursor:
     :return:
     """
-    name = None
-    message_id = None
-    macro = None
-    symbol_id = None
-    command_code = None
-
     for module_name in command_data['modules']:
         for command in command_data['modules'][module_name]['commands']:
             command_dict = command_data['modules'][module_name]['commands'][command]
@@ -192,6 +206,32 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
                     db_cursor.execute('INSERT INTO commands(name, command_code, message_id, symbol ,module) '
                                       'VALUES (?, ?, ?, ?, ?)',
                                       (name, command_code, message_id, symbol_id, modules_dict[module_name],))
+
+    for module_name in command_data['core']['cfe'].keys():
+        if module_name != 'config':
+            for command in command_data['core']['cfe'][module_name]['commands']:
+                command_dict = command_data['core']['cfe'][module_name]['commands'][command]
+                message_id = command_dict['msgID']
+                sub_commands = command_data['core']['cfe'][module_name]['commands']
+
+                for sub_command in sub_commands[command]['commands']:
+                    sub_command_dict = sub_commands[command]['commands']
+                    name = sub_command
+
+                    symbol = get_symbol_id(sub_command_dict[name]['struct'], db_cursor)
+
+                    # If the symbol does not exist, we skip it
+                    if symbol:
+                        symbol_id = symbol[0]
+                        command_code = sub_command_dict[name]['cc']
+
+                        # FIXME: Not sure if we'll read the macro in step of the chain
+                        # macro = command_dict['macro']
+
+                        # Write our command record to the database.
+                        db_cursor.execute('INSERT INTO commands(name, command_code, message_id, symbol ,module) '
+                                          'VALUES (?, ?, ?, ?, ?)',
+                                          (name, command_code, message_id, symbol_id, modules_dict[module_name],))
 
 
 def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
