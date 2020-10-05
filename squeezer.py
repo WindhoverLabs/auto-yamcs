@@ -4,6 +4,7 @@ import os
 import logging
 from pathlib import Path
 import yaml
+import sys
 
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
@@ -13,16 +14,10 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     for file_path in elf_files:
         my_file = Path(file_path)
         if my_file.exists() and my_file.is_file():
-            logging.info(f'Running juicer on {file_path}')
+            print('Running juicer on {0}'.format(my_file))
             subprocess.run(
                 ['build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
                 cwd="juicer")
-
-
-def create_venv():
-    subprocess.run(['python3.6', '-m' 'venv', 'venv'])
-    subprocess.run(['./venv/bin/pip', 'install', 'six'])
-    subprocess.run(['./venv/bin/pip', 'install', 'pyyaml'])
 
 
 def merge_files(yaml_path: str, sqlite_path: str):
@@ -77,8 +72,14 @@ def read_yaml(yaml_file: str) -> dict:
     return yaml_data
 
 
+def check_version():
+    if sys.version[0:3] < '3.6':
+        logging.error('Python version MUST be 3.6.X or newer. Python version found:{0}'.format(sys.version))
+        exit(0)
+
+
 def main():
-    create_venv()
+    check_version()
     args = parse_cli()
     yaml_dict = read_yaml(args.yaml_path)
 
