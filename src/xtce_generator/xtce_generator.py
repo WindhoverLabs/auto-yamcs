@@ -1,5 +1,5 @@
 from xml.etree import ElementTree as ET
-import src.xtce_generator.xtce as xtce
+import xtce as xtce
 import argparse
 import sqlite3
 import logging
