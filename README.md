@@ -1,6 +1,14 @@
 # auto-yamcs
 A collection of tools to auto-generate everything needed to run a ground system.
 
+## Requirements
+
+`Python>=3.6`  
+`PyYAML==5.3.1`  
+`six==1.15.0`
+
+
+
 ## How To Use It
 
 1.  You *must* have [airliner](https://github.com/WindhoverLabs/airliner.git)  built on your system in order to use this at the moment. `auto-yamcs` currently only works with the `tutorial/cfs` and `ocpoc` builds.
@@ -39,7 +47,7 @@ There might be situations where you might want to remap a database symbols to so
 be used as a workaround for when there is a symbol in the database that does not map to an intrinsic type. 
 For example:
 
-"*" = PRIMARY KEY 
+"*" = PRIMARY KEY  
 "+" = FOREIGN KEY
 
 
@@ -68,7 +76,7 @@ python3 remap_symbols.py --database path_to_database --yaml_path config_remap.ya
 
 This will remap all of the symbols specified in the config_remap.yaml on the database.
 
-Documentation updated on October 2, 2020
+Documentation updated on October 5, 2020
 
 
 
