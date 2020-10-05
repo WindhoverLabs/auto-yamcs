@@ -63,7 +63,7 @@ In the future we will strive to be 100% xtce compliant. However, given that we u
 
 
 ### XTCE  Data Structures
-Our xtce data structures are generated with `generateDS                    2.36.2`. There is a quirk with this tool where it will be name `SpaceSystem` objects to  `SpaceSystemType` after generating the python code the xtce schema. This is very easy to fix.
+Our xtce data structures are generated with `generateDS 2.36.2`. There is a quirk with this tool where it will be name `SpaceSystem` objects to  `SpaceSystemType` after generating the python code the xtce schema. This is very easy to fix.
 
 Go to the `export` method of your  `SpaceSystemType`.
 Change it from 
