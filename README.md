@@ -8,6 +8,8 @@ A collection of tools to auto-generate everything needed to run a ground system.
 `six==1.15.0`
 
 
+## Asumptions
+- Ubuntu 16.04, 18.04 or 20.04
 
 ## How To Use It
 
@@ -28,15 +30,39 @@ git checkout add-documentation-to-airliner-tutorial
 make ocpoc/default 
 ```
 
+**NOTE**: It's possible you might get this error when builiding `airliner`:
+```
+fatal error: bits/libc-header-start.h: No such file or directory
+```
 
-2. Once that builds successfully, you can run the `auto-yamcs` toolchain
+You can fix that by doing this:
+```
+apt-get install gcc-multilib
+```
+
+2. Be sure to update the submodules:
+
+```
+cd  auto-yamcs
+git submodule update --init
+```
+
+
+3. Install dependencies
 ```
 cd auto-yamcs
+pip3 install -r ./requirements.txt
+```
+4. Once that builds successfully, you can run the `auto-yamcs` toolchain
+```
+cd auto-yamcs
+
 python3 squeezer.py --output_file newdb --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
 
 ```
 
-3. Now you can open the database:
+
+5. Now you can open the database:
 ```
 xdg-open juicer/newdb
 
