@@ -21,7 +21,7 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
 
 
 def merge_files(yaml_path: str, sqlite_path: str):
-    subprocess.run(['../venv/bin/python', '../tlm_cmd_merger/src/tlm_cmd_merger.py', '--yaml_path',
+    subprocess.run(['python3', '../tlm_cmd_merger/src/tlm_cmd_merger.py', '--yaml_path',
                     os.path.join('..', yaml_path),
                     '--sqlite_path', sqlite_path], cwd='juicer')
 
