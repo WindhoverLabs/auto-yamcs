@@ -10,6 +10,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 
 ## Asumptions
 - Ubuntu 16.04, 18.04 or 20.04
+- The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
 
 ## How To Use It
 
