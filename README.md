@@ -60,14 +60,16 @@ pip3 install -r ./requirements.txt
 ```
 cd auto-yamcs
 
-python3 squeezer.py --output_file newdb --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
+python3 squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
 
 ```
 
-
-5. Now you can open the database:
+5. Now you can open the database with sqlite browser:
 ```
-xdg-open juicer/newdb
+sudo apt-get install sqlitebrowser
+```
+```
+xdg-open juicer/newdb.sqlite
 
 ```
 
