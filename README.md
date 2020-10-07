@@ -49,14 +49,24 @@ cd  auto-yamcs
 git submodule update --init
 ```
 
+3. Start a virtual environment
 
-3. Install dependencies
+```
+python3.6 -m venv venv
+```
+```
+. ./venv/bin/activate
+```
+
+**NOTE**: Be sure that the venv python version is **3.6** or above.
+
+4. Install dependencies
 ```
 cd auto-yamcs
 pip3 install -r ./requirements.txt
 ```
 
-4. Once that builds successfully, you can run the `auto-yamcs` toolchain
+5. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
 cd auto-yamcs
 
@@ -64,7 +74,7 @@ python3 squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_c
 
 ```
 
-5. Now you can open the database with sqlite browser:
+6. Now you can open the database with sqlite browser:
 ```
 sudo apt-get install sqlitebrowser
 ```
@@ -73,7 +83,7 @@ xdg-open juicer/newdb.sqlite
 
 ```
 
-## Remapping Database Symbols
+7. Remapping Database Symbols  
 There might be situations where you might want to remap a database symbols to some other type. Specifically this can
 be used as a workaround for when there is a symbol in the database that does not map to an intrinsic type. 
 For example:
@@ -102,7 +112,7 @@ aforementioned one.
 Here is the workaround:
 
 ```
-python3 remap_symbols.py --database path_to_database --yaml_path config_remap.yaml
+python3 remap_symbols.py --database juicer/newdb.sqlite --yaml_path config_remap.yaml
 ```
 
 This will remap all of the symbols specified in the config_remap.yaml on the database.
