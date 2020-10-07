@@ -11,6 +11,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 ## Asumptions
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
+- The `python3` command in the system points to a version of python that is 3.6 or highger.
 
 ## How To Use It
 
@@ -54,6 +55,7 @@ git submodule update --init
 cd auto-yamcs
 pip3 install -r ./requirements.txt
 ```
+
 4. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
 cd auto-yamcs
