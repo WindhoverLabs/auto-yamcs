@@ -342,21 +342,24 @@ def parse_cli() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main():
-    args = parse_cli()
-
-    db_handle = sqlite3.connect(args.sqlite_path)
+def merge_all(database_path: str, yaml_file: str):
+    db_handle = sqlite3.connect(database_path)
     db_cursor = db_handle.cursor()
 
     add_tables(db_cursor)
 
-    yaml_data = read_yaml(args.yaml_path)
+    yaml_data = read_yaml(yaml_file)
 
     # Write all the data to the database.
     write_tlm_cmd_data(yaml_data, db_cursor)
 
     # Save our changes to the database.
     db_handle.commit()
+
+
+def main():
+    args = parse_cli()
+    merge_all(args.sqlite_path, args.yaml_path)
 
 
 if __name__ == '__main__':
