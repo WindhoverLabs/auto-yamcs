@@ -11,7 +11,6 @@ A collection of tools to auto-generate everything needed to run a ground system.
 ## Assumptions
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
-- The `python3` command in the system points to a version of python that is 3.6 or higher. If that's not the case, `ln -sf /usrbin/python3.6 /usr/bin/python` in Ubuntu 16.04.
 
 ## How To Use It
 
@@ -67,7 +66,7 @@ pip install -r ./requirements.txt
 
 5. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
-python squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
+python squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml config_remap.yaml --xtce_config_yaml ./xtce_generator/src/xtce_generator/config.yaml
 
 ```
 
@@ -78,6 +77,8 @@ sudo apt-get install sqlitebrowser
 ```
 xdg-open newdb.sqlite
 ```
+
+7. When this is all done, there will be a `ocpoc.xml` in your working directory. You can use this on a ground system such as `yamcs`.
 
 7. Remapping Database Symbols  
 There might be situations where you might want to remap a database symbols to some other type. Specifically this can
@@ -105,13 +106,11 @@ this is the result of `juicer` not supporting typedef'd types intrinsic types su
 For now this issue is no of high priority, but this workaround should fix issues if your code base has typedefs like the
 aforementioned one.
 
-Here is the workaround:
-
-```
-python3 remap_symbols.py --database juicer/newdb.sqlite --yaml_path config_remap.yaml
-```
+This is what the `--remap_yaml` option is for.
 
 This will remap all of the symbols specified in the config_remap.yaml on the database.
+
+
 
 Documentation updated on October 5, 2020
 

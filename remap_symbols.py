@@ -24,8 +24,12 @@ def read_yaml(yaml_file: str) -> dict:
     return yaml_data
 
 
-def remap_symbols(db_handle, yaml_map: dict):
+def remap_symbols(database_path, yaml_path: dict):
+    db_handle = sqlite3.connect(database_path)
     db_cursor = db_handle.cursor()
+
+    yaml_map = read_yaml(yaml_path)['remaps']
+
     for old_symbol, new_symbol in yaml_map.items():
         old_symbol_id = db_cursor.execute('SELECT id FROM symbols where name=?',
                                           (old_symbol,)).fetchone()[0]
@@ -41,19 +45,14 @@ def remap_symbols(db_handle, yaml_map: dict):
 
         for field_id in field_ids:
             db_handle.execute("UPDATE fields SET type = ? WHERE id = ?",
-                          (new_symbol_id, field_id[0]))
+                              (new_symbol_id, field_id[0]))
             db_handle.commit()
 
 
 def main():
     args = parse_cli()
-    yaml_data = read_yaml(args.yaml_path)
-    db_handle = sqlite3.connect(args.database)
-    db_cursor = db_handle.cursor()
 
-    remap_symbols(db_handle, yaml_data['remaps'])
-
-    db_handle.commit()
+    remap_symbols(args.database, args.yaml_path)
 
 
 if __name__ == '__main__':

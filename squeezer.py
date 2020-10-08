@@ -7,6 +7,12 @@ import yaml
 import sys
 import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 
+import sys
+
+sys.path.append('./xtce_generator/src')
+import xtce_generator.src.xtce_generator as xtce_generator
+import remap_symbols
+
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', output_path])
@@ -36,8 +42,8 @@ def get_elf_files(yaml_dict: dict):
 
 
 # FIXME: Implement
-def generate_xtce(sqlite_path: str):
-    pass
+def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str):
+    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem)
 
 
 def parse_cli() -> argparse.Namespace:
@@ -58,9 +64,18 @@ def parse_cli() -> argparse.Namespace:
                         help='The yaml_path that will be passed to tlm_cmd_merger.py. This script uses this config file'
                              ' as well to know which binary files to pass to juicer')
 
+    parser.add_argument('--xtce_config_yaml', type=str, required=True,
+                        help='The yaml file that will be passed to xtce_generator. xtce_generator will use this'
+                             ' to map base containers for telemetry and commands.')
+
+    parser.add_argument('--remap_yaml', type=str, default=None,
+                        help='An optional remap configuration file that can be used to remap symbols in the database after'
+                             'it is created.')
+
     parser.add_argument('--spacesystem', type=str, default='airliner',
                         help='The name of the root spacesystem of the xtce file. Note that spacesystem is a synonym '
-                             'for namespace')
+                             'for namespace. The name of this spacesystem is also used as a file name in the form of'
+                             '"spacesystem.xml".')
 
     return parser.parse_args()
 
@@ -77,6 +92,10 @@ def check_version():
         exit(0)
 
 
+def remap(database_path: str, remap_yaml_path):
+    remap_symbols.remap_symbols(database_path, remap_yaml_path)
+
+
 def main():
     check_version()
     args = parse_cli()
@@ -86,6 +105,11 @@ def main():
 
     squeeze_files(elfs, args.output_file, args.mode, args.verbosity)
     merge_files(args.yaml_path, args.output_file)
+
+    if args.remap_yaml:
+        remap(args.output_file, args.remap_yaml)
+
+    run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem)
 
 
 if __name__ == '__main__':
