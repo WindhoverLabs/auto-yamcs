@@ -49,7 +49,7 @@ class XTCEManager:
         self.command_metadata = xtce.CommandMetaDataType()
         self.paramter_type_set = xtce.ParameterTypeSetType()
         self.argument_type_set = xtce.ArgumentTypeSetType()
-        self.output_file = open(file_path + '.xml', 'w+')
+        self.output_file = open(file_path, 'w+')
 
         self.telemetry_metadata.set_ParameterTypeSet(self.paramter_type_set)
         self.command_metadata.set_ArgumentTypeSet(self.argument_type_set)
@@ -1086,8 +1086,6 @@ class XTCEManager:
         if out_length < self.custom_config['global']['CommandMetaData']['BaseContainer']['size'] / 8:
             out_length += int(self.custom_config['global']['CommandMetaData']['BaseContainer']['size'] / 8 - out_length)
 
-
-
         return out_length - 7
 
     def __get_argtype_from_typeref(self, type_ref: str, namesapce: str):
@@ -1130,7 +1128,7 @@ class XTCEManager:
             elif arg_type == RefType.AGGREGATE:
                 aggregate_members = self.__extract_members_from_aggregate_argtype(
                     [aggregate_type for aggregate_type in self[namesapce].
-                    get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
+                        get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
                      if aggregate_type.get_name() == type_ref][0], namesapce)
                 for aggregate_member in aggregate_members.get_Member():
                     new_member = xtce.MemberType()
@@ -1307,24 +1305,25 @@ logging_map = {'DEBUG': logging.DEBUG,
                }
 
 
-def main():
-    logging.info('Parsing CLI arguments...')
-    args = parse_cli()
-
-    if args.log_level == 'SILENT':
+def set_log_level(log_level: str):
+    if log_level == 'SILENT':
         for key, level in logging_map.items():
             logging.disable(level)
     else:
-        logging.getLogger().setLevel(logging_map[args.log_level])
+        logging.getLogger().setLevel(logging_map[log_level])
+
+
+def generate_xtce(database_path: str, config_yaml: str, root_spacesystem: str = 'airliner', log_level: str = 'SILENT '):
+    set_log_level(log_level)
 
     logging.info('Building xtce object...')
 
-    if args.config_yaml:
-        config_data = read_yaml(args.config_yaml)
+    if config_yaml:
+        config_data = read_yaml(config_yaml)
     else:
         config_data = None
 
-    xtce_obj = XTCEManager(args.spacesystem, args.spacesystem, args.sqlite_path, config_data)
+    xtce_obj = XTCEManager(root_spacesystem, root_spacesystem + '.xml', database_path, config_data)
 
     logging.info('Adding base_types to xtce...')
     xtce_obj.add_base_types()
@@ -1335,7 +1334,14 @@ def main():
     xtce_obj.add_aggregate_types()
 
     logging.info('Writing xtce object to file...')
-    xtce_obj.write_to_file(namespace=args.spacesystem)
+    xtce_obj.write_to_file(namespace=root_spacesystem)
+
+
+def main():
+    logging.info('Parsing CLI arguments...')
+    args = parse_cli()
+
+    generate_xtce(args.sqlite_path, args.config_yaml, args.spacesystem, args.log_level)
 
 
 if __name__ == '__main__':
