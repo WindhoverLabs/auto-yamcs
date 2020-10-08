@@ -18,11 +18,11 @@ global:
 
 # Custom Mappings
 # Beware that our configuration only supports mapping to types in our BaseType spacesystem such as BaseType/int16_LE
-spacesystems:
-  SCH:
-    remap:
-      CFE_SB_MsgId_t: 'BaseType/uint16_LE'
-  TO:
-    remap:
-      CFE_SB_MsgId_t: 'BaseType/uint16_LE'
+#spacesystems:
+#  SCH:
+#    remap:
+#      CFE_SB_MsgId_t: 'BaseType/uint16_LE'
+#  TO:
+#    remap:
+#      CFE_SB_MsgId_t: 'BaseType/uint16_LE'
 

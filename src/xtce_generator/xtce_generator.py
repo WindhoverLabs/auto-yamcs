@@ -634,8 +634,7 @@ class XTCEManager:
         out_param = xtce.AggregateParameterType(name=symbol_record[2])
 
         # If the symbol exists already in our xtce, we don't need to explore it any further
-        if self.__aggrregate_paramtype_exists(symbol_record[2], module_name) \
-                or self.__is_type_in_config(module_name, symbol_record[2])[0]:
+        if self.__aggrregate_paramtype_exists(symbol_record[2], module_name):
             return None
 
         logging.debug(f'symbol record-->{symbol_record}')
@@ -670,12 +669,8 @@ class XTCEManager:
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
                     base_type_val = self.__is_base_type(symbol_type[2])
-                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
 
-                    if is_type_in_config_val[0]:
-                        type_ref_name = is_type_in_config_val[1]
-
-                    elif self.__is__symbol_enum(field_type):
+                    if self.__is__symbol_enum(field_type):
                         new_enum = self.__get_enum_param_type(field_type)
                         self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
                             new_enum)
@@ -729,13 +724,9 @@ class XTCEManager:
                 # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
-                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
                     base_type_val = self.__is_base_type(symbol_type[2])
 
-                    if is_type_in_config_val[0]:
-                        type_ref_name = is_type_in_config_val[1]
-
-                    elif self.__is__symbol_enum(field_type):
+                    if self.__is__symbol_enum(field_type):
                         new_enum = self.__get_enum_param_type(field_type)
                         self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
                             new_enum)
@@ -810,8 +801,7 @@ class XTCEManager:
         out_param = xtce.AggregateArgumentType(name=symbol_record[2])
 
         # If the symbol exists already in our xtce, we don't need to explore it any further
-        if self.__aggrregate_argtype_exists(symbol_record[2], module_name) or \
-                self.__is_type_in_config(module_name, symbol_record[2])[0]:
+        if self.__aggrregate_argtype_exists(symbol_record[2], module_name):
             return None
 
         logging.debug(f'symbol record-->{symbol_record}')
@@ -846,12 +836,8 @@ class XTCEManager:
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
                     base_type_val = self.__is_base_type(symbol_type[2])
-                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
 
-                    if is_type_in_config_val[0]:
-                        type_ref_name = is_type_in_config_val[1]
-
-                    elif self.__is__symbol_enum(field_type):
+                    if self.__is__symbol_enum(field_type):
                         new_enum = self.__get_enum_arg_type(field_type)
                         self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
                             new_enum)
@@ -904,13 +890,9 @@ class XTCEManager:
                 # The symbol_type is expected, as per our schema, to have the form of (id, elf ,name, byte_size)
                 if symbol_type:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
-                    is_type_in_config_val = self.__is_type_in_config(module_name, symbol_type[2])
                     base_type_val = self.__is_base_type(symbol_type[2])
 
-                    if is_type_in_config_val[0]:
-                        type_ref_name = is_type_in_config_val[1]
-
-                    elif self.__is__symbol_enum(field_type):
+                    if self.__is__symbol_enum(field_type):
                         new_enum = self.__get_enum_arg_type(field_type)
                         self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
                             new_enum)
