@@ -1,4 +1,4 @@
-from src import xtce
+import xtce
 import argparse
 import sqlite3
 import logging
@@ -1294,7 +1294,7 @@ def set_log_level(log_level: str):
         logging.getLogger().setLevel(logging_map[log_level])
 
 
-def generate_xtce(database_path: str, config_yaml: str, root_spacesystem: str = 'airliner', log_level: str = 'SILENT '):
+def generate_xtce(database_path: str, config_yaml: str, root_spacesystem: str = 'airliner', log_level: str = 'SILENT'):
     set_log_level(log_level)
 
     logging.info('Building xtce object...')
