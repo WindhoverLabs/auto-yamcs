@@ -5,19 +5,20 @@ import logging
 from pathlib import Path
 import yaml
 import sys
+import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
-    subprocess.run(['rm', output_path], cwd='./juicer')
-    subprocess.run(['make'], cwd='./juicer')
+    subprocess.run(['rm', output_path])
+    subprocess.run(['make', '-C', 'juicer'], check=True)
 
     for file_path in elf_files:
         my_file = Path(file_path)
         if my_file.exists() and my_file.is_file():
             print('Running juicer on {0}'.format(my_file))
             subprocess.run(
-                ['build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
-                cwd="juicer")
+                ['juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
+                check=True)
 
 
 def merge_files(yaml_path: str, sqlite_path: str):
@@ -50,9 +51,9 @@ def parse_cli() -> argparse.Namespace:
 
     parser.add_argument('--mode', type=str, default='SQLITE', choices=['SQLITE'],
                         help=' The mode which to run juicer on')
-    parser.add_argument('--output_file', type=str, default='build/newdb', help='The output file juier will write to.')
+    parser.add_argument('--output_file', type=str, default='newdb.sqlite', help='The output file juier will write to.')
 
-    parser.add_argument('--verbosity', type=str, default='4', choices=['1', '2', ' 3', '4'],
+    parser.add_argument('--verbosity', type=str, default='1', choices=['1', '2', ' 3', '4'],
                         help='The verbosity with which to run juicer.')
 
     parser.add_argument('--yaml_path', type=str, required=True,
@@ -86,7 +87,7 @@ def main():
     elfs = get_elf_files(yaml_dict)
 
     squeeze_files(elfs, args.output_file, args.mode, args.verbosity)
-    merge_files(args.yaml_path, args.output_file)
+    # merge_files(args.yaml_path, args.output_file)
 
 
 if __name__ == '__main__':

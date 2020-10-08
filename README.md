@@ -11,7 +11,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 ## Assumptions
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
-- The `python3` command in the system points to a version of python that is 3.6 or highger. If that's not the case, `ln -sf /usrbin/python3.6 /usr/bin/python` in Ubuntu 16.04.
+- The `python3` command in the system points to a version of python that is 3.6 or higher. If that's not the case, `ln -sf /usrbin/python3.6 /usr/bin/python` in Ubuntu 16.04.
 
 ## How To Use It
 
@@ -32,7 +32,7 @@ git checkout add-documentation-to-airliner-tutorial
 make ocpoc/default 
 ```
 
-**NOTE**: It's possible you might get this error when builiding `airliner`:
+**NOTE**: It's possible you might get this error when building `airliner`:
 ```
 fatal error: bits/libc-header-start.h: No such file or directory
 ```
@@ -62,15 +62,14 @@ python3.6 -m venv venv
 
 4. Install dependencies
 ```
-cd auto-yamcs
-pip3 install -r ./requirements.txt
+pip install -r ./requirements.txt
 ```
 
 5. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
 cd auto-yamcs
 
-python3 squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
+python squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
 
 ```
 
@@ -79,8 +78,7 @@ python3 squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_c
 sudo apt-get install sqlitebrowser
 ```
 ```
-xdg-open juicer/newdb.sqlite
-
+xdg-open newdb.sqlite
 ```
 
 7. Remapping Database Symbols  
