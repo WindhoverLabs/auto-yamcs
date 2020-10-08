@@ -1,5 +1,4 @@
-from xml.etree import ElementTree as ET
-import xtce as xtce
+from src import xtce
 import argparse
 import sqlite3
 import logging
