@@ -67,8 +67,6 @@ pip install -r ./requirements.txt
 
 5. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
-cd auto-yamcs
-
 python squeezer.py --output_file newdb.sqlite --verbosity 4 --yaml_path ./tlm_cmd_merger/src/combined.yml
 
 ```
