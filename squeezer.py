@@ -22,9 +22,7 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
 
 
 def merge_files(yaml_path: str, sqlite_path: str):
-    subprocess.run(['python3', '../tlm_cmd_merger/src/tlm_cmd_merger.py', '--yaml_path',
-                    os.path.join('..', yaml_path),
-                    '--sqlite_path', sqlite_path], cwd='juicer')
+    tlm_cmd_merger.merge_all(sqlite_path, yaml_path)
 
 
 def get_elf_files(yaml_dict: dict):
@@ -87,7 +85,7 @@ def main():
     elfs = get_elf_files(yaml_dict)
 
     squeeze_files(elfs, args.output_file, args.mode, args.verbosity)
-    # merge_files(args.yaml_path, args.output_file)
+    merge_files(args.yaml_path, args.output_file)
 
 
 if __name__ == '__main__':
