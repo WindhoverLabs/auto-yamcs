@@ -13,6 +13,9 @@ install:
 
 
 script:
+  pip3 install -r requirements.txt
+  pip3 install -r tlm_cmd_merger/requirements.txt
+  pipr install -r xtce_generator/requirements.txt
   python3 squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml config_remap.yaml --xtce_config_yaml ./xtce_generator/src/xtce_generator/config.yaml
 
 git:
