@@ -1,5 +1,13 @@
 language: python
 
+include:
+  - os: linux
+    dist: xenial
+  - os: linux
+    dist: bionic
+  - os: linux
+    dist: focal
+
 before_install:
   - sudo apt update
   - sudo apt-get update -qq
@@ -16,13 +24,5 @@ install:
 
 script:
   pytest
-
-include:
-  - os: linux
-    dist: xenial
-  - os: linux
-    dist: bionic
-  - os: linux
-    dist: focal
 
 
