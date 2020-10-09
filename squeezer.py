@@ -6,16 +6,16 @@ from pathlib import Path
 import yaml
 import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 import sys
-
-# There does not seem to be a cleaner way of doing this in pytnon when working with git submodules
-sys.path.append(os.path.join(os.getcwd(), 'xtce_generator/src'))
-import xtce_generator.src.xtce_generator as xtce_generator
 import remap_symbols
+# There does not seem to be a cleaner way of doing this in python when working with git submodules
+sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
+
+import xtce_generator.src.xtce_generator as xtce_generator
 
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', output_path])
-    subprocess.run(['make', '-C', 'juicer'], check=True)
+    subprocess.run(['make', '-C', os.path.join(os.getcwd(),'juicer')], check=True)
 
     for file_path in elf_files:
         my_file = Path(file_path)
@@ -32,7 +32,11 @@ def merge_files(yaml_path: str, sqlite_path: str):
 
 def get_elf_files(yaml_dict: dict):
     elf_files = []
-    elf_files += yaml_dict['core']['elf_files']
+
+    # In our airliner setup, we have a special key called "core"
+    if 'core' in yaml_dict:
+        elf_files += yaml_dict['core']['elf_files']
+
     for module_key in yaml_dict['modules']:
         for elf in yaml_dict['modules'][module_key]['elf_files']:
             elf_files.append(elf)
@@ -40,7 +44,6 @@ def get_elf_files(yaml_dict: dict):
     return elf_files
 
 
-# FIXME: Implement
 def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str):
     xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem)
 

@@ -1,0 +1,42 @@
+modules:
+  file1:
+    elf_files:
+      - ./juicer/build/ut_obj/test_file1.o
+    short_name: ak8963
+    long_name: TBD
+    events:
+      FILE1_INIT_INF_EID:
+        id: 1
+        type: INFORMATION
+    telemetry:
+      FILE1_HK_TLM_MID:
+        msgID: 0x0cc1
+        struct: Square
+    commands:
+      FILE1_CMD_MID:
+        msgID: 0x1cc4
+        commands:
+          Noop:
+            cc: 0
+            struct: Circle
+          Reset:
+            cc: 1
+            struct: Circle
+          SendDiag:
+            cc: 2
+            struct: Circle
+          SetCalibration:
+            cc: 3
+            struct: Circle
+
+    perfids:
+      FILE1_RECEIVE_PERF_ID:
+        id: 102
+      FILE1_SEND_PERF_ID:
+        id: 103
+      FILE1_MAIN_TASK_PERF_ID:
+        id: 104
+    config:
+      FILE1_SB_TIMEOUT:
+        name: AK8963_SB_TIMEOUT
+        value: CFE_SB_PEND_FOREVER

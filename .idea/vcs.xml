@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/juicer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/juicer/Catch2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/tlm_cmd_merger" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/xtce_generator" vcs="Git" />
   </component>
