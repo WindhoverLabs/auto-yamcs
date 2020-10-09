@@ -1,5 +1,17 @@
 language: python
 
+before_install:
+  - sudo apt update
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get -y install libelf-dev
+  - sudo apt-get -y install libdwarf-dev
+  - sudo apt-get -y install libsqlite3-dev
+  - sudo apt-get -y install --reinstall make
+  - sudo apt install build-essential
+
+
 script:
   python3 squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml config_remap.yaml --xtce_config_yaml ./xtce_generator/src/xtce_generator/config.yaml
 
