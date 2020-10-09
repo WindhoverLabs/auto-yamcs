@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/WindhoverLabs/auto-yamcs.svg?branch=develop)](https://travis-ci.com/WindhoverLabs/auto-yamcs)
+
 # auto-yamcs
 A collection of tools to auto-generate everything needed to run a ground system.
 
@@ -113,7 +115,3 @@ This will remap all of the symbols specified in the config_remap.yaml on the dat
 
 
 Documentation updated on October 5, 2020
-
-
-
-
