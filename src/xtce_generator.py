@@ -1,4 +1,4 @@
-import xtce
+from src import xtce
 import argparse
 import sqlite3
 import logging
