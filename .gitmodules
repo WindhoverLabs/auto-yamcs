@@ -1,9 +1,9 @@
-[submodule "juicer"]
-	path = juicer
-	url = https://github.com/WindhoverLabs/juicer.git
 [submodule "tlm_cmd_merger"]
 	path = tlm_cmd_merger
 	url = https://github.com/WindhoverLabs/tlm_cmd_merger.git
 [submodule "xtce_generator"]
 	path = xtce_generator
 	url = https://github.com/WindhoverLabs/xtce_generator.git
+[submodule "juicer"]
+	path = juicer
+	url = https://github.com/WindhoverLabs/juicer.git
