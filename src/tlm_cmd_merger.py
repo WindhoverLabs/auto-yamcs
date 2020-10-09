@@ -116,9 +116,9 @@ def write_module_records(module_data: dict, db_cursor: sqlite3.Cursor):
             if module != 'config':
                 db_cursor.execute('insert into modules(name) values(?)', (module,))
 
-        for module in module_data['modules'].keys():
-            print(f'current module:{module}')
-            db_cursor.execute('insert into modules(name) values(?)', (module,))
+    for module in module_data['modules'].keys():
+        print(f'current module:{module}')
+        db_cursor.execute('insert into modules(name) values(?)', (module,))
 
 
 def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
