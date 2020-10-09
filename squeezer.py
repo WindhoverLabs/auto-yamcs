@@ -4,12 +4,11 @@ import os
 import logging
 from pathlib import Path
 import yaml
-import sys
 import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
-
 import sys
 
-sys.path.append('./xtce_generator/src')
+# There does not seem to be a cleaner way of doing this in pytnon when working with git submodules
+sys.path.append(os.path.join(os.getcwd(), 'xtce_generator/src'))
 import xtce_generator.src.xtce_generator as xtce_generator
 import remap_symbols
 
