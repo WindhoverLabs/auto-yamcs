@@ -2,10 +2,10 @@
 config_base: ".."
 core:
   elf_files:
-    - ../airliner/build/tutorial/cfs/target/exe/airliner
+    - ../airliner/build/squeaky_weasel/default/target/exe/airliner
 
   osal:
-    config:        
+    config:
       OS_RUNTIME_MANAGER_CMD_QUEUE_NAME:
         name: OS_RUNTIME_MANAGER_CMD_QUEUE_NAME
         value: OS_RUNTIME_MGR_CMD
@@ -128,7 +128,7 @@ core:
         value: 0
       CFE_CORE_MAX_STARTUP_MSEC:
         name: CFE_CORE_MAX_STARTUP_MSEC
-        value: 30000     
+        value: 30000
       CFE_CMD_MID_BASE_CPU1:
         name: CFE_CMD_MID_BASE_CPU1
         value: 0x1800
@@ -949,7 +949,7 @@ core:
         CFE_SB_START_TASK_FLAGS:
           name: CFE_SB_START_TASK_FLAGS
           value: OS_ENABLE_CORE_0
-  
+
     cfe_tbl:
       short_name: cfe_tbl
       long_name: Core Flight Executive - Table Services
@@ -1352,7 +1352,7 @@ core:
 modules:
   ak8963:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/ak8963.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/ak8963.so
     short_name: ak8963
     long_name: TBD
     events:
@@ -1508,7 +1508,7 @@ modules:
 
   amc:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/amc.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/amc.so
     short_name: amc
     long_name: Actuator Motor Control
     events:
@@ -1678,7 +1678,7 @@ modules:
     definition: "../apps/amc"
   bat:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/bat.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/bat.so
     short_name: bat
     long_name: Battery Manager
     events:
@@ -1802,13 +1802,13 @@ modules:
     definition: "../apps/bat"
   cf:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/CF.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/CF.so
     short_name: cf
     long_name: CFDP File Delivery
     events:
       CF_INIT_EID :
         id: 1
-        type: 
+        type:
       CF_CC_ERR_EID :
         id: 2
         type: ERROR
@@ -1820,10 +1820,10 @@ modules:
         type: ERROR
       CF_NOOP_CMD_EID :
         id: 5
-        type: 
+        type:
       CF_RESET_CMD_EID :
         id: 6
-        type: 
+        type:
       CF_FILE_IO_ERR1_EID :
         id: 7
         type: ERROR
@@ -1850,13 +1850,13 @@ modules:
         type: ERROR
       CF_CFDP_ENGINE_DEB_EID :
         id: 15
-        type: 
+        type:
       CF_CFDP_ENGINE_INFO_EID :
         id: 16
-        type: 
+        type:
       CF_CFDP_ENGINE_WARN_EID :
         id: 17
-        type: 
+        type:
       CF_CFDP_ENGINE_ERR_EID :
         id: 18
         type: ERROR
@@ -1865,61 +1865,61 @@ modules:
         type: ERROR
       CF_IN_TRANS_OK_EID :
         id: 20
-        type: 
+        type:
       CF_OUT_TRANS_OK_EID :
         id: 21
-        type: 
+        type:
       CF_IN_TRANS_FAILED_EID:
         id: 22
-        type: 
+        type:
       CF_OUT_TRANS_FAILED_EID :
         id: 23
-        type: 
+        type:
       CF_MV_UP_NODE_EID :
         id: 24
-        type: 
+        type:
       CF_ENDIS_AUTO_SUS_CMD_EID :
         id: 25
-        type: 
+        type:
       CF_IND_XACT_SUS_EID :
         id: 26
-        type: 
+        type:
       CF_IND_XACT_RES_EID :
         id: 27
-        type: 
+        type:
       CF_IND_XACT_FAU_EID :
         id: 28
-        type: 
+        type:
       CF_IND_XACT_ABA_EID :
         id: 29
-        type: 
+        type:
       CF_KICKSTART_CMD_EID :
         id: 30
-        type: 
+        type:
       CF_REMOVE_ERR2_EID :
         id: 31
-        type: 
+        type:
       CF_IND_ACK_TIM_EXP_EID :
         id: 32
-        type: 
+        type:
       CF_IND_INA_TIM_EXP_EID :
         id: 33
-        type: 
+        type:
       CF_IND_NACK_TIM_EXP_EID :
         id: 34
-        type: 
+        type:
       CF_IND_UNEXP_TYPE_EID :
         id: 35
-        type: 
+        type:
       CF_FILE_CLOSE_ERR_EID :
         id: 36
-        type: 
+        type:
       CF_MACH_ALLOC_ERR_EID :
         id: 37
         type: ERROR
       CF_PLAYBACK_FILE_EID :
         id: 38
-        type: 
+        type:
       CF_PUT_REQ_ERR1_EID :
         id: 39
         type: ERROR
@@ -1940,31 +1940,31 @@ modules:
         type: ERROR
       CF_TRANS_SUSPEND_OVRFLW_EID :
         id: 45
-        type: 
+        type:
       CF_FREEZE_CMD_EID :
         id: 46
-        type: 
+        type:
       CF_THAW_CMD_EID :
         id: 47
-        type: 
+        type:
       CF_CARS_CMD_EID :
         id: 48
-        type: 
+        type:
       CF_CARS_ERR1_EID :
         id: 49
         type: ERROR
       CF_SET_MIB_CMD_EID :
         id: 50
-        type: 
+        type:
       CF_GET_MIB_CMD_EID :
         id: 51
-        type: 
+        type:
       CF_SUB_PDUS_ERR_EID :
         id: 52
         type: ERROR
       CF_SND_Q_INFO_EID :
         id: 53
-        type: 
+        type:
       CF_FILEWRITE_ERR_EID :
         id: 54
         type: ERROR
@@ -2006,10 +2006,10 @@ modules:
         type: ERROR
       CF_DEQ_NODE1_EID:
         id: 68
-        type: 
+        type:
       CF_DEQ_NODE2_EID :
         id: 69
-        type: 
+        type:
       CF_PDU_RCV_ERR1_EID :
         id: 70
         type: ERROR
@@ -2024,10 +2024,10 @@ modules:
         type: ERROR
       CF_SND_TRANS_CMD_EID :
         id: 74
-        type: 
+        type:
       CF_IND_FAU_UNEX_EID :
         id: 75
-        type: 
+        type:
       CF_PB_FILE_ERR1_EID :
         id: 76
         type: ERROR
@@ -2048,10 +2048,10 @@ modules:
         type: ERROR
       CF_QDIR_INV_NAME1_EID :
         id: 82
-        type: 
+        type:
       CF_QDIR_INV_NAME2_EID :
         id: 83
-        type: 
+        type:
       CF_MEM_ALLOC_ERR_EID :
         id: 84
         type: ERROR
@@ -2060,22 +2060,22 @@ modules:
         type: ERROR
       CF_ENA_DQ_CMD_EID :
         id: 86
-        type: 
+        type:
       CF_DQ_CMD_ERR1_EID :
         id: 87
         type: ERROR
       CF_DIS_DQ_CMD_EID :
         id: 88
-        type: 
+        type:
       CF_DQ_CMD_ERR2_EID :
         id: 89
         type: ERROR
       CF_ENA_POLL_CMD1_EID :
         id: 90
-        type: 
+        type:
       CF_ENA_POLL_CMD2_EID :
         id: 91
-        type: 
+        type:
       CF_ENA_POLL_ERR1_EID :
         id: 92
         type: ERROR
@@ -2084,10 +2084,10 @@ modules:
         type: ERROR
       CF_DIS_POLL_CMD1_EID :
         id: 94
-        type: 
+        type:
       CF_DIS_POLL_CMD2_EID :
         id: 95
-        type: 
+        type:
       CF_DIS_POLL_ERR1_EID :
         id: 96
         type: ERROR
@@ -2099,19 +2099,19 @@ modules:
         type: ERROR
       CF_QDIR_NOMEM1_EID:
         id: 99
-        type: 
+        type:
       CF_QDIR_NOMEM2_EID :
         id: 100
-        type: 
+        type:
       CF_QDIR_PQFUL_EID :
         id: 101
-        type: 
+        type:
       CF_IN_TRANS_START_EID :
         id: 102
-        type: 
+        type:
       CF_OUT_TRANS_START_EID :
         id: 103
-        type: 
+        type:
       CF_SET_MIB_CMD_ERR1_EID :
         id: 104
         type: ERROR
@@ -2186,10 +2186,10 @@ modules:
         type: ERROR
       CF_SET_POLL_PARAM1_EID :
         id: 128
-        type: 
+        type:
       CF_SND_CFG_CMD_EID :
         id: 129
-        type: 
+        type:
       CF_GIVETAKE_ERR1_EID :
         id: 130
         type: ERROR
@@ -2204,7 +2204,7 @@ modules:
         type: ERROR
       CF_PLAYBACK_DIR_EID :
         id: 134
-        type: 
+        type:
       CF_PB_DIR_ERR1_EID :
         id: 135
         type: ERROR
@@ -2240,10 +2240,10 @@ modules:
         type: ERROR
       CF_PURGEQ1_EID :
         id: 146
-        type: 
+        type:
       CF_PURGEQ2_EID :
         id: 147
-        type: 
+        type:
       CF_WRACT_ERR1_EID :
         id: 148
         type: ERROR
@@ -2252,10 +2252,10 @@ modules:
         type: ERROR
       CF_WRACT_TRANS_EID :
         id: 150
-        type: 
+        type:
       CF_TBL_LD_ATTEMPT_EID :
         id: 151
-        type: 
+        type:
       CF_OUT_SND_ERR1_EID :
         id: 152
         type: ERROR
@@ -2267,22 +2267,22 @@ modules:
         type: ERROR
       CF_QDIR_ACTIVEFILE_EID :
         id: 155
-        type: 
+        type:
       CF_QDIR_OPENFILE_EID :
         id: 156
-        type: 
+        type:
       CF_INV_FILENAME_EID :
         id: 157
-        type: 
+        type:
       CF_GIVETAKE_CMD_EID :
         id: 158
-        type: 
+        type:
       CF_QUICK_ERR1_EID :
         id: 159
         type: ERROR
       CF_QUICK_CMD_EID :
         id: 160
-        type: 
+        type:
     telemetry:
       CF_CONFIG_TLM_MID:
         msgID: 0x0919
@@ -2292,16 +2292,16 @@ modules:
         struct: CF_HkPacket_t
       CF_SPARE1_TLM_MID:
         msgID: 0x091c
-        struct: 
+        struct:
       CF_SPARE2_TLM_MID:
         msgID: 0x091d
-        struct: 
+        struct:
       CF_SPARE3_TLM_MID:
         msgID: 0x091e
-        struct: 
+        struct:
       CF_SPARE4_TLM_MID:
         msgID: 0x091f
-        struct: 
+        struct:
       CF_TRANS_TLM_MID:
         msgID: 0x0920
         struct: CF_TransPacket_t
@@ -2474,13 +2474,13 @@ modules:
     definition: "../apps/cf"
   ci:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/CI.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/CI.so
     short_name: ci
     long_name: Command Ingest
     events:
       CI_INIT_INF_EID:
         id: 1
-        type: 
+        type:
       CI_CONFIG_TABLE_INF_EID:
         id: 2
         type: INFORMATION
@@ -2554,7 +2554,7 @@ modules:
         id: 25
         type: ERROR
       CI_CMD_DEAUTHORIZED_EID 26:
-        id: 
+        id:
         type: INFORMATION
       CI_CMD_REGISTERED_EID:
         id: 27
@@ -2707,13 +2707,13 @@ modules:
     definition: "../apps/ci"
   cs:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/CS.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/CS.so
     short_name: cs
     long_name: Checksum Services
     events:
       CS_INIT_INF_EID:
         id: 1
-        type: 
+        type:
       CS_NOOP_INF_EID:
         id: 2
         type: INFORMATION
@@ -3309,7 +3309,7 @@ modules:
         name: CS_DEF_TABLES_TABLE_FILENAME
         value: "/cf/apps/cs_tablestbl.tbl"
       CS_DEF_APP_TABLE_FILENAME :
-        name: CS_DEF_APP_TABLE_FILENAME 
+        name: CS_DEF_APP_TABLE_FILENAME
         value: "/cf/apps/cs_apptbl.tbl"
       CS_PIPE_DEPTH:
         name: CS_PIPE_DEPTH
@@ -3318,7 +3318,7 @@ modules:
         name: CS_MAX_NUM_EEPROM_TABLE_ENTRIES
         value: 16
       CS_MAX_NUM_MEMORY_TABLE_ENTRIES :
-        name: CS_MAX_NUM_MEMORY_TABLE_ENTRIES 
+        name: CS_MAX_NUM_MEMORY_TABLE_ENTRIES
         value: 16
       CS_MAX_NUM_TABLES_TABLE_ENTRIES:
         name: CS_MAX_NUM_TABLES_TABLE_ENTRIES
@@ -3365,7 +3365,7 @@ modules:
     definition: "../apps/cs"
   ds:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/DS.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/DS.so
     short_name: ds
     long_name: Data Storage
     events:
@@ -3683,11 +3683,11 @@ modules:
         value: 50
       DS_PER_PACKET_PIPE_LIMIT:
         name: DS_PER_PACKET_PIPE_LIMIT
-        value: 
+        value:
     definition: "../apps/ds"
   ea:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/EA.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/EA.so
     short_name: ea
     long_name: External Application
     events:
@@ -3833,7 +3833,7 @@ modules:
 
   flow:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/FLOW.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/FLOW.so
     short_name: flow
     long_name: Optical Flow
     events:
@@ -3971,7 +3971,7 @@ modules:
     definition: "../apps/flow"
   fm:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/FM.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/FM.so
     short_name: fm
     long_name: File Management
     events:
@@ -4461,7 +4461,7 @@ modules:
 
   gps:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/GPS.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/GPS.so
     short_name: gps
     long_name: GPS Driver
     events:
@@ -4587,7 +4587,7 @@ modules:
 
   hk:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/HK.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/HK.so
     short_name: hk
     long_name: Housekeeping
     events:
@@ -4678,34 +4678,34 @@ modules:
         struct: HK_HkPacket_t
       HK_COMBINED_PKT1_MID:
         msgID: 0x0994
-        struct: 
+        struct:
       HK_COMBINED_PKT2_MID:
         msgID: 0x0995
-        struct: 
+        struct:
       HK_COMBINED_PKT3_MID:
         msgID: 0x0996
-        struct: 
+        struct:
       HK_COMBINED_PKT4_MID:
         msgID: 0x0997
-        struct: 
+        struct:
       HK_COMBINED_PKT5_MID:
         msgID: 0x0998
-        struct: 
+        struct:
       HK_COMBINED_PKT6_MID:
         msgID: 0x0999
-        struct: 
+        struct:
       HK_COMBINED_PKT7_MID:
         msgID: 0x099a
-        struct: 
+        struct:
       HK_COMBINED_PKT8_MID:
         msgID: 0x099b
-        struct: 
+        struct:
       HK_COMBINED_PKT9_MID:
         msgID: 0x099c
-        struct: 
+        struct:
       HK_COMBINED_PKT10_MID:
         msgID: 0x099d
-        struct: 
+        struct:
     commands:
       HK_CMD_MID:
         msgID: 0x1990
@@ -4760,9 +4760,9 @@ modules:
 
   hmc5883:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/HMC5883.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/HMC5883.so
     short_name: hmc5883
-    long_name: 
+    long_name:
     events:
       HMC5883_INIT_INF_EID:
         id: 1
@@ -4918,7 +4918,7 @@ modules:
     definition: "../apps/hmc5883"
   hs:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/HS.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/HS.so
     short_name: hs
     long_name: Heath Services
     events:
@@ -5126,7 +5126,7 @@ modules:
         struct: HS_HkPacket_t
       HS_CUSTOM_HK_TLM_MID:
         msgID: 0x09a4
-        struct: 
+        struct:
     commands:
       HS_CMD_MID:
         msgID: 0x19a0
@@ -5333,7 +5333,7 @@ modules:
 
   lc:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/LC.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/LC.so
     short_name: lc
     long_name: Limits Checker
     events:
@@ -5631,7 +5631,7 @@ modules:
 
   ld:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/LD.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/LD.so
     short_name: ld
     long_name: Landing Determination
     events:
@@ -5759,7 +5759,7 @@ modules:
 
   lgc:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/LGC.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/LGC.so
     short_name: lgc
     long_name: Landing Gear Control
     events:
@@ -5887,7 +5887,7 @@ modules:
 
   mac:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MAC.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MAC.so
     short_name: mac
     long_name: Multicopter Attitude Controller
     events:
@@ -5991,7 +5991,7 @@ modules:
 
   mavlink:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MAVLINK.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MAVLINK.so
     short_name: mavlink
     long_name: Mavlink Interface
     events:
@@ -6137,7 +6137,7 @@ modules:
 
   md:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MD.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MD.so
     short_name: md
     long_name: Memory Dwell
     events:
@@ -6337,7 +6337,7 @@ modules:
 
   mm:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MM.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MM.so
     short_name: mm
     long_name: Memory Manager
     events:
@@ -6677,7 +6677,7 @@ modules:
 
   mpc:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MPC.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MPC.so
     short_name: mpc
     long_name: Multicopter Position Controller
     events:
@@ -6835,9 +6835,9 @@ modules:
 
   mpu6050:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MPU6050.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MPU6050.so
     short_name: mpu6050
-    long_name: 
+    long_name:
     events:
       MPU6050_INIT_INF_EID:
         id: 1
@@ -7030,9 +7030,9 @@ modules:
 
   mpu9250:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MPU9250.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MPU9250.so
     short_name: mpu9250
-    long_name: 
+    long_name:
     events:
       MPU9250_INIT_INF_EID:
         id: 1
@@ -7227,9 +7227,9 @@ modules:
 
   ms5607:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MS5607.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MS5607.so
     short_name: ms5607
-    long_name: 
+    long_name:
     events:
       MS5607_INIT_INF_EID:
         id: 1
@@ -7368,9 +7368,9 @@ modules:
 
   ms5611:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/MS5611.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MS5611.so
     short_name: ms5611
-    long_name: 
+    long_name:
     events:
       MS5611_INIT_INF_EID:
         id: 1
@@ -7499,7 +7499,7 @@ modules:
 
   nav:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/NAV.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/NAV.so
     short_name: nav
     long_name: Navigation
     events:
@@ -7648,7 +7648,7 @@ modules:
 
   prmlib:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/PRMLIB.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/PRMLIB.so
     short_name: prmlib
     long_name: Parameters
     events: {}
@@ -7725,7 +7725,7 @@ modules:
 
   pe:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/PE.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/PE.so
     short_name: pe
     long_name: Position Estimator
     events:
@@ -8047,7 +8047,7 @@ modules:
 
   qae:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/QAE.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/QAE.so
     short_name: qae
     long_name: Attitude Estimator
     events:
@@ -8180,7 +8180,7 @@ modules:
 
   rcin:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/RCIN.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/RCIN.so
     short_name: rcin
     long_name: Radio Control Input
     events:
@@ -8304,7 +8304,7 @@ modules:
 
   rgbled:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/RGBLED.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/RGBLED.so
     short_name: rgbled
     long_name: RGB LED Control
     events:
@@ -8418,7 +8418,7 @@ modules:
 
   sbn:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/SBN.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SBN.so
     short_name: sbn
     long_name: Software Bus Network
     events: {}
@@ -8436,7 +8436,7 @@ modules:
 
   sc:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/SC.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SC.so
     short_name: sc
     long_name: Stored Command
     events:
@@ -8909,7 +8909,7 @@ modules:
 
   sch:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/SCH.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SCH.so
     short_name: sch
     long_name: Scheduler
     events:
@@ -9184,7 +9184,7 @@ modules:
 
   sens:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/SENS.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SENS.so
     short_name: sens
     long_name: Sensor Application
     events:
@@ -9309,7 +9309,7 @@ modules:
 
   sim:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/SIM.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SIM.so
     short_name: sim
     long_name: Simulation Application
     events:
@@ -9446,7 +9446,7 @@ modules:
 
   sonar:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/SONAR.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SONAR.so
     short_name: sonar
     long_name: Sonar Driver
     events:
@@ -9501,7 +9501,7 @@ modules:
     telemetry:
       SONAR_OUT_DATA_MID:
         msgID: 0x0cd9
-        struct: 
+        struct:
       SONAR_HK_TLM_MID:
         msgID: 0x0ce0
         struct: SONAR_HkTlm_t
@@ -9583,7 +9583,7 @@ modules:
 
   to:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/TO.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/TO.so
     short_name: to
     long_name: Telemetry Output
     events:
@@ -9833,7 +9833,7 @@ modules:
 
   ulr:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/ULR.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/ULR.so
     short_name: ulr
     long_name: uLanding Radar Driver
     events:
@@ -9973,7 +9973,7 @@ modules:
 
   vc:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/VC.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/VC.so
     short_name: vc
     long_name: Video Control
     events:
@@ -10180,7 +10180,7 @@ modules:
 
   vm:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/VM.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/VM.so
     short_name: vm
     long_name: Vehicle Manager
     events:
@@ -10494,7 +10494,7 @@ modules:
 
   px4lib:
     elf_files:
-      - ../airliner/build/tutorial/cfs/target/exe/cf/apps/PX4LIB.so
+      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/PX4LIB.so
     short_name: px4lib
     long_name: PX4 Library
     events: {}
