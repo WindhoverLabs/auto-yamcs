@@ -10,187 +10,177 @@ tables:
     elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
     byte_size: 20
 
-#  fields:
-#    HK_PX4_SensorAccelMsg_t_Timestamp:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: Timestamp
-#      byte_offset: 16
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorAccelMsg_t_ErrorCount:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: ErrorCount
-#      byte_offset: 24
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorAccelMsg_t_Temperature:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: Temperature
-#      byte_offset: 32
-#      type: float
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorAccelMsg_t_XRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: XRaw
-#      byte_offset: 36
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorAccelMsg_t_YRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: YRaw
-#      byte_offset: 38
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorAccelMsg_t_ZRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: ZRaw
-#      byte_offset: 40
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorAccelMsg_t_TemperatureRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: TemperatureRaw
-#      byte_offset: 42
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorGyroMsg_tTimestamp:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: TemperatureRaw
-#      byte_offset: 44
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorGyroMsg_t_ErrorCount:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: TemperatureRaw
-#      byte_offset: 52
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorGyroMsg_t_Temperature:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: Temperature
-#      byte_offset: 60
-#      type: float
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorGyroMsg_t_XRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: XRaw
-#      byte_offset: 64
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorGyroMsg_t_YRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: YRaw
-#      byte_offset: 66
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorGyroMsg_t_ZRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: ZRaw
-#      byte_offset: 68
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorMagMsg_t_Timestamp:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: Timestamp
-#      byte_offset: 70
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorMagMsg_t_ErrorCount:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: ErrorCount
-#      byte_offset: 78
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorMagMsg_t_Temperature:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: ErrorCount
-#      byte_offset: 86
-#      type: float
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorMagMsg_t_XRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: XRaw
-#      byte_offset: 90
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorMagMsg_t_YRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: YRaw
-#      byte_offset: 92
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorMagMsg_t_ZRaw:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: ZRaw
-#      byte_offset: 94
-#      type: int16
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorBaroMsg_t_TimeStamp:
-#      symbol: HK_PX4_SensorAccelMsg_t
-#      name: Timestamp
-#      byte_offset: 16
-#      type: uint64
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorBaroMsg_t_ErrorCount:
-#      symbol: HK_PX4_SensorBaroMsg_t
-#      name: ErrorCount
-#      byte_offset: 24
-#      type: uint32
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorBaroMsg_t_Pressure:
-#      symbol: HK_PX4_SensorBaroMsg_t
-#      name: Pressure
-#      byte_offset: 28
-#      type: float
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
-#
-#    HK_PX4_SensorBaroMsg_t_Temperature:
-#      symbol: HK_PX4_SensorBaroMsg_t
-#      name: Temperature
-#      byte_offset: 32
-#      type: float
-#      multiplicity: 0
-#      little_endian: 1 # 1 means true; 0 means false
+  fields:
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Timestamp
+      byte_offset: 16
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_ErrorCount
+      byte_offset: 24
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Temperature
+      byte_offset: 32
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_XRaw
+      byte_offset: 36
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_YRaw
+      byte_offset: 38
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_ZRaw
+      byte_offset: 40
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_TemperatureRaw
+      byte_offset: 42
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_tTimestamp
+      byte_offset: 44
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_t_ErrorCount
+      byte_offset: 52
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_t_Temperature
+      byte_offset: 60
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_t_XRaw
+      byte_offset: 64
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_t_YRaw
+      byte_offset: 66
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_t_ZRaw
+      byte_offset: 68
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_Timestamp
+      byte_offset: 70
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_ErrorCount
+      byte_offset: 78
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_Temperature
+      byte_offset: 86
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_XRaw
+      byte_offset: 90
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_YRaw
+      byte_offset: 92
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_ZRaw
+      byte_offset: 94
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_TimeStamp
+      byte_offset: 16
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_ErrorCount
+      byte_offset: 24
+      type: uint32
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_Pressure
+      byte_offset: 28
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_Temperature
+      byte_offset: 32
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+  telemetry:
+    - name: HK_COMBINED_PKT1_MID
+      message_id: 0x0994
+      symbol: HK_PX4_SensorAccelMsg_t
+      module: hk
+
+    - name: HK_COMBINED_PKT2_MID
+      message_id: 0x0995
+      symbol: HK_PX4_SensorBaroMsg_t
+      module: hk
