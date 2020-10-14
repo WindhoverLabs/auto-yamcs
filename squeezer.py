@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
 
 import xtce_generator.src.xtce_generator as xtce_generator
 
+import mod_sql
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', output_path])
@@ -74,6 +75,10 @@ def parse_cli() -> argparse.Namespace:
                         help='An optional remap configuration file that can be used to remap symbols in the database after'
                              'it is created.')
 
+    parser.add_argument('--sql_yaml', type=str, default=None,
+                        help='An optional config file which can be used to insert extra data into the database after juicer'
+                             'is done parsing.')
+
     parser.add_argument('--spacesystem', type=str, default='airliner',
                         help='The name of the root spacesystem of the xtce file. Note that spacesystem is a synonym '
                              'for namespace. The name of this spacesystem is also used as a file name in the form of'
@@ -98,6 +103,10 @@ def remap(database_path: str, remap_yaml_path):
     remap_symbols.remap_symbols(database_path, remap_yaml_path)
 
 
+def run_mod_sql(database_path: str, yaml_path):
+    mod_sql.mod_sql(database_path, yaml_path)
+
+
 def main():
     check_version()
     args = parse_cli()
@@ -110,6 +119,9 @@ def main():
 
     if args.remap_yaml:
         remap(args.output_file, args.remap_yaml)
+
+    if args.sql_yaml:
+        run_mod_sql(args.output_file, args.sql_yaml)
 
     run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem)
 
