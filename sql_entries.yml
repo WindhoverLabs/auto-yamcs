@@ -5,12 +5,19 @@ tables:
   symbols:
   - name: HK_PX4_SensorAccelMsg_t
     elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
-    byte_size: 80
+    byte_size: 84
   - name: HK_PX4_SensorBaroMsg_t
     elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
-    byte_size: 20
+    byte_size: 24
 
   fields:
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Spare1
+      byte_offset: 12
+      type: uint32
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
     - symbol: HK_PX4_SensorAccelMsg_t
       name: HK_PX4_SensorAccelMsg_t_Timestamp
       byte_offset: 16
@@ -39,14 +46,12 @@ tables:
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-
     - symbol: HK_PX4_SensorAccelMsg_t
       name: HK_PX4_SensorAccelMsg_t_YRaw
       byte_offset: 38
       type: int16
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
-
 
     - symbol: HK_PX4_SensorAccelMsg_t
       name: HK_PX4_SensorAccelMsg_t_ZRaw
@@ -143,6 +148,13 @@ tables:
       name: HK_PX4_SensorMagMsg_t_ZRaw
       byte_offset: 94
       type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Spare1
+      byte_offset: 12
+      type: uint32
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 

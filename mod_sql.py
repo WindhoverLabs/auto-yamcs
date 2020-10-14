@@ -55,6 +55,37 @@ def mod_sql(sqlite_path: str, yaml_path: str):
                 data['symbol'] = symbol_key
                 db['telemetry'].insert(data, ignore=True)
 
+            elif table == 'commands':
+                module_key = list(db['modules'].rows_where("name =?", [data['module']]))[0]['id']
+                symbol_key = list(db['symbols'].rows_where("name =?", [data['symbol']]))[0]['id']
+                data['module'] = module_key
+                data['symbol'] = symbol_key
+                db['commands'].insert(data, ignore=True)
+
+            elif table == 'elfs':
+                db['elfs'].insert(data, ignore=True)
+
+            elif table == 'enumerations':
+                symbol_key = list(db['symbols'].rows_where("name =?", [data['symbol']]))[0]['id']
+                data['symbol'] = symbol_key
+                db['enumerations'].insert(data, ignore=True)
+
+            elif table == 'events':
+                module_key = list(db['modules'].rows_where("name =?", [data['symbol']]))[0]['id']
+                data['module'] = module_key
+                db['events'].insert(data, ignore=True)
+
+            elif table == 'configurations':
+                module_key = list(db['modules'].rows_where("name =?", [data['symbol']]))[0]['id']
+                data['module'] = module_key
+                db['configurations'].insert(data, ignore=True)
+
+            elif table == 'performance_ids':
+                module_key = list(db['modules'].rows_where("name =?", [data['symbol']]))[0]['id']
+                data['module'] = module_key
+                db['performance_ids'].insert(data, ignore=True)
+
+
 
 def main():
     logging.getLogger().setLevel(logging.DEBUG)
