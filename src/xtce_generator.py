@@ -648,6 +648,9 @@ class XTCEManager:
             fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                             (symbol_id,)).fetchall()
 
+        # Enforce ordering of fields by offset.
+        fields.sort(key=lambda record: record[3])
+
         logging.debug(f'root fields-->{fields}')
 
         type_ref_name = None
