@@ -113,7 +113,108 @@ This is what the `--remap_yaml` option is for.
 
 This will remap all of the symbols specified in the config_remap.yaml on the database.
 
+### SQLite Manual Entries
 
+Some users, depending on the setup, might be in need of a mechanism to add data to the database, even after `juicer` has parsed all of the binaries. This is what the `--sql_yaml` switch is for. This flag takes a path to a yaml file as input and writes the data in the yaml to the sqlite database. The yaml file shouold look like this:
+
+```
+
+tables:
+  symbols:
+  - name: HK_PX4_SensorAccelMsg_t
+    elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
+    byte_size: 84
+  - name: HK_PX4_SensorBaroMsg_t
+    elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
+    byte_size: 24
+
+  fields:
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Spare1
+      byte_offset: 12
+      type: uint32
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Timestamp
+      byte_offset: 16
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorAccelMsg_t_ErrorCount
+      byte_offset: 24
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+...
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorGyroMsg_t_ZRaw
+      byte_offset: 68
+      type: int16
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorAccelMsg_t
+      name: HK_PX4_SensorMagMsg_t_Timestamp
+      byte_offset: 70
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorAccelMsg_t_Spare1
+      byte_offset: 12
+      type: uint32
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_TimeStamp
+      byte_offset: 16
+      type: uint64
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_ErrorCount
+      byte_offset: 24
+      type: uint32
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_Pressure
+      byte_offset: 28
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+    - symbol: HK_PX4_SensorBaroMsg_t
+      name: HK_PX4_SensorBaroMsg_t_Temperature
+      byte_offset: 32
+      type: float
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+
+  telemetry:
+    - name: HK_COMBINED_PKT1_MID
+      message_id: 0x0994
+      symbol: HK_PX4_SensorAccelMsg_t
+      module: hk
+
+    - name: HK_COMBINED_PKT2_MID
+      message_id: 0x0995
+      symbol: HK_PX4_SensorBaroMsg_t
+      module: hk
+```
+
+This is a short version of the `sqlite_entries.yml` file.
 
 ## Get Up And Running Quick with YAMCS and Open MCT
 Once there is an xtce-compliant xml file such as `ocpoc.xml`, it is possible to run `yamcs` along with `Open MCT`.
@@ -227,4 +328,4 @@ The `OpenMCT` instance can be accessed on `http://localhost:9000`
 
 
 
-Documentation updated on October 12, 2020
+Documentation updated on October 14, 2020
