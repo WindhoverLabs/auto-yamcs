@@ -483,6 +483,8 @@ class XTCEManager:
             out_base_type = (True, 'int')
         elif type_name == 'boolean':
             out_base_type = (True, 'boolean')
+        elif type_name == 'float':
+            out_base_type = (True, 'float32')
 
         return out_base_type
 
