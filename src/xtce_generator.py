@@ -484,7 +484,7 @@ class XTCEManager:
         elif type_name == 'boolean':
             out_base_type = (True, 'boolean')
         elif type_name == 'float':
-            out_base_type = (True, 'float32')
+            out_base_type = (True, 'float')
 
         return out_base_type
 
