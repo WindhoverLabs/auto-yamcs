@@ -252,14 +252,15 @@ def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3
         for event in event_data['modules'][module_name]['events']:
             event_dict = event_data['modules'][module_name]['events'][event]
             event_id = event_dict['id']
+            event_name = event
 
             # FIXME: Not sure if we'll read the macro in this step of the chain
             # macro = event_dict['macro']
 
             # Write our event record to the database.
-            db_cursor.execute('INSERT INTO events(event_id, module) '
+            db_cursor.execute('INSERT INTO events(event_id, name, module) '
                               'VALUES (?, ?)',
-                              (event_id, modules_dict[module_name],))
+                              (event_id, event_name, modules_dict[module_name],))
 
 
 def write_configuration_records(config_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
