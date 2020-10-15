@@ -250,8 +250,7 @@ def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3
 
     for module_name in event_data['modules']:
         for event in event_data['modules'][module_name]['events']:
-            event_dict = event_data['modules'][module_name]['events'][event]
-            event_id = event
+            event_id = event['id']
 
             # FIXME: Not sure if we'll read the macro in step of the chain
             # macro = event_dict['macro']
