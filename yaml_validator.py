@@ -1,7 +1,6 @@
 import cerberus
 import yaml
 import argparse
-import sys
 
 
 def parse_cli() -> argparse.Namespace:
@@ -25,19 +24,27 @@ def read_yaml(yaml_file: str) -> dict:
     return yaml_data
 
 
-def val():
-    args = parse_cli()
-
-    schema = read_yaml(args.yaml_schema)
-    document = read_yaml(args.yaml_document)
+def val(yaml_schema: str, yaml_document: str):
+    schema = read_yaml(yaml_schema)
+    document = read_yaml(yaml_document)
 
     V = cerberus.Validator(schema)
-    if V.validate(document) is True:
-        print(f'The document "{args.yaml_document}" has passed validation with no errors.')
+    is_valid = V.validate(document)
+
+    if is_valid:
+        print(f'The document "{yaml_document}" has passed validation with no errors.')
     else:
-        print(f'The document "{args.yaml_document}" has failed validation because of the following errors:'
+        print(f'The document "{yaml_document}" has failed validation because of the following errors:'
               f'\n'
               f'{V.errors}')
+    return is_valid
 
 
-val()
+
+def main():
+    args = parse_cli()
+    val(args.yaml_schema, args.yaml_document)
+
+
+if __name__ == '__main__':
+    main()

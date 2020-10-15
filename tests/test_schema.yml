@@ -1,3 +1,4 @@
+#TODO: Test the database schema for a more robust and realistic test .
 name:
   type: string
 age:
