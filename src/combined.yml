@@ -5682,7 +5682,7 @@ modules:
         id: 58
         type: INFORMATION
       LC_PASSIVE_FAIL_DBG_EID:
-        id: 49
+        id: 59
         type: DEBUG
       LC_AP_PASSIVE_FAIL_INF_EID:
         id: 60
