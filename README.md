@@ -7,10 +7,10 @@ A collection of tools to auto-generate everything needed to run a ground system.
 
 `Python>=3.6`  
 `PyYAML>=5.3.1`  
-`six>=1.15.0`
-`wheel>= 0.35.1`
-`pytest>=6.1.1`
-`sqlite_utils>=2.21`
+`six>=1.15.0`  
+`wheel>= 0.35.1`  
+`pytest>=6.1.1`  
+`sqlite_utils>=2.21`  
 `Cerberus>=1.3.2`
 
 
