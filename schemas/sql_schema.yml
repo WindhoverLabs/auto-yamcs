@@ -1,0 +1,182 @@
+# This schema represents our sqlite database. The sql schema can be found here: https://github.com/WindhoverLabs/tlm_cmd_merger/tree/develop#schemas
+
+bit_fields:
+  type: list
+  schema:
+    type: dict
+    schema:
+      field:
+        type: integer # This is a foreign key
+        min: 0
+      bit_size:
+        type: integer
+        min: 0
+      bit_offset:
+        type: integer
+        min: 0
+
+commands:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      name:
+        type: string
+      command_code:
+        type: integer
+        min: 0
+      message_id:
+        type: integer
+        min: 0
+      nacro:
+        type: string
+      symbol:
+        type: string
+      module:
+        type: string
+
+configurations:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      name:
+        type: string
+      value:
+        type: integer
+        min: 0
+      module:
+        type: string
+
+elfs:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      name:
+        type: string
+      checksum:
+        type: integer
+      date:
+        type: datetime
+      little_endian:
+        type: boolean
+
+enumerations:
+  type: list
+  schema:
+    type: dict
+    schema:
+      symbol:
+        type: string
+      value:
+        type: integer
+      name:
+        type: integer
+
+events:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id: #TODO: This needs to be fixed in the merger
+        type: integer
+        min: 0
+      event_id:
+        type: integer
+        min: 0
+      name:
+        type: string
+      module:
+        type: string
+
+fields:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+      symbol:
+        type: string
+      name:
+        type: string
+      byte_offset:
+        type: integer
+        min: 0
+      type:
+        type: string
+      multiplicity:
+        type: integer
+      little_endian:
+        type: integer # This is a boolean; 1 means true; 0 means false.
+
+modules:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      name:
+        type: string
+
+performance_ids:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      name:
+        type: string
+      perf_id:
+        type: integer
+      module:
+        type: string
+
+symbols:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      elf:
+        type: string
+      name:
+        type: string
+      byte_size:
+        type: integer
+        min: 0
+
+telemetry:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+        min: 0
+      name:
+        type: string
+      message_id:
+        type: integer
+      macro:
+        type: string
+      symbol:
+        type: string
+      module:
+        type: string
