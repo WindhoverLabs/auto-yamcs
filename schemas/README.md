@@ -1,0 +1,1 @@
+All yaml schemas used by auto-yamcs will be saved in this directory.

@@ -6,8 +6,12 @@ A collection of tools to auto-generate everything needed to run a ground system.
 ## Requirements
 
 `Python>=3.6`  
-`PyYAML==5.3.1`  
-`six==1.15.0`
+`PyYAML>=5.3.1`  
+`six>=1.15.0`
+`wheel>= 0.35.1`
+`pytest>=6.1.1`
+`sqlite_utils>=2.21`
+`Cerberus>=1.3.2`
 
 
 ## Assumptions
@@ -328,4 +332,4 @@ The `OpenMCT` instance can be accessed on `http://localhost:9000`
 
 
 
-Documentation updated on October 14, 2020
+Documentation updated on October 15, 2020
