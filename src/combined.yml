@@ -1505,7 +1505,7 @@ modules:
         name: AK8963_MAG_UNIT
         value: 1.0f
     definition: "../apps/ak8963"
-icm20689:
+  icm20689:
     elf_files:
       - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/ICM20689.so
     short_name: imc
