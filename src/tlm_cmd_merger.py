@@ -259,7 +259,7 @@ def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3
 
             # Write our event record to the database.
             db_cursor.execute('INSERT INTO events(event_id, name, module) '
-                              'VALUES (?, ?)',
+                              'VALUES (?, ?, ?)',
                               (event_id, event_name, modules_dict[module_name],))
 
 
