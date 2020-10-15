@@ -34,8 +34,8 @@ def mod_sql(sqlite_path: str, yaml_path: str):
 
     yaml_dict = read_yaml(yaml_path)
 
-    for table in yaml_dict['tables']:
-        for data in yaml_dict['tables'][table]:
+    for table in yaml_dict:
+        for data in yaml_dict[table]:
             if table == 'symbols':
                 elf_key = list(db['elfs'].rows_where("name =?", [data['elf']]))[0]['id']
                 data['elf'] = elf_key
@@ -84,7 +84,6 @@ def mod_sql(sqlite_path: str, yaml_path: str):
                 module_key = list(db['modules'].rows_where("name =?", [data['symbol']]))[0]['id']
                 data['module'] = module_key
                 db['performance_ids'].insert(data, ignore=True)
-
 
 
 def main():
