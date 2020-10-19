@@ -1,6 +1,5 @@
 names:
-  - name: john
-    age: 25
+  - age: 25
 
   - name: Ageless
     age:
