@@ -328,8 +328,4 @@ npm start
 ```
 The `OpenMCT` instance can be accessed on `http://localhost:9000`
 
-
-
-
-
 Documentation updated on October 19, 2020

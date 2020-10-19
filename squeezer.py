@@ -16,7 +16,7 @@ import mod_sql
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', output_path])
-    subprocess.run(['make', '-C', os.path.join(os.getcwd(),'juicer')], check=True)
+    subprocess.run(['make', '-C', os.path.join(os.getcwd(), 'juicer')], check=True)
 
     for file_path in elf_files:
         my_file = Path(file_path)
