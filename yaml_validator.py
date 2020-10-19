@@ -5,7 +5,7 @@ import argparse
 
 def parse_cli() -> argparse.Namespace:
     """
-    Parses cli argyments.
+    Parses cli arguments.
     :return: The namespace that has all of the arguments that have been parsed.
     """
     parser = argparse.ArgumentParser(description='Takes in path to sqlite database.')
@@ -38,7 +38,6 @@ def val(yaml_schema: str, yaml_document: str):
               f'\n'
               f'{V.errors}')
     return is_valid
-
 
 
 def main():

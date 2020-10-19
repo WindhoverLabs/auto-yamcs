@@ -9,7 +9,7 @@ import yaml
 
 def parse_cli(args: list = sys.argv) -> argparse.Namespace:
     """
-    Parses cli argyments.
+    Parses cli arguments.
     :return: The namespace that has all of the arguments that have been parsed.
     """
     parser = argparse.ArgumentParser(description='Takes in path to sqlite database.')

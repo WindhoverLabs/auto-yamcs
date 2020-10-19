@@ -51,7 +51,7 @@ def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str):
 
 def parse_cli() -> argparse.Namespace:
     """
-    Parses cli argyments.
+    Parses cli arguments.
     :return: The namespace that has all of the arguments that have been parsed.
     """
     parser = argparse.ArgumentParser(description='Takes in path to sqlite database.')
