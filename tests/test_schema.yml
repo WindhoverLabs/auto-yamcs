@@ -1,6 +1,13 @@
-#TODO: Test the database schema for a more robust and realistic test .
-name:
-  type: string
-age:
-  type: integer
-  min: 0
+#TODO: Test the database schema for a more robust and realistic test.
+
+names:
+  type: list
+  schema:
+    type: dict
+    schema:
+      name:
+        type: string
+      age:
+        type: integer
+        min: 0
+        nullable: True
