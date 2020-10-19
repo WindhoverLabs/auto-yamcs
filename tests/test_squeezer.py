@@ -1,7 +1,6 @@
 import subprocess
 import sys
 import os
-from pathlib import Path
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
 sys.path.append(os.path.join(os.getcwd(), '../xtce_generator'))
@@ -10,29 +9,25 @@ import sys
 from unittest.mock import patch
 
 
-def test_juicer(monkeypatch):
+def test_juicer(monkeypatch, get_tests_path):
     """
     Test juicer with "make run-tests"
     :return:
     """
-    # FIXME: It might be best to make this directory configuration a fixture to avoid code duplication
-    if Path(os.getcwd()).parts[-1] != 'auto-yamcs':
-        monkeypatch.chdir("..")
-
+    monkeypatch.chdir(os.path.join(get_tests_path, '..'))
     subprocess.run(['make', '-C', 'juicer', 'run-tests'], check=True)
 
 
-def test_squeezer(monkeypatch):
+def test_squeezer(monkeypatch, get_tests_path):
     args = ['',
             '--yaml_path',
-            'tests/test_combined.yml',
+            'tests/data/test_combined.yml',
             '--output_file',
             'newdb.sqlite',
             '--xtce_config_yaml',
             'xtce_generator/src/config.yaml', ]
 
-    if Path(os.getcwd()).parts[-1] != 'auto-yamcs':
-        monkeypatch.chdir("..")
+    monkeypatch.chdir(os.path.join(get_tests_path, '..'))
 
     with patch.object(sys, 'argv', args):
         squeezer.main()
