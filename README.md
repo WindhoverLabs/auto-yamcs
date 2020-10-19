@@ -71,10 +71,10 @@ python3.6 -m venv venv
 pip install -r ./requirements.txt
 ```
 
+
 5. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
-python squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml config_remap.yaml --xtce_config_yaml ./xtce_generator/src/config.yaml
-
+python squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml remap.yaml --xtce_config_yaml ./xtce_generator/src/config.yaml
 ```
 
 6. Now you can open the database with sqlite browser:
@@ -332,4 +332,4 @@ The `OpenMCT` instance can be accessed on `http://localhost:9000`
 
 
 
-Documentation updated on October 15, 2020
+Documentation updated on October 19, 2020
