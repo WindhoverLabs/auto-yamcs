@@ -14,6 +14,7 @@ import xtce_generator.src.xtce_generator as xtce_generator
 
 import mod_sql
 
+
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', output_path])
     subprocess.run(['make', '-C', os.path.join(os.getcwd(), 'juicer')], check=True)

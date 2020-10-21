@@ -1,0 +1,7 @@
+structures:
+  - name: CFE_FS_Header_t
+  - name: DS_FileHeader_t
+
+headers:
+  - name: CCSDS_PriHdr_t
+  - name: CCSDS_TlmSecHdr_t
