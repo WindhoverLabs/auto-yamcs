@@ -147,7 +147,7 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                 symbol_id = symbol[0]
 
                 # FIXME: Not sure if we'll read the macro in this step of the chain
-                # macro = message_dict['macro']
+                macro = name
 
                 # Write our telemetry record to the database.
                 db_cursor.execute('INSERT INTO telemetry(name, message_id, symbol ,module) '
