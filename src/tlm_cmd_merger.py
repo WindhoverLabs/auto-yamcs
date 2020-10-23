@@ -151,7 +151,7 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
 
                 # Write our telemetry record to the database.
                 db_cursor.execute('INSERT INTO telemetry(name, message_id, symbol ,module) '
-                                  'VALUES (?, ?, ?, ?)',
+                                  'VALUES (?, ?, ?, ?, ?)',
                                   (name, message_id, macro, symbol_id, modules_dict[module_name],))
 
     if 'core' in telemetry_data:
