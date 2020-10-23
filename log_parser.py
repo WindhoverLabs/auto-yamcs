@@ -1,5 +1,7 @@
 """"
-Reads in a binary file created by the ds application and outputs its contents into csv files.
+Reads in a binary file created by the ds application and outputs its contents into csv files. The ds application is an
+application which is part of airliner. You can check it out at [1].
+[1]:https://github.com/WindhoverLabs/airliner/tree/develop/apps/ds/fsw/src
 """
 import argparse
 import sqlite_utils
@@ -7,10 +9,7 @@ import yaml
 from struct import pack, unpack, calcsize
 import csv
 from enum import Enum
-import sys
 from pathlib import Path
-
-
 
 import os
 
@@ -45,12 +44,16 @@ symbol_to_struct_format_map = \
 def get_struct_format_string(symbol_id: int, db_handle: sqlite_utils.Database):
     """
     Returns a string that can be used by the struct module to unpack a C-style struct from a binary stream.
-    Network byte-order is assumed.
+    Network byte-order is assumed. Please note that the ccsds header is ignored. So the nice that is returned is the
+    payload of the message, meaning the struct that has holds the data in code.
     :param symbol_id:
     :return:s
     """
     fields = list(db_handle['fields'].rows_where('symbol=?', [symbol_id], order_by='byte_offset'))
-    format_string = '!'
+
+    little_endian = '<' if fields[0]['little_endian'] == 1 else '>'
+
+    format_string = little_endian
 
     for field in fields:
         type_name = list(db_handle['symbols'].rows_where('id=?', [field['type']]))[0]['name']
@@ -148,25 +151,58 @@ def get_field_names_from_struct(symbol_id: int, db_handle: sqlite_utils.Database
     return field_labels
 
 
-def write_csv(message_id: int, symbol_name: str, fields: list, filed_values: tuple, time_in_seconds: int):
-    file_name = str(message_id) +  '.csv'
+def write_telemetry_row_to_csv(message_macro: str, message_id: int, symbol_name: str, fields: list, filed_values: tuple,
+                               time_in_seconds: int):
+    file_name = message_macro + '.csv'
     my_file = Path(file_name)
     does_file_exist = (my_file.exists() and my_file.is_file())
-    with open(file_name, 'w', newline='') as csvfile:
+
+    with open(file_name, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
+
         if does_file_exist is False:
             writer.writerow(['message_id', 'time in seconds', 'symbol_name'] + fields)
+
         writer.writerow([message_id, time_in_seconds, symbol_name] + list(filed_values))
 
 
-def get_symbol_id_from_message_id(message_id: int, db_hanndle: sqlite_utils.Database) -> dict:
+def write_command_row_to_csv(message_macro: str, command_code: int, message_id: int, symbol_name: str, fields: list, filed_values: tuple,
+                               time_in_seconds: int):
+    file_name = message_macro + '_cc' + str(command_code) + '.csv'
+    my_file = Path(file_name)
+    does_file_exist = (my_file.exists() and my_file.is_file())
+
+    with open(file_name, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+
+        if does_file_exist is False:
+            writer.writerow(['message_id', 'time in seconds', 'symbol_name'] + fields)
+
+        writer.writerow([message_id, time_in_seconds, symbol_name] + list(filed_values))
+
+
+def get_symbol_name(symbol_id: int, db_handle: sqlite_utils.Database):
+    symbol_name = list(db_handle['symbols'].rows_where('id=?', [symbol_id]))[0]['name']
+    return symbol_name
+
+
+def get_symbol_id_from_message_id(message_id: int, db_handle: sqlite_utils.Database) -> dict:
     """
-    Returns the symbol and its fields in the form of a dictionary.
+    Returns the symbol id that is mapped to message_id.
     :return:
     """
-    out_struct = dict()
-    symbol_key = list(db_hanndle['telemetry'].rows_where('message_id=?', [message_id]))[0]['symbol']
+    symbol_key = list(db_handle['telemetry'].rows_where('message_id=?', [message_id]))[0]['symbol']
     return symbol_key
+
+
+def get_telemetry_message_macro(message_id: int, db_handle: sqlite_utils.Database):
+    macro = list(db_handle['telemetry'].rows_where('message_id=?', [message_id]))[0]['macro']
+
+    return macro
+
+
+def get_command_code(command_header: int):
+    return command_header << 8 & 0XFF00
 
 # FIXME: Cleanup code
 
@@ -179,8 +215,6 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
     structure = list(db['symbols'].rows_where('name=?', [structures[0]]))[0]
 
     struct_fields = list(db['fields'].rows_where('symbol=?', [structure['id']], order_by='byte_offset'))
-
-    struct_size = structure['byte_size']
 
     structure_data = bytes_buffer[64:140]
 
@@ -205,7 +239,13 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
 
     message_ids = set()
     struct_string = None
+    struct_size = 0
     symbol_id = None
+
+    # These map works like a cache for our symbols so we don't have to have redundant queries that slow down our code
+    telemetry_symbol_map = {}
+    commands_symbol_map = {}
+
     symbol_field_labels = None
     time_in_seconds = 0
 
@@ -222,24 +262,78 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
                 secondary_header = message_data[current_message_index + 6: current_message_index + 12]
                 ccsds_header_length = 12
                 time_in_seconds = get_time(time_format, secondary_header)
+
             # Keep track of previous message ids to optimize; otherwise the script could take minutes to finish
-            if not(stream_id in message_ids):
+            if not (stream_id in telemetry_symbol_map):
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
+                symbol_name = get_symbol_name(symbol_id, db)
                 struct_string = get_struct_format_string(symbol_id, db)
                 symbol_field_labels = get_field_names_from_struct(symbol_id, db)
+                struct_size = calcsize(struct_string)
+                message_macro = get_telemetry_message_macro(stream_id, db)
 
-            print(f'current_message_index:{current_message_index+5} length:{current_message_index+length}')
+                # NOTE: Please note that symbol and struct are synonyms in this context; they mean the same thing.
+                telemetry_symbol_map.update({stream_id:
+                                                 {'symvol_id': symbol_id,
+                                                  'struct_string': struct_string,
+                                                  'symbol_field_labels': symbol_field_labels,
+                                                  'struct_size': struct_size,
+                                                  'symbol_name': symbol_name,
+                                                  'message_macro': message_macro}
+                                             })
+            current_message_index += ccsds_header_length
 
-            # FIXME: One file per telemetry macro
+            write_telemetry_row_to_csv(telemetry_symbol_map[stream_id]['message_macro'] ,stream_id,
+                                       telemetry_symbol_map[stream_id]['symbol_name'],
+                                       telemetry_symbol_map[stream_id]['symbol_field_labels'],
+                                       unpack(telemetry_symbol_map[stream_id]['struct_string'],
+                                              message_data[current_message_index:current_message_index +
+                                                                                 telemetry_symbol_map[stream_id][
+                                                                                     'struct_size']]),
+                                       time_in_seconds)
 
-            write_csv(stream_id, 'some_symbol', symbol_field_labels, unpack(struct_string, message_data[current_message_index+ccsds_header_length:96]),
-                      time_in_seconds)
+            current_message_index += telemetry_symbol_map[stream_id]['struct_size']
 
-            return
 
-            current_message_index += length + 7
-        else:
-            current_message_index += length
+        # FIXME:Commands have not been verified yet
+        elif get_packet_type(stream_id) == PacketType.COMMAND:
+            ccsds_header_length = 6
+            if is_secondary_header_present(stream_id):
+                command_secondary_header = message_data[current_message_index + 6: current_message_index + 8]
+                ccsds_header_length = 8
+                command = unpack(command_secondary_header, 'H')
+                command_code = get_command_code(command)
+            if not (stream_id in telemetry_symbol_map):
+                symbol_id = get_symbol_id_from_message_id(stream_id, db)
+                symbol_name = get_symbol_name(symbol_id, db)
+                struct_string = get_struct_format_string(symbol_id, db)
+                symbol_field_labels = get_field_names_from_struct(symbol_id, db)
+                struct_size = calcsize(struct_string)
+                message_macro = get_telemetry_message_macro(stream_id, db)
+
+                # NOTE: Please note that symbol and struct are synonyms in this context; they mean the same thing.
+                commands_symbol_map.update({(stream_id, command_code):
+                                                 {'symvol_id': symbol_id,
+                                                  'struct_string': struct_string,
+                                                  'symbol_field_labels': symbol_field_labels,
+                                                  'struct_size': struct_size,
+                                                  'symbol_name': symbol_name,
+                                                  'message_macro': message_macro,
+                                                  'command_code': command_code}
+                                             })
+            current_message_index += ccsds_header_length
+
+            write_command_row_to_csv(commands_symbol_map[stream_id]['message_macro'] ,stream_id,
+                                       commands_symbol_map[stream_id]['symbol_name'],
+                                       commands_symbol_map[stream_id]['symbol_field_labels'],
+                                       unpack(telemetry_symbol_map[stream_id]['struct_string'],
+                                              message_data[current_message_index:current_message_index +
+                                                                                 commands_symbol_map[stream_id][
+                                                                                     'struct_size']]),
+                                       time_in_seconds)
+
+            current_message_index += commands_symbol_map[stream_id]['struct_size']
+
 
         message_ids.add(stream_id)
 
