@@ -189,10 +189,12 @@ fields:
 telemetry:
     - name: HK_COMBINED_PKT1_MID
       message_id: 0x0994
+      macro: HK_COMBINED_PKT1_MID
       symbol: HK_PX4_SensorAccelMsg_t
       module: hk
 
     - name: HK_COMBINED_PKT2_MID
       message_id: 0x0995
+      macro: HK_COMBINED_PKT2_MID
       symbol: HK_PX4_SensorBaroMsg_t
       module: hk
