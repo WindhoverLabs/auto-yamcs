@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+tests/data/merged_output.yaml
+*.csv
 
 # C extensions
 *.so
