@@ -25,6 +25,7 @@ symbol_to_struct_format_map = \
         'int8': 'b',  # Maps to the same thing as 'signed char' type
         'int16': 'h',
         'int32': 'i',
+        'enum': 'i',
         'int64': 'l',
         'uint8': 'B',
         'uint16': 'H',
@@ -37,29 +38,54 @@ symbol_to_struct_format_map = \
         'long long': 'q',
         'unsigned long long': 'Q',
         'double': 'd',
+        'bool': '?',
+        "boolean": '?',
         'float': 'f'
     }
 
 
-def get_struct_format_string(symbol_id: int, db_handle: sqlite_utils.Database):
+def is_enum(symbol_id: int, db_handle: sqlite_utils.Database):
+    is_symbol_enum = len(list(db_handle['enumerations'].rows_where('symbol=?', [symbol_id]))) > 0
+
+    return is_symbol_enum
+
+
+def get_struct_format_string(symbol_id: int, header_size: int, db_handle: sqlite_utils.Database, depth: int = 0):
     """
     Returns a string that can be used by the struct module to unpack a C-style struct from a binary stream.
-    Network byte-order is assumed. Please note that the ccsds header is ignored. So the nice that is returned is the
+    Please note that the ccsds header is ignored. So the string that is returned is the
     payload of the message, meaning the struct that has holds the data in code.
+    :param db_handle:
+    :param header_size:
     :param symbol_id:
     :return:s
     """
     fields = list(db_handle['fields'].rows_where('symbol=?', [symbol_id], order_by='byte_offset'))
 
-    little_endian = '<' if fields[0]['little_endian'] == 1 else '>'
+    # Filter out the ccsds headers
+    if depth == 0:
+        filtered_fields = list(filter(lambda record: record['byte_offset'] >= header_size, fields))
+    else:
+        filtered_fields = fields
+
+    little_endian = '<' if filtered_fields[0]['little_endian'] == 1 else '>'
 
     format_string = little_endian
 
-    for field in fields:
-        type_name = list(db_handle['symbols'].rows_where('id=?', [field['type']]))[0]['name']
+    for field in filtered_fields:
+        if is_enum(field['type'], db_handle):
+            type_name = 'enum'
+
+        else:
+            type_name = list(db_handle['symbols'].rows_where('id=?', [field['type']]))[0]['name']
+
+        if type_name not in symbol_to_struct_format_map:
+            child_symbol_id = list(db_handle['symbols'].rows_where('name=?', [type_name]))[0]['id']
+            format_string += get_struct_format_string(child_symbol_id, header_size, db_handle, depth+1)
+
         if field['multiplicity'] == 0:
             format_string += symbol_to_struct_format_map[type_name]
-            print(f'current string-->{format_string}')
+
         else:
             format_string += str(field['multiplicity'])
             format_string += symbol_to_struct_format_map[type_name]
@@ -108,11 +134,11 @@ def is_secondary_header_present(stream_id: int):
 
 
 # getting your message as int
-i = int("140900793d002327", 16)
+# i = int("140900793d002327", 16)
 # getting bit at position 28 (counting from 0 from right)
-i >> 28 & 1
+# i >> 28 & 1
 # getting bits at position 24-27
-bin(i >> 24 & 0b111)
+# bin(i >> 24 & 0b111)
 
 
 def get_time(time_format: TimeFormat, bits: bin):
@@ -143,6 +169,7 @@ def get_packet_type(stream_id: int):
     return packet_type
 
 
+# FIXME:Ignore ccsds headers. Move this function to another function where the get_struct_format_string gets called along with this function
 def get_field_names_from_struct(symbol_id: int, db_handle: sqlite_utils.Database):
     field_labels = []
     for record in list(db_handle['fields'].rows_where('symbol=?', [symbol_id], order_by='byte_offset')):
@@ -206,15 +233,22 @@ def get_command_code(command_header: int):
 
 # FIXME: Cleanup code
 
+
 def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format: TimeFormat):
+    """
+    Parses the file at file_path, extracts all data from it and outputs it into a csv.
+    :param file_path:
+    :param sqlite_path:
+    :param structures:
+    :param time_format:
+    :return:
+    """
     db = sqlite_utils.Database(sqlite_path)
     file_size = os.path.getsize(file_path)
     f = open(file_path, "rb")
     bytes_buffer = f.read()
 
     structure = list(db['symbols'].rows_where('name=?', [structures[0]]))[0]
-
-    struct_fields = list(db['fields'].rows_where('symbol=?', [structure['id']], order_by='byte_offset'))
 
     structure_data = bytes_buffer[64:140]
 
@@ -267,7 +301,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
             if not (stream_id in telemetry_symbol_map):
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
                 symbol_name = get_symbol_name(symbol_id, db)
-                struct_string = get_struct_format_string(symbol_id, db)
+                struct_string = get_struct_format_string(symbol_id, ccsds_header_length , db)
                 symbol_field_labels = get_field_names_from_struct(symbol_id, db)
                 struct_size = calcsize(struct_string)
                 message_macro = get_telemetry_message_macro(stream_id, db)
@@ -295,7 +329,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
             current_message_index += telemetry_symbol_map[stream_id]['struct_size']
 
 
-        # FIXME:Commands have not been verified yet
+        # FIXME: Commands have not been verified yet
         elif get_packet_type(stream_id) == PacketType.COMMAND:
             ccsds_header_length = 6
             if is_secondary_header_present(stream_id):
