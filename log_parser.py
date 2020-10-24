@@ -299,6 +299,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
 
             # Keep track of previous message ids to optimize; otherwise the script could take minutes to finish
             if not (stream_id in telemetry_symbol_map):
+                #FIXME:For commands, get the symbol by command code AND message id
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
                 symbol_name = get_symbol_name(symbol_id, db)
                 struct_string = get_struct_format_string(symbol_id, ccsds_header_length , db)
@@ -335,7 +336,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
             if is_secondary_header_present(stream_id):
                 command_secondary_header = message_data[current_message_index + 6: current_message_index + 8]
                 ccsds_header_length = 8
-                command = unpack(command_secondary_header, 'H')
+                command, = unpack('H', command_secondary_header)
                 command_code = get_command_code(command)
             if not (stream_id in telemetry_symbol_map):
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
