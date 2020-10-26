@@ -523,18 +523,15 @@ class XTCEManager:
         :param symbol_id:
         :return: The name of the enumeration if it is found. Otherwise, None is returned.
         """
-        enums = self.db_cursor.execute('SELECT * FROM enumerations where symbol=?',
+        enums = self.db_cursor.execute('SELECT * FROM symbols where id=?',
                                        (symbol_id,)).fetchall()
 
         out_enum_name = None
 
-        if len(enums)>0:
+        if len(enums) > 0:
             out_enum_name = enums[0][2]
 
         return out_enum_name
-
-
-
 
     def __get_enum_param_type(self, symbol_id: int) -> xtce.EnumeratedParameterType:
         """
@@ -664,6 +661,32 @@ class XTCEManager:
 
         return does_enum_exist
 
+    def __enumeration_argtype_exists(self, symbol_id: int, namespace: str):
+        """
+        Checks if the enumerated type with symbol_id exists in the command metadata child of our root space system.
+        :return:
+        """
+        does_enum_exist = False
+
+        type_name = self.db_cursor.execute('SELECT * FROM enumerations WHERE symbol=?',
+                                           (symbol_id,)).fetchall()
+
+        if len(type_name) > 0:
+            enum_symbol = self.db_cursor.execute('SELECT * FROM symbols WHERE id=?',
+                                                 (symbol_id,)).fetchall()[0][2]
+            if namespace in self.__namespace_dict:
+                if self[namespace].get_CommandMetaData().get_ArgumentTypeSet():
+                    types = [enum_name.get_name() for enum_name in
+                             self[
+                                 namespace].get_CommandMetaData().get_ArgumentTypeSet().get_EnumeratedArgumentType()
+                             if
+                             enum_name.get_name() == enum_symbol]
+
+                    if len(types) > 0:
+                        does_enum_exist = True
+
+        return does_enum_exist
+
     def __get_aggregate_paramtype(self, symbol_record: tuple, module_name: str,
                                   header_present: bool = True, header_size: int = 0) -> xtce.AggregateParameterType:
         """
@@ -725,7 +748,8 @@ class XTCEManager:
 
                         else:
                             new_enum = self.__get_enum_param_type(field_type)
-                            self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
+                            self[
+                                module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
                                 new_enum)
                             type_ref_name = new_enum.get_name()
 
@@ -785,7 +809,8 @@ class XTCEManager:
 
                         else:
                             new_enum = self.__get_enum_param_type(field_type)
-                            self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
+                            self[
+                                module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_EnumeratedParameterType(
                                 new_enum)
                             type_ref_name = new_enum.get_name()
 
@@ -894,11 +919,16 @@ class XTCEManager:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
                     base_type_val = self.__is_base_type(symbol_type[2])
 
-                    if self.__is__symbol_enum(field_type):
-                        new_enum = self.__get_enum_arg_type(field_type)
-                        self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
-                            new_enum)
-                        type_ref_name = new_enum.get_name()
+                    if self.__is__symbol_enum(field_type) is True:
+                        if self.__enumeration_argtype_exists(field_type, module_name) is True:
+                            type_ref_name = self.__get_enum_from_symbol_id(field_type)
+
+                        else:
+                            new_enum = self.__get_enum_arg_type(field_type)
+                            self[
+                                module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
+                                new_enum)
+                            type_ref_name = new_enum.get_name()
 
                     elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
@@ -949,11 +979,16 @@ class XTCEManager:
                     logging.debug(f'symbol_type$$$$-->{symbol_type}')
                     base_type_val = self.__is_base_type(symbol_type[2])
 
-                    if self.__is__symbol_enum(field_type):
-                        new_enum = self.__get_enum_arg_type(field_type)
-                        self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
-                            new_enum)
-                        type_ref_name = new_enum.get_name()
+                    if self.__is__symbol_enum(field_type) is True:
+                        if self.__enumeration_argtype_exists(field_type, module_name) is True:
+                            type_ref_name = self.__get_enum_from_symbol_id(field_type)
+
+                        else:
+                            new_enum = self.__get_enum_arg_type(field_type)
+                            self[
+                                module_name].get_CommandMetaData().get_ArgumentTypeSet().add_EnumeratedArgumentType(
+                                new_enum)
+                            type_ref_name = new_enum.get_name()
 
                     elif base_type_val[0]:
                         #     TODO: Make a distinction between unsigned and int types
