@@ -2,7 +2,7 @@
 config_base: ".."
 core:
   elf_files:
-    - ../airliner/build/squeaky_weasel/default/target/exe/airliner
+    - ../airliner/build/bebop2/sitl/target/exe/airliner
 
   osal:
     config:
@@ -1352,7 +1352,7 @@ core:
 modules:
   ak8963:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/ak8963.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/ak8963.so
     short_name: ak8963
     long_name: TBD
     events:
@@ -1507,7 +1507,7 @@ modules:
     definition: "../apps/ak8963"
   icm20689:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/ICM20689.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/ICM20689.so
     short_name: imc
     long_name: Actuator Motor Control
     events:
@@ -1678,7 +1678,7 @@ modules:
 
   amc:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/amc.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/amc.so
     short_name: amc
     long_name: Actuator Motor Control
     events:
@@ -1848,7 +1848,7 @@ modules:
     definition: "../apps/amc"
   bat:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/bat.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/bat.so
     short_name: bat
     long_name: Battery Manager
     events:
@@ -1972,7 +1972,7 @@ modules:
     definition: "../apps/bat"
   cf:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/CF.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/CF.so
     short_name: cf
     long_name: CFDP File Delivery
     events:
@@ -2644,7 +2644,7 @@ modules:
     definition: "../apps/cf"
   ci:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/CI.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/CI.so
     short_name: ci
     long_name: Command Ingest
     events:
@@ -2877,7 +2877,7 @@ modules:
     definition: "../apps/ci"
   cs:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/CS.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/CS.so
     short_name: cs
     long_name: Checksum Services
     events:
@@ -3535,7 +3535,7 @@ modules:
     definition: "../apps/cs"
   ds:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/DS.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/DS.so
     short_name: ds
     long_name: Data Storage
     events:
@@ -3857,7 +3857,7 @@ modules:
     definition: "../apps/ds"
   ea:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/EA.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/EA.so
     short_name: ea
     long_name: External Application
     events:
@@ -4003,7 +4003,7 @@ modules:
 
   flow:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/FLOW.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/FLOW.so
     short_name: flow
     long_name: Optical Flow
     events:
@@ -4141,7 +4141,7 @@ modules:
     definition: "../apps/flow"
   fm:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/FM.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/FM.so
     short_name: fm
     long_name: File Management
     events:
@@ -4631,7 +4631,7 @@ modules:
 
   gps:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/GPS.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/GPS.so
     short_name: gps
     long_name: GPS Driver
     events:
@@ -4757,7 +4757,7 @@ modules:
 
   hk:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/HK.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/HK.so
     short_name: hk
     long_name: Housekeeping
     events:
@@ -4930,7 +4930,7 @@ modules:
 
   hmc5883:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/HMC5883.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/HMC5883.so
     short_name: hmc5883
     long_name:
     events:
@@ -5088,7 +5088,7 @@ modules:
     definition: "../apps/hmc5883"
   hs:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/HS.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/HS.so
     short_name: hs
     long_name: Heath Services
     events:
@@ -5503,7 +5503,7 @@ modules:
 
   lc:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/LC.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/LC.so
     short_name: lc
     long_name: Limits Checker
     events:
@@ -5801,7 +5801,7 @@ modules:
 
   ld:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/LD.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/LD.so
     short_name: ld
     long_name: Landing Determination
     events:
@@ -5929,7 +5929,7 @@ modules:
 
   lgc:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/LGC.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/LGC.so
     short_name: lgc
     long_name: Landing Gear Control
     events:
@@ -6057,7 +6057,7 @@ modules:
 
   mac:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MAC.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MAC.so
     short_name: mac
     long_name: Multicopter Attitude Controller
     events:
@@ -6161,7 +6161,7 @@ modules:
 
   mavlink:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MAVLINK.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MAVLINK.so
     short_name: mavlink
     long_name: Mavlink Interface
     events:
@@ -6307,7 +6307,7 @@ modules:
 
   md:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MD.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MD.so
     short_name: md
     long_name: Memory Dwell
     events:
@@ -6507,7 +6507,7 @@ modules:
 
   mm:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MM.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MM.so
     short_name: mm
     long_name: Memory Manager
     events:
@@ -6847,7 +6847,7 @@ modules:
 
   mpc:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MPC.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MPC.so
     short_name: mpc
     long_name: Multicopter Position Controller
     events:
@@ -7005,7 +7005,7 @@ modules:
 
   mpu6050:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MPU6050.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MPU6050.so
     short_name: mpu6050
     long_name:
     events:
@@ -7200,7 +7200,7 @@ modules:
 
   mpu9250:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MPU9250.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MPU9250.so
     short_name: mpu9250
     long_name:
     events:
@@ -7397,7 +7397,7 @@ modules:
 
   ms5607:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MS5607.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MS5607.so
     short_name: ms5607
     long_name:
     events:
@@ -7538,7 +7538,7 @@ modules:
 
   ms5611:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/MS5611.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/MS5611.so
     short_name: ms5611
     long_name:
     events:
@@ -7669,7 +7669,7 @@ modules:
 
   nav:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/NAV.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/NAV.so
     short_name: nav
     long_name: Navigation
     events:
@@ -7818,7 +7818,7 @@ modules:
 
   prmlib:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/PRMLIB.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/PRMLIB.so
     short_name: prmlib
     long_name: Parameters
     events: {}
@@ -7895,7 +7895,7 @@ modules:
 
   pe:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/PE.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/PE.so
     short_name: pe
     long_name: Position Estimator
     events:
@@ -8217,7 +8217,7 @@ modules:
 
   qae:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/QAE.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/QAE.so
     short_name: qae
     long_name: Attitude Estimator
     events:
@@ -8350,7 +8350,7 @@ modules:
 
   rcin:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/RCIN.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/RCIN.so
     short_name: rcin
     long_name: Radio Control Input
     events:
@@ -8474,7 +8474,7 @@ modules:
 
   rgbled:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/RGBLED.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/RGBLED.so
     short_name: rgbled
     long_name: RGB LED Control
     events:
@@ -8588,7 +8588,7 @@ modules:
 
   sbn:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SBN.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/SBN.so
     short_name: sbn
     long_name: Software Bus Network
     events: {}
@@ -8606,7 +8606,7 @@ modules:
 
   sc:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SC.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/SC.so
     short_name: sc
     long_name: Stored Command
     events:
@@ -9079,7 +9079,7 @@ modules:
 
   sch:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SCH.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/SCH.so
     short_name: sch
     long_name: Scheduler
     events:
@@ -9354,7 +9354,7 @@ modules:
 
   sens:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SENS.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/SENS.so
     short_name: sens
     long_name: Sensor Application
     events:
@@ -9479,7 +9479,7 @@ modules:
 
   sim:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SIM.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/SIM.so
     short_name: sim
     long_name: Simulation Application
     events:
@@ -9616,7 +9616,7 @@ modules:
 
   sonar:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/SONAR.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/SONAR.so
     short_name: sonar
     long_name: Sonar Driver
     events:
@@ -9753,7 +9753,7 @@ modules:
 
   to:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/TO.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/TO.so
     short_name: to
     long_name: Telemetry Output
     events:
@@ -10003,7 +10003,7 @@ modules:
 
   ulr:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/ULR.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/ULR.so
     short_name: ulr
     long_name: uLanding Radar Driver
     events:
@@ -10143,7 +10143,7 @@ modules:
 
   vc:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/VC.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/VC.so
     short_name: vc
     long_name: Video Control
     events:
@@ -10350,7 +10350,7 @@ modules:
 
   vm:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/VM.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/VM.so
     short_name: vm
     long_name: Vehicle Manager
     events:
@@ -10664,7 +10664,7 @@ modules:
 
   px4lib:
     elf_files:
-      - ../airliner/build/squeaky_weasel/default/target/exe/cf/apps/PX4LIB.so
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/PX4LIB.so
     short_name: px4lib
     long_name: PX4 Library
     events: {}
