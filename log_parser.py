@@ -221,6 +221,13 @@ def get_symbol_id_from_message_id(message_id: int, db_handle: sqlite_utils.Datab
     symbol_key = list(db_handle['telemetry'].rows_where('message_id=?', [message_id]))[0]['symbol']
     return symbol_key
 
+def get_symbol_id_from_message_id_and_command_code(message_id: int, command_code: int , db_handle: sqlite_utils.Database) -> dict:
+    """
+    Returns the symbol id that is mapped to message_id.
+    :return:
+    """
+    symbol_key = list(db_handle['commands'].rows_where('message_id=?, command_code=?', [message_id]))[0]['symbol']
+    return symbol_key
 
 def get_telemetry_message_macro(message_id: int, db_handle: sqlite_utils.Database):
     macro = list(db_handle['telemetry'].rows_where('message_id=?', [message_id]))[0]['macro']
@@ -338,7 +345,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
                 ccsds_header_length = 8
                 command, = unpack('H', command_secondary_header)
                 command_code = get_command_code(command)
-            if not (stream_id in telemetry_symbol_map):
+            if not (stream_id in commands_symbol_map):
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
                 symbol_name = get_symbol_name(symbol_id, db)
                 struct_string = get_struct_format_string(symbol_id, db)
