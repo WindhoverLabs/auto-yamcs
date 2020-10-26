@@ -4,10 +4,10 @@
 
 symbols:
 - name: HK_PX4_SensorAccelMsg_t
-  elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
+  elf: ../airliner/build/bebop2/sitl/target/exe/airliner
   byte_size: 84
 - name: HK_PX4_SensorBaroMsg_t
-  elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
+  elf: ../airliner/build/bebop2/sitl/target/exe/airliner
   byte_size: 24
 
 fields:
