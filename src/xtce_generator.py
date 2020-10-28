@@ -85,7 +85,7 @@ class XTCEManager:
 
     def __get_command_base_container_length(self):
         """
-        Retrieves the length of our commmand base container from the user-provided yaml configuration file, if it is
+        Retrieves the length of our command base container from the user-provided yaml configuration file, if it is
         provided.
         :return: The length of the base container in bits. If it cannot be retrieved, None is returned.
         """
@@ -106,9 +106,10 @@ class XTCEManager:
     def __get_int_argtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
         """
         Factory function to construct a IntegerArgumentType.
-        :param bit_size:
+        :param bit_size: The size of the type in bits.
         :param little_endian:
-        :return:
+        :return: A IntegerArgumentType with an encoding of signed int, size of bit_size and endianness dependent on the
+        little_endian flag.
         """
         endianness = self.__get_endianness(bit_size, little_endian)
 
@@ -148,6 +149,40 @@ class XTCEManager:
         endianness = self.__get_endianness(bit_size, little_endian)
 
         base_type_name = 'uint' + str(bit_size) + endianness
+
+        arg_type = xtce.IntegerArgumentType(name=base_type_name, signed=False)
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        if bit_size > 8:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   byteOrder=byte_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+        else:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+
+        arg_type.set_IntegerDataEncoding(base_type_data_encoding)
+
+        return arg_type
+
+    def __get_padding_argtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
+        """
+        Factory function to construct a IntegerArgumentType.
+        :param bit_size:
+        :param little_endian:
+        :return:
+        """
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = '_padding' + str(bit_size) + endianness
 
         arg_type = xtce.IntegerArgumentType(name=base_type_name, signed=False)
         bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
@@ -273,6 +308,42 @@ class XTCEManager:
 
         return param_type
 
+    def __get_padding_paramtype(self, bit_size: int, little_endian: bool) -> xtce.IntegerDataType:
+        """
+        Factory function to construct a IntegerParameterType.
+        :param bit_size:
+        :param little_endian:
+        :return:
+        """
+        endianness = self.__get_endianness(bit_size, little_endian)
+
+        base_type_name = '_padding' + str(bit_size) + endianness
+
+        param_type = xtce.IntegerParameterType(name=base_type_name, signed=False, sizeInBits=bit_size)
+
+        bit_order = xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST if little_endian else \
+            xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST
+
+        byte_order = xtce.ByteOrderCommonType.LEAST_SIGNIFICANT_BYTE_FIRST if little_endian else \
+            xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST
+
+        if bit_size > 8:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   byteOrder=byte_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+        else:
+            base_type_data_encoding = xtce.IntegerDataEncodingType(sizeInBits=bit_size,
+                                                                   bitOrder=bit_order,
+                                                                   encoding=xtce.IntegerEncodingType.UNSIGNED
+                                                                   )
+
+        param_type.set_IntegerDataEncoding(base_type_data_encoding)
+
+        return param_type
+
+
     def __get_float_paramtype(self, bit_size: int, little_endian: bool) -> xtce.FloatDataType:
         """
         Factory function to construct a IntegerParameterType.
@@ -321,6 +392,8 @@ class XTCEManager:
                 base_set.add_IntegerParameterType(self.__get_int_paramtype(bit, True))
                 base_set.add_IntegerParameterType(self.__get_int_paramtype(bit, False))
 
+            base_set.add_IntegerParameterType(self.__get_padding_paramtype(bit, True))
+            base_set.add_IntegerParameterType(self.__get_padding_paramtype(bit, False))
             base_set.add_IntegerParameterType(self.__get_uint_paramtype(bit, True))
             base_set.add_IntegerParameterType(self.__get_uint_paramtype(bit, False))
 
@@ -363,13 +436,15 @@ class XTCEManager:
         """
         base_set = xtce.ArgumentTypeSetType()
         base_space_system = self[self.base_type_namespace]
-        # base_space_system.set_CommandMetaData(xtce.CommandMetaDataType())
 
         # Add int types
         for bit in range(1, 65):
             if bit > 1:
                 base_set.add_IntegerArgumentType(self.__get_int_argtype(bit, True))
                 base_set.add_IntegerArgumentType(self.__get_int_argtype(bit, False))
+
+            base_set.add_IntegerArgumentType(self.__get_padding_argtype(bit, True))
+            base_set.add_IntegerArgumentType(self.__get_padding_argtype(bit, False))
 
             base_set.add_IntegerArgumentType(self.__get_uint_argtype(bit, True))
             base_set.add_IntegerArgumentType(self.__get_uint_argtype(bit, False))
@@ -411,8 +486,9 @@ class XTCEManager:
         self.__add_telemetry_base_types()
         self.__add_commands_base_types()
 
+
     def __get_all_basetypes(self):
-        # Maybe I should opt for a more readable solution (?)
+        # FIXME: Maybe I should opt for a more readable solution (?)
         return set([name.get_name() for name in
                     self[
                         self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() +
@@ -425,6 +501,7 @@ class XTCEManager:
                         self.base_type_namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() +
                     self[self.base_type_namespace].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType()
                     ])
+
 
     def __get_basetype_name(self, basename: str, bit_size: int, little_endian: bool):
         """
@@ -463,7 +540,8 @@ class XTCEManager:
         Checks if type_name is a base type as it appears in the database.
         :return: A tuple of the form (bool, str), where the bool is whether this is a basetype or not and what the
         base type maps to in our BaseType namespace. Please note that this function does not pre-append the BaseType
-        namespace to the type, that is the responsibility of the caller.
+        namespace to the type, that is the responsibility of the caller. Please note that padding types are also
+        considered base types. Padding types have the form of _padding[Number Of Bits] such as _padding8.
         """
         out_base_type = (False, '')
 
@@ -485,6 +563,8 @@ class XTCEManager:
             out_base_type = (True, 'boolean')
         elif type_name == 'float':
             out_base_type = (True, 'float')
+        elif type_name[:8] == '_padding':
+            out_base_type = (True, '_padding')
 
         return out_base_type
 
