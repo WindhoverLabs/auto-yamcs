@@ -17,6 +17,8 @@ fields:
     type: uint32
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_Timestamp
@@ -24,6 +26,9 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_ErrorCount
@@ -31,6 +36,8 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_Temperature
@@ -38,6 +45,8 @@ fields:
     type: float
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_XRaw
@@ -45,6 +54,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_YRaw
@@ -52,6 +63,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_ZRaw
@@ -59,6 +72,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorAccelMsg_t_TemperatureRaw
@@ -66,6 +81,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorGyroMsg_tTimestamp
@@ -73,6 +90,8 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorGyroMsg_t_ErrorCount
@@ -80,6 +99,8 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorGyroMsg_t_Temperature
@@ -87,6 +108,8 @@ fields:
     type: float
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorGyroMsg_t_XRaw
@@ -94,6 +117,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorGyroMsg_t_YRaw
@@ -101,6 +126,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorGyroMsg_t_ZRaw
@@ -108,6 +135,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorMagMsg_t_Timestamp
@@ -115,6 +144,8 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorMagMsg_t_ErrorCount
@@ -122,6 +153,8 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorMagMsg_t_Temperature
@@ -129,6 +162,8 @@ fields:
     type: float
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorMagMsg_t_XRaw
@@ -136,6 +171,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorMagMsg_t_YRaw
@@ -143,6 +180,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorAccelMsg_t
     name: HK_PX4_SensorMagMsg_t_ZRaw
@@ -150,6 +189,8 @@ fields:
     type: int16
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorBaroMsg_t
     name: HK_PX4_SensorAccelMsg_t_Spare1
@@ -157,6 +198,8 @@ fields:
     type: uint32
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorBaroMsg_t
     name: HK_PX4_SensorBaroMsg_t_TimeStamp
@@ -164,6 +207,8 @@ fields:
     type: uint64
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorBaroMsg_t
     name: HK_PX4_SensorBaroMsg_t_ErrorCount
@@ -171,6 +216,8 @@ fields:
     type: uint32
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorBaroMsg_t
     name: HK_PX4_SensorBaroMsg_t_Pressure
@@ -178,6 +225,8 @@ fields:
     type: float
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
   - symbol: HK_PX4_SensorBaroMsg_t
     name: HK_PX4_SensorBaroMsg_t_Temperature
@@ -185,6 +234,8 @@ fields:
     type: float
     multiplicity: 0
     little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
 
 telemetry:
     - name: HK_COMBINED_PKT1_MID
