@@ -23,6 +23,7 @@ symbol_to_struct_format_map = \
     {
         'int': 'i',
         'int8': 'b',  # Maps to the same thing as 'signed char' type
+        'char': 'c',
         'int16': 'h',
         'int32': 'i',
         'enum': 'i',
@@ -62,15 +63,14 @@ def get_struct_format_string(symbol_id: int, header_size: int, db_handle: sqlite
     """
     fields = list(db_handle['fields'].rows_where('symbol=?', [symbol_id], order_by='byte_offset'))
 
+    format_string = ''
     # Filter out the ccsds headers
     if depth == 0:
         filtered_fields = list(filter(lambda record: record['byte_offset'] >= header_size, fields))
+        little_endian = '<' if filtered_fields[0]['little_endian'] == 1 else '>'
+        format_string = little_endian
     else:
         filtered_fields = fields
-
-    little_endian = '<' if filtered_fields[0]['little_endian'] == 1 else '>'
-
-    format_string = little_endian
 
     for field in filtered_fields:
         if is_enum(field['type'], db_handle):
@@ -83,12 +83,19 @@ def get_struct_format_string(symbol_id: int, header_size: int, db_handle: sqlite
             child_symbol_id = list(db_handle['symbols'].rows_where('name=?', [type_name]))[0]['id']
             format_string += get_struct_format_string(child_symbol_id, header_size, db_handle, depth+1)
 
-        if field['multiplicity'] == 0:
-            format_string += symbol_to_struct_format_map[type_name]
-
         else:
-            format_string += str(field['multiplicity'])
-            format_string += symbol_to_struct_format_map[type_name]
+            if field['multiplicity'] == 0:
+                print(f'member_str:{symbol_to_struct_format_map[type_name]}, member_str_size:{calcsize(symbol_to_struct_format_map[type_name])}')
+                format_string += symbol_to_struct_format_map[type_name]
+
+            else:
+                #FIXME: If multiplicity is greater than 0 and the type_name is char, we assume this is a string, for now.
+                if type_name == 'char':
+                    format_string += str(field['multiplicity'])
+                    format_string += 's'
+                else:
+                    format_string += str(field['multiplicity'])
+                    format_string += symbol_to_struct_format_map[type_name]
 
     return format_string
 
@@ -170,10 +177,29 @@ def get_packet_type(stream_id: int):
 
 
 # FIXME:Ignore ccsds headers. Move this function to another function where the get_struct_format_string gets called along with this function
-def get_field_names_from_struct(symbol_id: int, db_handle: sqlite_utils.Database):
+def get_field_names_from_struct(symbol_id: int, header_size: int, db_handle: sqlite_utils.Database, depth: int = 0):
     field_labels = []
-    for record in list(db_handle['fields'].rows_where('symbol=?', [symbol_id], order_by='byte_offset')):
-        field_labels.append(record['name'])
+    fields = list(db_handle['fields'].rows_where('symbol=?', [symbol_id], order_by='byte_offset'))
+
+    # Filter out the ccsds headers
+    if depth == 0:
+        filtered_fields = list(filter(lambda record: record['byte_offset'] >= header_size, fields))
+
+    else:
+        filtered_fields = fields
+
+    type_to_symbol_name = {}
+
+    for symbol_field in filtered_fields:
+        field_type_name = list(db_handle['symbols'].rows_where('id=?', [symbol_field['type']]))[0]['name']
+        type_to_symbol_name[symbol_field['type']] = field_type_name
+
+    for record in filtered_fields:
+        if type_to_symbol_name[record['type']] in symbol_to_struct_format_map:
+            field_labels.append(record['name'])
+        else:
+            children_fields = get_field_names_from_struct(record['type'], header_size, db_handle, depth+1)
+            field_labels += children_fields
 
     return field_labels
 
@@ -310,7 +336,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
                 symbol_name = get_symbol_name(symbol_id, db)
                 struct_string = get_struct_format_string(symbol_id, ccsds_header_length , db)
-                symbol_field_labels = get_field_names_from_struct(symbol_id, db)
+                symbol_field_labels = get_field_names_from_struct(symbol_id, ccsds_header_length ,db)
                 struct_size = calcsize(struct_string)
                 message_macro = get_telemetry_message_macro(stream_id, db)
 
@@ -349,7 +375,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
                 symbol_id = get_symbol_id_from_message_id(stream_id, db)
                 symbol_name = get_symbol_name(symbol_id, db)
                 struct_string = get_struct_format_string(symbol_id, db)
-                symbol_field_labels = get_field_names_from_struct(symbol_id, db)
+                symbol_field_labels = get_field_names_from_struct(symbol_id, ccsds_header_length ,db)
                 struct_size = calcsize(struct_string)
                 message_macro = get_telemetry_message_macro(stream_id, db)
 
