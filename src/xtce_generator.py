@@ -808,7 +808,7 @@ class XTCEManager:
         member_list = xtce.MemberListType()
         out_param.set_MemberList(member_list)
         symbol_id = str(symbol_record[0])
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian in fields:
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian, bit_size, bit_offset in fields:
             if field_type == field_symbol:
                 continue
             elif field_multiplicity > 0 and field_type != field_symbol:
@@ -985,7 +985,7 @@ class XTCEManager:
         member_list = xtce.MemberListType()
         out_param.set_MemberList(member_list)
         symbol_id = str(symbol_record[0])
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian in fields:
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian,  bit_size, bit_offset in fields:
             if field_type == field_symbol:
                 continue
             elif field_multiplicity > 0 and field_type != field_symbol:
@@ -1226,7 +1226,7 @@ class XTCEManager:
         out_length = 0
         fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                         (symbol_id,)).fetchall()
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplcity, field_little_endian in \
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplcity, field_little_endian, bit_offset, bit_size in \
                 fields:
             size_of_symbol = self.db_cursor.execute('SELECT byte_size from symbols where id=?',
                                                     (field_type,)).fetchone()[0]
