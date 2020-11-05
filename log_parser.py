@@ -41,7 +41,11 @@ symbol_to_struct_format_map = \
         'double': 'd',
         'bool': '?',
         "boolean": '?',
-        'float': 'f'
+        'float': 'f',
+        '_padding8': 'c',
+        '_padding16': '2c',
+        '_padding24': '3c',
+        '_padding32': '4c',
     }
 
 
