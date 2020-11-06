@@ -227,13 +227,12 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
                             symbol_id = symbol[0]
                             command_code = sub_command_dict[name]['cc']
 
-                            # FIXME: Not sure if we'll read the macro in step of the chain
-                            # macro = command_dict['macro']
+                            macro = command
 
                             # Write our command record to the database.
-                            db_cursor.execute('INSERT INTO commands(name, command_code, message_id, symbol ,module) '
-                                              'VALUES (?, ?, ?, ?, ?)',
-                                              (name, command_code, message_id, symbol_id, modules_dict[module_name],))
+                            db_cursor.execute('INSERT INTO commands(name, command_code, message_id, macro, symbol ,module) '
+                                              'VALUES (?, ?, ?, ?, ?, ?)',
+                                              (name, command_code, message_id, macro, symbol_id, modules_dict[module_name],))
 
 
 def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
