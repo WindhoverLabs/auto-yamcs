@@ -1,6 +1,6 @@
 # The definitions of headers we will insert into the database. Note this is almost the same schema that mod_sql uses since
 # we are doing the same thing as mod_sql; we are inserting manual queries into the database. Except that in this case we
-# removing some entries before inserting new ones.
+# are removing some entries before inserting new ones.
 
 command_header:
   # This size should equal the size of CCSDS_CmdPkt_t
