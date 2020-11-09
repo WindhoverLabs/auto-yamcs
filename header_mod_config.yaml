@@ -1,0 +1,156 @@
+# The definitions of headers we will insert into the database. Note this is almost same schema that mod_sql uses since
+# we are doing the same thing as mod_sql; we are inserting manual queries into the database.
+
+command_header:
+  # This size should equal the size of CCSDS_CmdPkt_t
+  size: 8
+  header_symbol: CCSDS_CmdPkt_t
+  symbols:
+    - name: CCSDS_PriHdr_t
+      elf: ../airliner/build/bebop2/sitl/target/exe/airliner
+      byte_size: 6
+    - name: CCSDS_CmdSecHdr_t
+      elf: ../airliner/build/bebop2/sitl/target/exe/airliner
+      byte_size: 2
+
+    - name: CCSDS_CmdPkt_t
+      elf: ../airliner/build/bebop2/sitl/target/exe/airliner
+      byte_size: 8
+
+  fields:
+  # CCSDS_PriHdr_t fields
+
+  - symbol: CCSDS_PriHdr_t
+    name: StreamId
+    byte_offset: 0
+    type: uint8
+    multiplicity: 2
+    little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
+  - symbol: CCSDS_PriHdr_t
+    name: Sequence
+    byte_offset: 2
+    type: uint8
+    multiplicity: 2
+    little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
+  - symbol: CCSDS_PriHdr_t
+    name: Length
+    byte_offset: 4
+    type: uint8
+    multiplicity: 2
+    little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
+    # CCSDS_CmdSecHdr_t fields
+
+  - symbol: CCSDS_CmdSecHdr_t
+    name: Command
+    byte_offset: 0
+    type: uint16
+    multiplicity: 0
+    little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
+    # CCSDS_CmdPkt_t fields
+
+  - symbol: CCSDS_CmdPkt_t
+    name: PriHdr
+    byte_offset: 0
+    type: CCSDS_PriHdr_t
+    multiplicity: 0
+    little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
+  - symbol: CCSDS_CmdPkt_t
+    name: SecHdr
+    byte_offset: 6
+    type: CCSDS_CmdSecHdr_t
+    multiplicity: 0
+    little_endian: 1 # 1 means true; 0 means false
+    bit_size: 0
+    bit_offset: 0
+
+telemetry_header:
+  # This size should equal the size of CCSDS_TlmPkt_t
+  size: 12
+  header_symbol: CCSDS_TlmPkt_t
+  symbols:
+    - name: CCSDS_PriHdr_t
+      elf: ../airliner/build/bebop2/sitl/target/exe/airliner
+      byte_size: 6
+
+    - name: CCSDS_TlmSecHdr_t
+      elf: ../airliner/build/bebop2/sitl/target/exe/airliner
+      byte_size: 6
+
+    - name: CCSDS_TlmPkt_t
+      elf: ../airliner/build/bebop2/sitl/target/exe/airliner
+      byte_size: 12
+
+  fields:
+      # CCSDS_PriHdr_t fields
+    - symbol: CCSDS_PriHdr_t
+      name: StreamId
+      byte_offset: 0
+      type: uint8
+      multiplicity: 2
+      little_endian: 1 # 1 means true; 0 means false
+      bit_size: 0
+      bit_offset: 0
+
+    - symbol: CCSDS_PriHdr_t
+      name: Sequence
+      byte_offset: 2
+      type: uint8
+      multiplicity: 2
+      little_endian: 1 # 1 means true; 0 means false
+      bit_size: 0
+      bit_offset: 0
+
+    - symbol: CCSDS_PriHdr_t
+      name: Length
+      byte_offset: 4
+      type: uint8
+      multiplicity: 2
+      little_endian: 1 # 1 means true; 0 means false
+      bit_size: 0
+      bit_offset: 0
+
+    # CCSDS_TlmSecHdr_t fields
+
+    - symbol: CCSDS_TlmSecHdr_t
+      name: Time
+      byte_offset: 0
+      type: uint8
+      multiplicity: 6
+      little_endian: 1 # 1 means true; 0 means false
+      bit_size: 0
+      bit_offset: 0
+
+    # CCSDS_TlmPkt_t fields
+
+    - symbol: CCSDS_TlmPkt_t
+      name: PriHdr
+      byte_offset: 0
+      type: CCSDS_PriHdr_t
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+      bit_size: 0
+      bit_offset: 0
+
+    - symbol: CCSDS_TlmPkt_t
+      name: SecHdr
+      byte_offset: 6
+      type: CCSDS_TlmSecHdr_t
+      multiplicity: 0
+      little_endian: 1 # 1 means true; 0 means false
+      bit_size: 0
+      bit_offset: 0
