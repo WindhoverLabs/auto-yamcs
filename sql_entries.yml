@@ -1,5 +1,5 @@
 # The order in which tables are defined in the yaml file matters for now. This is because if something
-# using a foreign key of something that is defined in this yaml file.
+# is using a foreign key of something that is defined in this yaml file.
 
 
 symbols:
