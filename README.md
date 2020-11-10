@@ -109,9 +109,9 @@ For example:
 
 Suppose there is a record in the `fields` table that looks like this:
 
-| id* | symbol+ | name | byte_offset | type+ | multiplicity | little_endian
-| --- | --- | --- | ---| --- | --- | --- |
-|  651 | 188 | MsgId |0 | 109 | 0 | 1 |
+| id* | symbol+ | name | byte_offset | type+ | multiplicity | little_endian | bit_size | bit_offsey
+| --- | --- | --- | ---| --- | --- | --- | --- | --- |
+|  651 | 188 | MsgId |0 | 109 | 0 | 1 | 0 | 0
 
 Suppose also that when we follow our `type` foreign key(109) to the symbols table:
 
@@ -412,7 +412,7 @@ python log_parser.py --structures_yaml structures.yaml --sqlite_path newdb.sqlit
 ## Protocol Headers <a name="protocol_headers"></a>
 `auto-yamcs` is meant to be flexible. It is meant to get a ground system running quick. Because of this, there is a way of inserting protocol headers such as `CCSDS`, `MAVLink`, etc into the database. This is useful when the database does not have an *exact* representation of the header. For example in the case of [airliner](https://github.com/WindhoverLabs/airliner), `CCSDS` is used. However, when `juicer` extracts the DWARF information, the CCSDS structures are written as an array of `char`. Which is done on purpose by the airliner developers to enforce Big Endian byte(Network Endianness) order of the ccsds headers. 
 
-Assuming the database has been generated successfully by `auto-yamcs`, one may use `header_mod.py:
+Assuming the database has been generated successfully by `auto-yamcs`, one may use `header_mod.py`:
 
 ```
 python header_mod.py --sqlite_path newdb.sqlite --header_definitions header_mod_config.yaml
