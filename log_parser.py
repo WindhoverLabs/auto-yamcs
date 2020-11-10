@@ -234,7 +234,7 @@ def get_symbol_name(symbol_id: int, db_handle: sqlite_utils.Database):
     return symbol_name
 
 
-def get_symbol_id_from_message_id(message_id: int, db_handle: sqlite_utils.Database) -> dict:
+def get_symbol_id_from_message_id(message_id: int, db_handle: sqlite_utils.Database) -> int:
     """
     Returns the symbol id that is mapped to message_id.
     :return:
@@ -243,7 +243,7 @@ def get_symbol_id_from_message_id(message_id: int, db_handle: sqlite_utils.Datab
     return symbol_key
 
 
-def get_symbol_id_from_message_id_and_command_code(message_id: int, command_code: int , db_handle: sqlite_utils.Database) -> dict:
+def get_symbol_id_from_message_id_and_command_code(message_id: int, command_code: int , db_handle: sqlite_utils.Database) -> int:
     """
     Returns the symbol id that is mapped to message_id.
     :return:
@@ -313,7 +313,7 @@ def parse_file(file_path: str, sqlite_path: str, structures: [str], time_format:
     while current_message_index < file_size - file_header_size:
         # We assume that the primary header is always a ccsds primary header
         primary_header = message_data[current_message_index: current_message_index + 6]
-        stream_id, squence, length = unpack('!HHH', primary_header)
+        stream_id, sequence, length = unpack('!HHH', primary_header)
 
         if get_packet_type(stream_id) == PacketType.TELEMETRY:
             ccsds_header_length = 6
@@ -432,6 +432,7 @@ def main():
 
     yaml_structs = read_yaml(args.structures_yaml)
     parse_file(args.input_file, args.sqlite_path, get_structure_names(yaml_structs), str_to_time_enum[args.time_format])
+
 
 
 if __name__ == '__main__':
