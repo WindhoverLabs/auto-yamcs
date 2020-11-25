@@ -182,6 +182,16 @@ core:
       short_name: cfe_es
       long_name: Core Flight Executive - Essential Services
       events: {}
+      msg_def_overrides:
+        - parent: CFE_ES_AppInfo_t
+          member: Name
+          type: string
+        - parent: CFE_ES_HkPacket_Payload_t
+          member: SysLogMode
+          type: enumeration
+          enumerations:
+            OVERWRITE: 0
+            DROP: 1
       telemetry:
         CFE_ES_HK_TLM_MID:
           msgID: 0x0800
