@@ -1,20 +1,5 @@
 # This schema represents our sqlite database. The sql schema can be found here: https://github.com/WindhoverLabs/tlm_cmd_merger/tree/develop#schemas
 
-bit_fields:
-  type: list
-  schema:
-    type: dict
-    schema:
-      field:
-        type: integer # This is a foreign key
-        min: 0
-      bit_size:
-        type: integer
-        min: 0
-      bit_offset:
-        type: integer
-        min: 0
-
 commands:
   type: list
   schema:
@@ -119,6 +104,10 @@ fields:
         type: integer
       little_endian:
         type: integer # This is a boolean; 1 means true; 0 means false.
+      bit_size:
+        type: integer
+      bit_offset:
+        type: integer
 
 modules:
   type: list
