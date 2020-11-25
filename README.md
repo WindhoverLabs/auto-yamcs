@@ -109,7 +109,7 @@ For example:
 
 Suppose there is a record in the `fields` table that looks like this:
 
-| id* | symbol+ | name | byte_offset | type+ | multiplicity | little_endian | bit_size | bit_offsey
+| id* | symbol+ | name | byte_offset | type+ | multiplicity | little_endian | bit_size | bit_offset
 | --- | --- | --- | ---| --- | --- | --- | --- | --- |
 |  651 | 188 | MsgId |0 | 109 | 0 | 1 | 0 | 0
 
