@@ -1,15 +1,15 @@
 [![Build Status](https://travis-ci.com/WindhoverLabs/auto-yamcs.svg?branch=develop)](https://travis-ci.com/WindhoverLabs/auto-yamcs)
 # Table of Contents
-1. [auto-yamcs](#auto-yamcs)
-2. [Requirements](#Requirements)
-3. [How To Use It](#how_to_use_it)
-4. [SQLite Manual Entries](#sqlite_manual_entries)
-5. [Get Up And Running Quick with YAMCS and Open MCT](#open_mct_and_yamcs)
-6. [YAML Verification](#yaml_verification)
-7. [YAML Merger](#yaml_merger)
-8. [DS Log Parser](#ds_log_parser)
-9. [Protocol Headers](#protocol_headers)
-
+1.  [auto-yamcs](#auto-yamcs)
+2.  [Requirements](#Requirements)
+3.  [How To Use It](#how_to_use_it)
+4.  [SQLite Manual Entries](#sqlite_manual_entries)
+5.  [Get Up And Running Quick with YAMCS and Open MCT](#open_mct_and_yamcs)
+6.  [YAML Verification](#yaml_verification)
+7.  [YAML Merger](#yaml_merger)
+8.  [DS Log Parser](#ds_log_parser)
+9.  [Protocol Headers](#protocol_headers) 
+10. [Overrides](#overrides)
 
 # auto-yamcs <a name="auto-yamcs"></a>
 A collection of tools to auto-generate everything needed to run a ground system.
@@ -297,7 +297,7 @@ cd airliner/build/tutorial/cfs/target/exe/
 
 ### Open MCT
 
-Assuming the yamcs setup was sucessful, now one may set up [Open MCT](https://github.com/akhenry/openmct-yamcs)  as a front-end to yamcs if desired:
+Assuming the yamcs setup was successful, now one may set up [Open MCT](https://github.com/akhenry/openmct-yamcs)  as a front-end to yamcs if desired:
 
 
 1. Install Open MCT:
@@ -306,7 +306,7 @@ git clone https://github.com/akhenry/openmct-yamcs.git
 cd openmct-yamcs
 npm install
 ```
-**NOTE:** `Open MCT` requires nodejs version **10** or highger.
+**NOTE:** `Open MCT` requires nodejs version **10** or higher.
 
 
 2. Modify the Open MCT to run with the `auto-yamcs` setup. Open the `openmct-yamcs/example/index.js` file and change the `yamcsInstance` from
@@ -422,6 +422,123 @@ For an example of the structure of the config file, see `header_mod_config.yaml`
 
 **NOTE:** At the moment only `CCSDS` header is known to work. But any other protocol may be configured through the header_mod_config.yaml config file. Hopefully that configuration template is clear enough.
 
+## Overrides <a name="overrides"></a>
+The `msg_def_overrides.py` tool is useful for cases when a user might want to override a symbol in the database.
+An example of this is strings. There are case in a code base where something might be a string but is read as a `char[]`
+by `juicer`.
+Another example is when enumerations are not explicit in code and are just MACROS. For these cases and any other similar
+ones `msg_def_overrides.py` can be of great use.
+
+### Usage
+First define overrides in a yaml configuration file that looks like the following:
+```
+---
+config_base: ".."
+core:
+  elf_files:
+    - ../airliner/build/bebop2/sitl/target/exe/airliner
+
+    cfe_es:
+      short_name: cfe_es
+      long_name: Core Flight Executive - Essential Services
+      events: {}
+      msg_def_overrides:
+        - parent: CFE_ES_AppInfo_t
+          member: Name
+          type: string
+        - parent: CFE_ES_HkPacket_Payload_t
+          member: SysLogMode
+          type: enumeration
+          enumerations:
+            OVERWRITE: 0
+            DROP: 1
+  ...
+
+modules:
+  ak8963:
+    elf_files:
+      - ../airliner/build/bebop2/sitl/target/exe/cf/apps/ak8963.so
+    short_name: ak8963
+    long_name: TBD
+    events:
+      AK8963_INIT_INF_EID:
+        id: 1
+        type: INFORMATION
+      AK8963_CMD_NOOP_EID:
+        id: 2
+        type: INFORMATION
+      AK8963_SUBSCRIBE_ERR_EID:
+        id: 3
+        type: ERROR
+      AK8963_PIPE_INIT_ERR_EID:
+        id: 4
+        type: ERROR
+      AK8963_CFGTBL_MANAGE_ERR_EID:
+        id: 5
+        type: ERROR
+      AK8963_CFGTBL_GETADDR_ERR_EID:
+        id: 6
+        type: ERROR
+      AK8963_RCVMSG_ERR_EID:
+        id: 7
+        type: ERROR
+      AK8963_MSGID_ERR_EID:
+        id: 8
+        type: ERROR
+      AK8963_CC_ERR_EID:
+        id: 9
+        type: ERROR
+      AK8963_MSGLEN_ERR_EID:
+        id: 10
+        type: ERROR
+      AK8963_CFGTBL_REG_ERR_EID:
+        id: 11
+        type: ERROR
+      AK8963_CFGTBL_LOAD_ERR_EID:
+        id: 12
+        type: ERROR
+      AK8963_UNINIT_ERR_EID:
+        id: 13
+        type: ERROR
+      AK8963_INIT_ERR_EID:
+        id: 14
+        type: ERROR
+      AK8963_READ_ERR_EID:
+        id: 15
+        type: ERROR
+      AK8963_VALIDATE_ERR_EID:
+        id: 16
+        type: ERROR
+      AK8963_CALIBRATE_INF_EID:
+        id: 17
+        type: INFORMATION
+      AK8963_CALIBRATE_ERR_EID:
+        id: 18
+        type: ERROR
+    msg_def_overrides:
+      - parent: CFE_ES_AppInfo_t
+        member: Name
+        type: string
+      - parent: CFE_ES_HkPacket_Payload_t
+        member: SysLogMode
+        type: enumeration
+        enumerations:
+          OVERWRITE: 0
+          DROP: 1
+    telemetry:
+      AK8963_HK_TLM_MID:
+        msgID: 0x0cc1
+        struct: AK8963_HkTlm_t
+      AK8963_DIAG_TLM_MID:
+        msgID: 0x0cc5
+        struct: AK8963_DiagPacket_t
 
 
-Documentation updated on November 9, 2020
+```
+
+Notice the new `msg_def_overrides` key in the config file; that is what `msg_def_overrides.py` will use to know
+what to override.
+
+For a full example, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
+
+Documentation updated on November 30, 2020
