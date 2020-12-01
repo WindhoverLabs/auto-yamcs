@@ -31,7 +31,9 @@ A collection of tools to auto-generate everything needed to run a ground system.
 
 ## How To Use It <a name="how_to_use_it"></a>
 
-1.  You *must* have [airliner](https://github.com/WindhoverLabs/airliner.git)  built on your system in order to use this at the moment. `auto-yamcs` currently only works with the `tutorial/cfs` and `ocpoc` builds.
+1.  To make get this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
+    Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
+    `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation.
 
 To create a `tutorial/cfs` build for airliner:
 ```
@@ -40,13 +42,6 @@ cd airliner
 git checkout add-documentation-to-airliner-tutorial
 make tutorial/cfs
 ``` 
-Or an `ocpoc` build:
-
-```
-cd airliner
-git checkout add-documentation-to-airliner-tutorial
-make ocpoc/default 
-```
 
 **NOTE**: It's possible you might get this error when building `airliner`:
 ```
@@ -57,6 +52,9 @@ You can fix that by doing this:
 ```
 apt-get install gcc-multilib
 ```
+
+`auto-yamcs` has been tested on the following 
+
 
 2. Clone the repo and update the submodules:
 
@@ -85,7 +83,7 @@ pip install -r ./requirements.txt
 
 5. Once that builds successfully, you can run the `auto-yamcs` toolchain
 ```
-python squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml remap.yaml --xtce_config_yaml ./xtce_generator/src/config.yaml
+python squeezer.py  --spacesystem tutorial --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml remap.yaml --xtce_config_yaml ./xtce_generator/src/config.yaml
 ```
 
 6. Now you can open the database with sqlite browser:
@@ -96,7 +94,7 @@ sudo apt-get install sqlitebrowser
 xdg-open newdb.sqlite
 ```
 
-When this is all done, there will be a `ocpoc.xml` in your working directory. You can use this on a ground system such as `yamcs`.
+When this is all done, there will be a `tutorial.xml` in your working directory. You can use this on a ground system such as `yamcs`.
 
 7. Remapping Database Symbols  
 There might be situations where you might want to remap a database symbols to some other type. Specifically this can
@@ -232,7 +230,7 @@ tables:
 This is a short version of the `sqlite_entries.yml` file.
 
 ## Get Up And Running Quick with YAMCS and Open MCT <a name="open_mct_and_yamcs"></a>
-Once there is an xtce-compliant xml file such as `ocpoc.xml`, it is possible to run `yamcs` along with `Open MCT`.
+Once there is an xtce-compliant xml file such as `tutorial.xml`, it is possible to run `yamcs` along with `Open MCT`.
 
 **NOTE**: This guide assumes that `airliner` was the code base that was passed to `jucier` in the guide above, however, this can be followed as a template for any other non-airliner projects.
 
@@ -248,9 +246,9 @@ git clone https://github.com/WindhoverLabs/yamcs-cfs.git
 cd yamcs-cfs
 git checkout update-yamcs-tools
 ```
-3. Copy our `ocpoc.xml` file to our yamcs database
+3. Copy our `tutorial.xml` file to our yamcs database
 ```
-cp ../auto-yamcs/ocpoc.xml src/main/yamcs/mdb
+cp ../auto-yamcs/tutorial.xml src/main/yamcs/mdb
 ```
 4. YAMCS will use the config file on `src/main/yamcs/etc/yamcs.yamcs-cfs.yaml ` to know which files to include in its internal database. We need to add this to the list of files
 
@@ -264,7 +262,7 @@ mdb:
     - type: "xtce"
       spec: "mdb/CFE_EVS.xml"
     - type: "xtce"
-      spec: "mdb/ocpoc.xml"
+      spec: "mdb/tutorial.xml"
 ```
 
 5. Run YAMCS
@@ -274,7 +272,7 @@ mdb:
  
 If `yamcs` runs successfully, the terminal should look similar to this:
 ```
-18:57:42.192 _global [1] XtceStaxReader Parsing XTCE file mdb/ocpoc.xml
+18:57:42.192 _global [1] XtceStaxReader Parsing XTCE file mdb/tutorial.xml
 18:57:42.532 _global [1] XtceStaxReader XTCE file parsing finished, loaded: 39 parameters, 39 tm containers, 250 commands
 18:57:44.964 _global [1] XtceDbFactory Serialized database saved locally
 ...
@@ -291,7 +289,7 @@ The important part of this output is `WebPlugin Website deployed at http://b7a4a
 cd airliner/build/tutorial/cfs/target/exe/
 ./airliner
 ```
-**NOTE**: The path to airliner will be *slightly* different if it was built for the `ocpoc` or any target other than `tutorial/cfs`.
+**NOTE**: The path to airliner will be *slightly* different if it was built for the `tutorial` or any target other than `tutorial/cfs`.
 
 
 
