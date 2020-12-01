@@ -31,7 +31,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 
 ## How To Use It <a name="how_to_use_it"></a>
 
-1.  To make get this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
+1.  To make this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
     Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
     `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation.
 
