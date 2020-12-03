@@ -138,7 +138,7 @@ def get_field_record(symbol_name: str, field_name: str, db_handle: sqlite_utils.
     :param db_handle:
     :param symbol_name:
     :param field_name:
-    :return:
+    :return: Returns None if either the symbol with name symbol_name or the field with name of field_name does not exist.
     """
     field_record = None
 
@@ -178,6 +178,64 @@ def get_field_type_record(symbol_name: str, field_name: str, db_handle: sqlite_u
     return symbol_record
 
 
+def process_enum_override(enum_override: dict, symbol_elf: str, db_handle: sqlite_utils.Database):
+    """
+    Process the enumeration override enum_override.
+    :param enum_override: A dict with the configuration of this override.
+    :param symbol_elf: The elf this new enum symbol will point in the database.
+    :param db_handle:
+    :return:
+    """
+    type_record = get_field_type_record(enum_override['parent'], enum_override['member'], db_handle)
+    if type_record:
+        type_byte_size = type_record['byte_size']
+        new_type_record = add_random_type_to_database(symbol_elf, type_byte_size, db_handle)
+        if new_type_record:
+            new_enum_record = add_enumeration_to_data_base(new_type_record['name'],
+                                                           enum_override['enumerations'],
+                                                           db_handle)
+            if new_enum_record:
+                new_field_record = get_field_record(enum_override['parent'],
+                                                    enum_override['member'],
+                                                    db_handle)
+                db_handle['fields'].delete_where('id=?', [new_field_record['id']])
+                db_handle.conn.commit()
+                new_field_record['type'] = new_type_record['id']
+                db_handle['fields'].insert(new_field_record)
+
+    else:
+        logging.warning(f'The symbol "{enum_override["parent"]}" does not exist in the database.'
+                        f'Field override will not be processed.')
+
+
+def process_symbol_override(symbol_override: dict, symbol_elf: str, db_handle: sqlite_utils.Database):
+    type_record = get_field_type_record(symbol_override['parent'], symbol_override['member'], db_handle)
+    if type_record:
+        type_byte_size = type_record['byte_size']
+        if symbol_exists(symbol_override['type'], db_handle) is False:
+            new_type = add_type_to_database(symbol_override['type'], symbol_elf, type_byte_size, db_handle)
+            new_field_record = get_field_record(symbol_override['parent'], symbol_override['member'], db_handle)
+            if new_field_record:
+                db_handle['fields'].delete_where('id=?', [new_field_record['id']])
+                db_handle.conn.commit()
+                new_field_record['type'] = new_type['id']
+                db_handle['fields'].insert(new_field_record)
+        else:
+            new_field_record = get_field_record(symbol_override['parent'], symbol_override['member'], db_handle)
+            if new_field_record:
+                db_handle['fields'].delete_where('id=?', [new_field_record['id']])
+                db_handle.conn.commit()
+                new_field_record['type'] = list(db_handle['symbols'].rows_where('name=?', [symbol_override['type']]))[0]['id']
+                db_handle['fields'].insert(new_field_record)
+            else:
+                logging.warning(f'The field record with symbol "{symbol_override["parent"]}" with name'
+                                f' "{symbol_override["member"]}".')
+
+    else:
+        logging.warning(f'The symbol "{symbol_override["parent"]}" does not exist in the database.'
+                        f'Field override will not be processed.')
+
+
 def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database):
     """
     Apply overrides in def_overrides to database. Examples of these are strings that show up as char[] in sour code
@@ -192,74 +250,20 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database)
         for app in def_overrides['core']['cfe']:
             if 'msg_def_overrides' in def_overrides['core']['cfe'][app]:
                 for override in def_overrides['core']['cfe'][app]['msg_def_overrides']:
+                    # FIXME: I think we should have the condition be override['type'] == 'enumeration' and flip the logic
                     if override['type'] != 'enumeration':
-                        type_record = get_field_type_record(override['parent'], override['member'], db_handle)
-                        if type_record:
-                            type_byte_size = type_record['byte_size']
-                            new_type = add_type_to_database(override['type'], core_elf, type_byte_size, db_handle)
-                            if new_type:
-                                new_field_record = get_field_record(override['parent'], override['member'], db_handle)
-                                if new_field_record:
-                                    db_handle['fields'].delete_where('id=?', [new_field_record['id']])
-                                    db_handle.conn.commit()
-                                    new_field_record['type'] = new_type['id']
-                                    db_handle['fields'].insert(new_field_record)
-
-                        else:
-                            continue
+                        process_symbol_override(override, core_elf, db_handle)
                     else:
-                        type_record = get_field_type_record(override['parent'], override['member'], db_handle)
-                        if type_record:
-                            type_byte_size = type_record['byte_size']
-                            new_type_record = add_random_type_to_database(core_elf, type_byte_size, db_handle)
-                            if new_type_record:
-                                new_enum_record = add_enumeration_to_data_base(new_type_record['name'],
-                                                                               override['enumerations'],
-                                                                               db_handle)
-                                if new_enum_record:
-                                    new_field_record = get_field_record(override['parent'],
-                                                                        override['member'],
-                                                                        db_handle)
-                                    db_handle['fields'].delete_where('id=?', [new_field_record['id']])
-                                    db_handle.conn.commit()
-                                    new_field_record['type'] = new_type_record['id']
-                                    db_handle['fields'].insert(new_field_record)
+                        process_enum_override(override, core_elf, db_handle)
     if 'modules' in def_overrides:
         for module in def_overrides['modules']:
             module_elf = def_overrides['modules'][module]['elf_files'][0]
             if 'msg_def_overrides' in def_overrides['modules'][module]:
                 for override in def_overrides['modules'][module]['msg_def_overrides']:
                     if override['type'] != 'enumeration':
-                        type_record = get_field_type_record(override['parent'], override['member'], db_handle)
-                        if type_record:
-                            type_byte_size = type_record['byte_size']
-                            new_type = add_type_to_database(override['type'], module_elf, type_byte_size, db_handle)
-                            if new_type:
-                                new_field_record = get_field_record(override['parent'], override['member'], db_handle)
-                                if new_field_record:
-                                    db_handle['fields'].delete_where('id=?', [new_field_record['id']])
-                                    db_handle.conn.commit()
-                                    new_field_record['type'] = new_type['id']
-                                    db_handle['fields'].insert(new_field_record)
-                        else:
-                            continue
+                        process_symbol_override(override, module_elf, db_handle)
                     else:
-                        type_record = get_field_type_record(override['parent'], override['member'], db_handle)
-                        if type_record:
-                            type_byte_size = type_record['byte_size']
-                            new_type_record = add_random_type_to_database(module_elf, type_byte_size, db_handle)
-                            if new_type_record:
-                                new_enum_record = add_enumeration_to_data_base(new_type_record['name'],
-                                                                               override['enumerations'],
-                                                                               db_handle)
-                                if new_enum_record:
-                                    new_field_record = get_field_record(override['parent'],
-                                                                        override['member'],
-                                                                        db_handle)
-                                    db_handle['fields'].delete_where('id=?', [new_field_record['id']])
-                                    db_handle.conn.commit()
-                                    new_field_record['type'] = new_type_record['id']
-                                    db_handle['fields'].insert(new_field_record)
+                        process_enum_override(override, module_elf)
 
 
 def read_yaml(yaml_file: str) -> dict:
