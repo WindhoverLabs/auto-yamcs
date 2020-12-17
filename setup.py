@@ -1,5 +1,6 @@
 from pathlib import Path
 from setuptools import setup, find_packages
+import squeezer
 
 version = '0.1'
 
