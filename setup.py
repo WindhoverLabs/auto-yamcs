@@ -2,7 +2,7 @@ from pathlib import Path
 from setuptools import setup, find_packages
 import squeezer
 
-version = '0.1'
+version = '1.0.0'
 
 
 description = 'A collection of tools to auto-generate everything needed to run a ground system.'
@@ -33,11 +33,12 @@ setup(
     python_requires='>=3.6.0',
     install_requires=requires,
     packages=find_packages(),
+    py_modules=['header_mod', 'log_parser', 'mod_sql', 'msg_def_overrides', 'remap_symbols', 'squeezer', 'yaml_merger',
+                'yaml_merger'], #FIXME: We need to organize auto-yamcs into a package to avoid ugly things like this one.
     include_package_data=True,
     entry_points={'console_scripts': ['auto-yamcs = squeezer:main']},
     classifiers=[
         "License :: 3BSD-3-Clause",
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
     ],
 )
