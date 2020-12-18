@@ -7,6 +7,7 @@ import yaml
 import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 import sys
 import remap_symbols
+from enum import Enum
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
 sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
 
@@ -16,13 +17,13 @@ import mod_sql
 
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
-    subprocess.run(['rm', output_path])
+    subprocess.run(['rm', '-f', output_path])
     subprocess.run(['make', '-C', os.path.join(os.getcwd(), 'juicer')], check=True)
 
     for file_path in elf_files:
         my_file = Path(file_path)
         if my_file.exists() and my_file.is_file():
-            print('Running juicer on {0}'.format(my_file))
+            logging.info('Running juicer on {0}'.format(my_file))
             subprocess.run(
                 ['juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
                 check=True)
@@ -46,7 +47,7 @@ def get_elf_files(yaml_dict: dict):
     return elf_files
 
 
-def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str):
+def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str, verbosity: str):
     xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem)
 
 
@@ -61,8 +62,8 @@ def parse_cli() -> argparse.Namespace:
                         help=' The mode which to run juicer on')
     parser.add_argument('--output_file', type=str, default='newdb.sqlite', help='The output file juier will write to.')
 
-    parser.add_argument('--verbosity', type=str, default='1', choices=['1', '2', ' 3', '4'],
-                        help='The verbosity with which to run juicer.')
+    parser.add_argument('--verbosity', type=str, default='0', choices=['0', '1', '2', '3', '4'],
+                        help='[(0=SILENT), (1=ERRORS), (2=WARNINGS), (3=INFO), (4=DEBUG)]')
 
     parser.add_argument('--yaml_path', type=str, required=True,
                         help='The yaml_path that will be passed to tlm_cmd_merger.py. This script uses this config file'
@@ -108,10 +109,30 @@ def run_mod_sql(database_path: str, yaml_path):
     mod_sql.mod_sql(database_path, yaml_path)
 
 
+# FIXME: I don't like the fact I'm repeating code here that is also on xtce_generator.py. Will revise.
+log_level_map = {
+    '1': logging.ERROR,
+    '2': logging.WARNING,
+    '3': logging.INFO,
+    '4': logging.DEBUG
+}
+
+
+def set_log_level(log_level: str):
+    if log_level == '0':
+        for key, level in log_level_map.items():
+            logging.disable(level)
+    else:
+        logging.getLogger().setLevel(log_level_map[log_level])
+
+    logging.getLogger().name = 'squeezer'
+
+
 def main():
     check_version()
     args = parse_cli()
     yaml_dict = read_yaml(args.yaml_path)
+    set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
 
@@ -124,7 +145,7 @@ def main():
     if args.sql_yaml:
         run_mod_sql(args.output_file, args.sql_yaml)
 
-    run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem)
+    run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem, args.verbosity)
 
 
 if __name__ == '__main__':
