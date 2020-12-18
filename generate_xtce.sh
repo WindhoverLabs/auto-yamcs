@@ -21,4 +21,4 @@ fi
 # Set working directory to the auto_yamcs directory.
 cd ${AUTO_YAMCS_DIR}
 
-python3 squeezer.py  --spacesystem cfs --yaml_path ${YAML_PATH} --output_file ${OUTPUT_DB_FILE} --verbosity 1 --xtce_config_yaml ./xtce_generator/src/config.yaml
+python3 squeezer.py  --spacesystem cfs --yaml_path ${YAML_PATH}  --output_file ${OUTPUT_DB_FILE} --remap_yaml remap.yaml --verbosity 1 --xtce_config_yaml ./xtce_generator/src/config.yaml
