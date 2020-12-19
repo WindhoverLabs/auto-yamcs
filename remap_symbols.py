@@ -9,7 +9,8 @@ def read_yaml(yaml_file: str) -> dict:
     return yaml_data
 
 
-def remap_symbols(database_path, yaml_path: dict):
+# FIXME: In order to work with the singleton config, yaml_path should the contents of the YAML file itself.
+def remap_symbols(database_path, yaml_path: str):
     db_handle = sqlite3.connect(database_path)
     db_cursor = db_handle.cursor()
 
