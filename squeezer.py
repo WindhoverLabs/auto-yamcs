@@ -7,7 +7,6 @@ import yaml
 import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 import sys
 import remap_symbols
-from enum import Enum
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
 sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
@@ -21,6 +20,7 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', '-f', output_path])
     subprocess.run(['make', '-C', os.path.join(os.getcwd(), 'juicer')], check=True)
 
+    logging.info('Squeezing files...')
     for file_path in elf_files:
         my_file = Path(file_path)
         if my_file.exists() and my_file.is_file():
@@ -30,7 +30,9 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
                 check=True)
 
 
-def merge_files(yaml_path: str, sqlite_path: str):
+def merge_command_telemetry(yaml_path: str, sqlite_path: str):
+    logging.info('Merging commands and telemetry into database.')
+    # FIXME: Change the yaml_path to a yaml_dict; this way we avoid parsing the same YAML twice.
     tlm_cmd_merger.merge_all(sqlite_path, yaml_path)
 
 
@@ -49,20 +51,122 @@ def get_elf_files(yaml_dict: dict):
 
 
 def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str, verbosity: str):
-    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem)
+    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem, verbosity)
+
+
+def read_yaml(yaml_file: str) -> dict:
+    yaml_data = yaml.load(open(yaml_file, 'r'),
+                          Loader=yaml.FullLoader)
+    return yaml_data
+
+
+def check_version():
+    if float(sys.version[0:3]) < float('3.6'):
+        logging.error('Python version MUST be 3.6.X or newer. Python version found:{0}'.format(sys.version))
+        exit(0)
+
+
+def remap(database_path: str, remap_yaml_path: str):
+    yaml_data = read_yaml(remap_yaml_path)
+    logging.info('Remapping synbols...')
+    if 'remaps' in yaml_data:
+        yaml_remaps = read_yaml(remap_yaml_path)['remaps']
+        remap_symbols.remap_symbols(database_path, yaml_remaps)
+    else:
+        logging.warning('remap tool was invoked but "remaps" configuration does exist on'
+                        f'"{remap_yaml_path}". Thus no remapping will be done.')
+
+
+def run_mod_sql(database_path: str, yaml_path):
+    logging.info('Modding sqlite database(manual entries)...')
+    mod_sql.mod_sql(database_path, yaml_path)
+
+
+def get_remaps_from_singleton(yaml_dict: dict):
+    """
+    Should be used when user is on "singleton" mode.
+    :param yaml_dict:
+    :return:
+    """
+    remaps = {'remaps': dict()}
+
+    # In our airliner setup, we have a special key called "core"
+    if 'core' in yaml_dict:
+        if 'cfe' in yaml_dict['core']:
+            for module in yaml_dict['core']['cfe']:
+                if 'remaps' in yaml_dict['core']['cfe'][module]:
+                    for remap_key, remap_value in yaml_dict['core']['cfe'][module]['remaps'].items():
+                        if remap_key in remaps['remaps']:
+                            logging.error(f'The {remap_key} remap appears twice in the config file.'
+                                          f'Please review the configuration file.')
+                            raise Exception('Duplicate remapping in configuration file.')
+                        remaps['remaps'].update({remap_key: remap_value})
+
+    for module_key in yaml_dict['modules']:
+        if 'remaps' in yaml_dict['modules'][module_key]:
+            for symbol_remap in yaml_dict['modules'][module_key]['remaps']:
+                if symbol_remap in remaps['remaps']:
+                    logging.error(f'The {symbol_remap} remap appears twice in the config file.'
+                                  f'Please review the configuration file.')
+                    raise Exception('Duplicate remapping in configuration file.')
+                remaps['remaps'].update(symbol_remap)
+
+    return remaps
+
+
+def get_remaps_from_inline(yaml_data: dict):
+    """
+    Should only be used when in "inline" mode.
+    :param yaml_data:
+    :return:
+    """
+    out_remaps = dict({'remaps': dict()})
+    logging.info('Remapping synbols...')
+    if 'remaps' in yaml_data:
+        out_remaps['remaps'] = yaml_data['remaps']
+    else:
+        logging.warning('remap tool was invoked but "remaps" configuration does exist on'
+                        f' configuration file.')
+
+    return out_remaps
+
+
+# FIXME: I don't like the fact I'm repeating code here that is also on xtce_generator.py. Will revise.
+log_level_map = {
+    '1': logging.ERROR,
+    '2': logging.WARNING,
+    '3': logging.INFO,
+    '4': logging.DEBUG
+}
+
+
+def set_log_level(log_level: str):
+    if log_level == '0':
+        for key, level in log_level_map.items():
+            logging.disable(level)
+    else:
+        logging.getLogger().setLevel(log_level_map[log_level])
+
+    logging.getLogger().name = 'squeezer'
 
 
 def inline_mode_handler(args: argparse.Namespace):
+    logging.info('"inline" mode invoked.')
     yaml_dict = read_yaml(args.yaml_path)
     set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
-    merge_files(args.yaml_path, args.output_file)
+    merge_command_telemetry(args.yaml_path, args.output_file)
 
     if args.remap_yaml:
-        remap(args.output_file, args.remap_yaml)
+        yaml_remaps_dict = read_yaml(args.remap_yaml)
+        yaml_remaps = get_remaps_from_inline(yaml_remaps_dict)
+        if len(yaml_remaps['remaps']) > 0:
+            remap_symbols.remap_symbols(args.output_file, yaml_remaps['remaps'])
+        else:
+            logging.warning('No remaps configuration found. No remapping was done done.')
 
     if args.sql_yaml:
         run_mod_sql(args.output_file, args.sql_yaml)
@@ -71,13 +175,28 @@ def inline_mode_handler(args: argparse.Namespace):
 
 
 def singleton_mode_handler(args: argparse.Namespace):
-    yaml_dict = read_yaml(args.yaml_path)
+    """
+    The singleton mode allows the user to pass in one YAML file tha combines all YAML files into one.
+    This function is invoked when the "singleton" argument is passed in from the command line.
+    :param args:
+    :return:
+    """
+    yaml_dict = read_yaml(args.singleton_yaml_path)
     set_log_level(args.verbosity)
-    print('YAML:', get_remaps(yaml_dict))  #
-    # elfs = get_elf_files(yaml_dict)
-    #
-    # squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
-    # merge_files(args.yaml_path, args.output_file)
+
+    yaml_remaps = get_remaps_from_singleton(yaml_dict)
+
+    elfs = get_elf_files(yaml_dict)
+
+    if len(yaml_remaps['remaps']) > 0:
+        remap_symbols.remap_symbols(args.output_file, yaml_remaps['remaps'])
+    else:
+        logging.warning('No remaps configuration found. No remapping was done done.')
+
+    squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
+    merge_command_telemetry(args.yaml_path, args.output_file)
+
+    run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem, args.verbosity)
 
 
 def parse_cli() -> argparse.Namespace:
@@ -144,70 +263,6 @@ def parse_cli() -> argparse.Namespace:
                                   'has everything auto-yamcs needs.')
 
     return parser.parse_args()
-
-
-def read_yaml(yaml_file: str) -> dict:
-    yaml_data = yaml.load(open(yaml_file, 'r'),
-                          Loader=yaml.FullLoader)
-    return yaml_data
-
-
-def check_version():
-    if sys.version[0:3] < '3.6':
-        logging.error('Python version MUST be 3.6.X or newer. Python version found:{0}'.format(sys.version))
-        exit(0)
-
-
-def remap(database_path: str, remap_yaml_path):
-    remap_symbols.remap_symbols(database_path, remap_yaml_path)
-
-
-def run_mod_sql(database_path: str, yaml_path):
-    mod_sql.mod_sql(database_path, yaml_path)
-
-
-def get_remaps(yaml_dict: dict):
-    remaps = {'remaps': dict()}
-
-    # In our airliner setup, we have a special key called "core"
-    if 'core' in yaml_dict:
-        if 'cfe' in yaml_dict['core']:
-            for module in yaml_dict['core']['cfe']:
-                if 'remaps' in yaml_dict['core']['cfe'][module]:
-                    for symbol_remap in yaml_dict['core']['cfe'][module]:
-                        if symbol_remap in remaps['remaps']:
-                            logging.error(f'The {symbol_remap} remap appears twice in the config file.'
-                                          f'Please review the configuration file.')
-                            raise Exception('Duplicate remapping in configuration file.')
-                        remaps['remaps'].update(symbol_remap)
-
-    for module_key in yaml_dict['modules']:
-        if 'remaps' in yaml_dict['modules'][module_key]:
-            for symbol_remap in yaml_dict['modules'][module_key]:
-                if symbol_remap in remaps['remaps']:
-                    logging.error(f'The {symbol_remap} remap appears twice in the config file.'
-                                  f'Please review the configuration file.')
-                    raise Exception('Duplicate remapping in configuration file.')
-                remaps['remaps'].update(symbol_remap)
-
-
-# FIXME: I don't like the fact I'm repeating code here that is also on xtce_generator.py. Will revise.
-log_level_map = {
-    '1': logging.ERROR,
-    '2': logging.WARNING,
-    '3': logging.INFO,
-    '4': logging.DEBUG
-}
-
-
-def set_log_level(log_level: str):
-    if log_level == '0':
-        for key, level in log_level_map.items():
-            logging.disable(level)
-    else:
-        logging.getLogger().setLevel(log_level_map[log_level])
-
-    logging.getLogger().name = 'squeezer'
 
 
 def main():
