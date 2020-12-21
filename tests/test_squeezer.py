@@ -20,6 +20,7 @@ def test_juicer(monkeypatch, get_tests_path):
 
 def test_squeezer(monkeypatch, get_tests_path):
     args = ['',
+            'inline',
             '--yaml_path',
             'tests/data/test_combined.yml',
             '--output_file',
