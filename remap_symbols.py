@@ -10,11 +10,21 @@ def read_yaml(yaml_file: str) -> dict:
 
 
 # FIXME: In order to work with the singleton config, yaml_path should the contents of the YAML file itself.
-def remap_symbols(database_path, yaml_path: str):
+def remap_symbols(database_path, yaml_map: dict):
+    """
+    Remaps symbols in the database. This is very useful for situations where juicer does not
+    accurately capture the intent of the source code. An example is a typedef'd voi* type by a macro.
+    Since the "void*" type does not exist in the database(as of DWARF Version4), one may remap the macro to the word size
+    of the machine which may represented by uint16, uint32 or uint64 depending on the architecture of course.
+    :param database_path: The path to the sqlite database.
+    :param yaml_map:A dictionary of the form {old_symbol1:new_symbol1, old_symbol2:new_symbol2} which has all
+    of the remaps.
+    :return:
+    NOTE: This function commits the database transactions; so there is no need for the caller to commit anything to the
+    database.
+    """
     db_handle = sqlite3.connect(database_path)
     db_cursor = db_handle.cursor()
-
-    yaml_map = read_yaml(yaml_path)['remaps']
 
     for old_symbol, new_symbol in yaml_map.items():
         old_symbol_id = db_cursor.execute('SELECT id FROM symbols where name=?',
@@ -50,7 +60,9 @@ def parse_cli() -> argparse.Namespace:
 def main():
     args = parse_cli()
 
-    remap_symbols(args.database, args.yaml_path)
+    yaml_remaps = read_yaml(args.yaml_path)['remaps']
+
+    remap_symbols(args.database, yaml_remaps)
 
 
 if __name__ == '__main__':
