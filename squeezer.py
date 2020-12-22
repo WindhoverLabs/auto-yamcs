@@ -7,6 +7,8 @@ import yaml
 import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 import sys
 import remap_symbols
+import msg_def_overrides
+import sqlite_utils
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
 sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
@@ -82,7 +84,7 @@ def run_mod_sql(database_path: str, yaml_path):
     mod_sql.mod_sql(database_path, yaml_path)
 
 
-def get_remaps_from_singleton(yaml_dict: dict):
+def __singleton_get_remap(yaml_dict: dict):
     """
     Should be used when user is on "singleton" mode.
     :param yaml_dict:
@@ -114,7 +116,7 @@ def get_remaps_from_singleton(yaml_dict: dict):
     return remaps
 
 
-def get_remaps_from_inline(yaml_data: dict):
+def __inline_get_remaps(yaml_data: dict):
     """
     Should only be used when in "inline" mode.
     :param yaml_data:
@@ -150,6 +152,13 @@ def set_log_level(log_level: str):
     logging.getLogger().name = 'squeezer'
 
 
+def run_msg_def_overrides(yaml_path: str, sqlite_path: str):
+    yaml_overrides_dict = read_yaml(yaml_path)
+    db_handle = sqlite_utils.Database(sqlite_path)
+    logging.info('Processing overrides...')
+    msg_def_overrides.process_def_overrides(yaml_overrides_dict, db_handle)
+
+
 def inline_mode_handler(args: argparse.Namespace):
     logging.info('"inline" mode invoked.')
     yaml_dict = read_yaml(args.yaml_path)
@@ -162,7 +171,7 @@ def inline_mode_handler(args: argparse.Namespace):
 
     if args.remap_yaml:
         yaml_remaps_dict = read_yaml(args.remap_yaml)
-        yaml_remaps = get_remaps_from_inline(yaml_remaps_dict)
+        yaml_remaps = __inline_get_remaps(yaml_remaps_dict)
         if len(yaml_remaps['remaps']) > 0:
             remap_symbols.remap_symbols(args.output_file, yaml_remaps['remaps'])
         else:
@@ -170,6 +179,9 @@ def inline_mode_handler(args: argparse.Namespace):
 
     if args.sql_yaml:
         run_mod_sql(args.output_file, args.sql_yaml)
+
+    if args.override_yaml:
+        run_msg_def_overrides(args.override_yaml, args.output_file)
 
     run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem, args.verbosity)
 
@@ -184,7 +196,7 @@ def singleton_mode_handler(args: argparse.Namespace):
     yaml_dict = read_yaml(args.singleton_yaml_path)
     set_log_level(args.verbosity)
 
-    yaml_remaps = get_remaps_from_singleton(yaml_dict)
+    yaml_remaps = __singleton_get_remap(yaml_dict)
 
     elfs = get_elf_files(yaml_dict)
 
@@ -212,7 +224,7 @@ def parse_cli() -> argparse.Namespace:
                                help='The mode which to run juicer on')
 
     parent_parser.add_argument('--output_file', type=str, default='newdb.sqlite',
-                               help='The output file juier will write to.', required=True)
+                               help='The output file juicer will write to; the database.', required=True)
 
     parent_parser.add_argument('--verbosity', type=str, default='0', choices=['0', '1', '2', '3', '4'],
                                help='[(0=SILENT), (1=ERRORS), (2=WARNINGS), (3=INFO), (4=DEBUG)]')
@@ -254,12 +266,17 @@ def parse_cli() -> argparse.Namespace:
                                help='An optional config file which can be used to insert extra data into the database after juicer'
                                     'is done parsing.')
 
+    inline_parser.add_argument('--override_yaml', type=str, default=None,
+                               help='Optional configuration file to override types in the database. '
+                                    'This can be useful for turning "char[SIZE]" tpes into "string" types for'
+                                    'a ground system.')
+
     inline_parser.add_argument('--spacesystem', type=str, default='airliner',
                                help='The name of the root spacesystem of the xtce file. Note that spacesystem is a '
                                'synonym for namespace. The name of this spacesystem is also used as a file name in '
                                'the form of "spacesystem.xml".')
 
-    singleton_parser.add_argument('--singleton_yaml_path', type=str, required=True, help='A single YAML file that'
+    singleton_parser.add_argument('--singleton_yaml_path', type=str, required=True, help='A single YAML file that '
                                   'has everything auto-yamcs needs.')
 
     return parser.parse_args()

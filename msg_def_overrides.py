@@ -10,6 +10,7 @@ from typing import Union
 from random import randint
 import yaml
 import sqlite_utils
+import os.path
 
 
 def generate_random_name(name_length: int):
@@ -55,7 +56,7 @@ def add_type_to_database(type_name: str, elf_name: str, byte_size: int,
     the new symbol record that was written to the database.
     """
     new_type_record = {}
-    elf_key = list(db_handle['elfs'].rows_where('name=?', [elf_name]))
+    elf_key = list(db_handle['elfs'].rows_where('name=?', [os.path.realpath(elf_name)]))
     if len(elf_key) < 1:
         logging.error(f"The elf record with name of {elf_name} was not found on the database")
         return None
@@ -81,7 +82,7 @@ def add_random_type_to_database(elf_name: str, byte_size: int, db_handle: sqlite
     does not exist, then None is returned.
     """
     new_type_record = {}
-    elf_key = list(db_handle['elfs'].rows_where('name=?', [elf_name]))
+    elf_key = list(db_handle['elfs'].rows_where('name=?', [os.path.realpath(elf_name)]))
     if len(elf_key) < 1:
         logging.error(f"The elf record with name of {elf_name} was not found on the database.")
         return None
@@ -214,12 +215,13 @@ def process_symbol_override(symbol_override: dict, symbol_elf: str, db_handle: s
         type_byte_size = type_record['byte_size']
         if symbol_exists(symbol_override['type'], db_handle) is False:
             new_type = add_type_to_database(symbol_override['type'], symbol_elf, type_byte_size, db_handle)
-            new_field_record = get_field_record(symbol_override['parent'], symbol_override['member'], db_handle)
-            if new_field_record:
-                db_handle['fields'].delete_where('id=?', [new_field_record['id']])
-                db_handle.conn.commit()
-                new_field_record['type'] = new_type['id']
-                db_handle['fields'].insert(new_field_record)
+            if new_type:
+                new_field_record = get_field_record(symbol_override['parent'], symbol_override['member'], db_handle)
+                if new_field_record:
+                    db_handle['fields'].delete_where('id=?', [new_field_record['id']])
+                    db_handle.conn.commit()
+                    new_field_record['type'] = new_type['id']
+                    db_handle['fields'].insert(new_field_record)
         else:
             new_field_record = get_field_record(symbol_override['parent'], symbol_override['member'], db_handle)
             if new_field_record:
@@ -277,7 +279,7 @@ def parse_cli() -> argparse.Namespace:
     Parses cli arguments.
     :return: The namespace that has all of the arguments that have been parsed.
     """
-    parser = argparse.ArgumentParser(description='Takes in path to sqlite database.')
+    parser = argparse.ArgumentParser(description='Override types in the database.')
 
     parser.add_argument('--database', type=str, required=True, help='The path to the SQLITE database..')
 
