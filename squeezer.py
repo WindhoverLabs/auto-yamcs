@@ -196,17 +196,18 @@ def singleton_mode_handler(args: argparse.Namespace):
     yaml_dict = read_yaml(args.singleton_yaml_path)
     set_log_level(args.verbosity)
 
-    yaml_remaps = __singleton_get_remap(yaml_dict)
-
     elfs = get_elf_files(yaml_dict)
+    squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
+
+    yaml_remaps = __singleton_get_remap(yaml_dict)
 
     if len(yaml_remaps['remaps']) > 0:
         remap_symbols.remap_symbols(args.output_file, yaml_remaps['remaps'])
     else:
         logging.warning('No remaps configuration found. No remapping was done done.')
 
-    squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
-    merge_command_telemetry(args.yaml_path, args.output_file)
+    merge_command_telemetry(args.singleton_yaml_path, args.output_file)
+    run_msg_def_overrides(args.singleton_yaml_path, args.output_file)
 
     run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem, args.verbosity)
 
@@ -228,6 +229,11 @@ def parse_cli() -> argparse.Namespace:
 
     parent_parser.add_argument('--verbosity', type=str, default='0', choices=['0', '1', '2', '3', '4'],
                                help='[(0=SILENT), (1=ERRORS), (2=WARNINGS), (3=INFO), (4=DEBUG)]')
+
+    parent_parser.add_argument('--spacesystem', type=str, default='airliner',
+                               help='The name of the root spacesystem of the xtce file. Note that spacesystem is a '
+                               'synonym for namespace. The name of this spacesystem is also used as a file name in '
+                               'the form of "spacesystem.xml".')
 
     subparsers = parser.add_subparsers(
         description='Mode to run squeezer.',
@@ -270,11 +276,6 @@ def parse_cli() -> argparse.Namespace:
                                help='Optional configuration file to override types in the database. '
                                     'This can be useful for turning "char[SIZE]" tpes into "string" types for'
                                     'a ground system.')
-
-    inline_parser.add_argument('--spacesystem', type=str, default='airliner',
-                               help='The name of the root spacesystem of the xtce file. Note that spacesystem is a '
-                               'synonym for namespace. The name of this spacesystem is also used as a file name in '
-                               'the form of "spacesystem.xml".')
 
     singleton_parser.add_argument('--singleton_yaml_path', type=str, required=True, help='A single YAML file that '
                                   'has everything auto-yamcs needs.')
