@@ -26,7 +26,9 @@ def test_squeezer(monkeypatch, get_tests_path):
             '--output_file',
             'newdb.sqlite',
             '--xtce_config_yaml',
-            'tests/data/xtce_config.yaml', ]
+            'tests/data/xtce_config.yaml',
+            '--xtce_output_path',
+            'cfs.xml']
 
     monkeypatch.chdir(os.path.join(get_tests_path, '..'))
 
