@@ -26,7 +26,7 @@ def test_squeezer(monkeypatch, get_tests_path):
             '--output_file',
             'newdb.sqlite',
             '--xtce_config_yaml',
-            'xtce_generator/src/config.yaml', ]
+            'tests/data/xtce_config.yaml', ]
 
     monkeypatch.chdir(os.path.join(get_tests_path, '..'))
 
@@ -36,4 +36,4 @@ def test_squeezer(monkeypatch, get_tests_path):
     # TODO: The correctness of the database should be tested.
 
     os.remove('newdb.sqlite')
-    os.remove('airliner.xml')
+    os.remove('cfs.xml')
