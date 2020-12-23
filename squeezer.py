@@ -53,8 +53,8 @@ def get_elf_files(yaml_dict: dict):
     return elf_files
 
 
-def run_xtce_generator(sqlite_path: str, xtce_yaml: dict, root_spacesystem: str, verbosity: str):
-    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem, verbosity)
+def run_xtce_generator(sqlite_path: str, xtce_yaml: dict, verbosity: str, output_dir):
+    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, output_dir, xtce_yaml['root_spacesystem'], verbosity)
 
 
 def read_yaml(yaml_file: str) -> dict:
@@ -185,7 +185,7 @@ def inline_mode_handler(args: argparse.Namespace):
         run_msg_def_overrides(args.override_yaml, args.output_file)
 
     xtce_config_data = read_yaml(args.xtce_config_yaml)
-    run_xtce_generator(args.output_file, xtce_config_data, args.spacesystem, args.verbosity)
+    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_dir)
 
 
 def singleton_mode_handler(args: argparse.Namespace):
@@ -218,8 +218,7 @@ def singleton_mode_handler(args: argparse.Namespace):
                         'No configuration will be applied when generating xtce file.')
         xtce_config_data = None
 
-    run_xtce_generator(args.output_file, xtce_config_data, args.spacesystem, args.verbosity)
-
+    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_dir)
 
 def parse_cli() -> argparse.Namespace:
     """
@@ -239,10 +238,8 @@ def parse_cli() -> argparse.Namespace:
     parent_parser.add_argument('--verbosity', type=str, default='0', choices=['0', '1', '2', '3', '4'],
                                help='[(0=SILENT), (1=ERRORS), (2=WARNINGS), (3=INFO), (4=DEBUG)]')
 
-    parent_parser.add_argument('--spacesystem', type=str, default='airliner',
-                               help='The name of the root spacesystem of the xtce file. Note that spacesystem is a '
-                               'synonym for namespace. The name of this spacesystem is also used as a file name in '
-                               'the form of "spacesystem.xml".')
+    parent_parser.add_argument('--xtce_output_dir', type=str, default=None,
+                               help='The output directory where to write the output XTCE to.')
 
     subparsers = parser.add_subparsers(
         description='Mode to run squeezer.',
