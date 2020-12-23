@@ -12,6 +12,7 @@ import sqlite_utils
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
 sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
+sys.path.append(os.path.join(os.getcwd(), 'xtce_generator/src'))
 
 import xtce_generator.src.xtce_generator as xtce_generator
 
