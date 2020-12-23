@@ -11016,7 +11016,7 @@ modules:
 
 
 # Configuration for xtce_generator
-xtce_cofig:
+xtce_config:
   # The global settings affect every namespace except for the root namespace/spacesystem since the root spacesystem is
   # merely used as an abstraction that may represent anything such as a vehicle, particular mission or even a hardware
   # architecture. This is particularly useful when users want to decouple the protocol(an example is ccsds) from the payload
