@@ -52,7 +52,7 @@ def get_elf_files(yaml_dict: dict):
     return elf_files
 
 
-def run_xtce_generator(sqlite_path: str, xtce_yaml: str, root_spacesystem: str, verbosity: str):
+def run_xtce_generator(sqlite_path: str, xtce_yaml: dict, root_spacesystem: str, verbosity: str):
     xtce_generator.generate_xtce(sqlite_path, xtce_yaml, root_spacesystem, verbosity)
 
 
@@ -183,7 +183,8 @@ def inline_mode_handler(args: argparse.Namespace):
     if args.override_yaml:
         run_msg_def_overrides(args.override_yaml, args.output_file)
 
-    run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem, args.verbosity)
+    xtce_config_data = read_yaml(args.xtce_config_yaml)
+    run_xtce_generator(args.output_file, xtce_config_data, args.spacesystem, args.verbosity)
 
 
 def singleton_mode_handler(args: argparse.Namespace):
@@ -209,7 +210,14 @@ def singleton_mode_handler(args: argparse.Namespace):
     merge_command_telemetry(args.singleton_yaml_path, args.output_file)
     run_msg_def_overrides(args.singleton_yaml_path, args.output_file)
 
-    run_xtce_generator(args.output_file, args.xtce_config_yaml, args.spacesystem, args.verbosity)
+    if 'xtce_config' in yaml_dict:
+        xtce_config_data = yaml_dict['xtce_config']
+    else:
+        logging.warning('The xtce configuration file "{args.singleton_yaml_path}" has no "xtce_config" key.'
+                        'No configuration will be applied when generating xtce file.')
+        xtce_config_data = None
+
+    run_xtce_generator(args.output_file, xtce_config_data, args.spacesystem, args.verbosity)
 
 
 def parse_cli() -> argparse.Namespace:
