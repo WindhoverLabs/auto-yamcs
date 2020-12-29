@@ -103,7 +103,7 @@ def add_random_type_to_database(elf_name: str, byte_size: int, db_handle: sqlite
 
 
 def add_enumeration_to_data_base(symbol_name: str, enum_map: dict, db_handle: sqlite_utils.Database) -> Union[
-                                 dict, None]:
+    dict, None]:
     """
     Adds new enumeration records to database.
     :param symbol_name: A foreign key to a symbol record in the symbols table.
@@ -227,7 +227,8 @@ def process_symbol_override(symbol_override: dict, symbol_elf: str, db_handle: s
             if new_field_record:
                 db_handle['fields'].delete_where('id=?', [new_field_record['id']])
                 db_handle.conn.commit()
-                new_field_record['type'] = list(db_handle['symbols'].rows_where('name=?', [symbol_override['type']]))[0]['id']
+                new_field_record['type'] = \
+                list(db_handle['symbols'].rows_where('name=?', [symbol_override['type']]))[0]['id']
                 db_handle['fields'].insert(new_field_record)
             else:
                 logging.warning(f'The field record with symbol "{symbol_override["parent"]}" with name'
@@ -238,34 +239,30 @@ def process_symbol_override(symbol_override: dict, symbol_elf: str, db_handle: s
                         f'Field override will not be processed.')
 
 
-def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database):
+def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database, module_elf=None):
     """
     Apply overrides in def_overrides to database. Examples of these are strings that show up as char[] in sour code
     or enumerations that are represented
+    :param module_elf:
     :param def_overrides:
     :param db_handle:
     :return:
     """
-    # Check for our core dict in airliner
-    if 'core' in def_overrides:
-        core_elf = def_overrides['core']['elf_files'][0]
-        for app in def_overrides['core']['cfe']:
-            if 'msg_def_overrides' in def_overrides['core']['cfe'][app]:
-                for override in def_overrides['core']['cfe'][app]['msg_def_overrides']:
-                    # FIXME: I think we should have the condition be override['type'] == 'enumeration' and flip the logic
-                    if override['type'] != 'enumeration':
-                        process_symbol_override(override, core_elf, db_handle)
-                    else:
-                        process_enum_override(override, core_elf, db_handle)
+    # FIXME. This looks ugly; I don't like it. Will revisit.
     if 'modules' in def_overrides:
         for module in def_overrides['modules']:
-            module_elf = def_overrides['modules'][module]['elf_files'][0]
-            if 'msg_def_overrides' in def_overrides['modules'][module]:
-                for override in def_overrides['modules'][module]['msg_def_overrides']:
-                    if override['type'] != 'enumeration':
-                        process_symbol_override(override, module_elf, db_handle)
-                    else:
-                        process_enum_override(override, module_elf)
+            if 'elf_files' in def_overrides['modules'][module]:
+                module_elf = def_overrides['modules'][module]['elf_files'][0]
+            if module_elf:
+                if 'msg_def_overrides' in def_overrides['modules'][module]:
+                    for override in def_overrides['modules'][module]['msg_def_overrides']:
+                        if override['type'] != 'enumeration':
+                            process_symbol_override(override, module_elf, db_handle)
+                        else:
+                            process_enum_override(override, module_elf)
+                if 'modules' in def_overrides['modules'][module]:
+                    process_def_overrides(def_overrides['modules'][module], module_elf)
+                    module_elf = None
 
 
 def read_yaml(yaml_file: str) -> dict:
