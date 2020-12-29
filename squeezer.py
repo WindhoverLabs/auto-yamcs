@@ -214,7 +214,7 @@ def singleton_mode_handler(args: argparse.Namespace):
     if 'xtce_config' in yaml_dict:
         xtce_config_data = yaml_dict['xtce_config']
     else:
-        logging.warning('The xtce configuration file "{args.singleton_yaml_path}" has no "xtce_config" key.'
+        logging.warning(f'The xtce configuration file "{args.singleton_yaml_path}" has no "xtce_config" key.'
                         'No configuration will be applied when generating xtce file.')
         xtce_config_data = None
 
