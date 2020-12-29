@@ -9,7 +9,6 @@ def read_yaml(yaml_file: str) -> dict:
     return yaml_data
 
 
-# FIXME: In order to work with the singleton config, yaml_path should the contents of the YAML file itself.
 def remap_symbols(database_path, yaml_map: dict):
     """
     Remaps symbols in the database. This is very useful for situations where juicer does not

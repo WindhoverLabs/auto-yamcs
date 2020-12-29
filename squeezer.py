@@ -72,11 +72,11 @@ def check_version():
 def remap(database_path: str, remap_yaml_path: str):
     yaml_data = read_yaml(remap_yaml_path)
     logging.info('Remapping synbols...')
-    if 'remaps' in yaml_data:
-        yaml_remaps = read_yaml(remap_yaml_path)['remaps']
+    if 'type_remaps' in yaml_data:
+        yaml_remaps = read_yaml(remap_yaml_path)['type_remaps']
         remap_symbols.remap_symbols(database_path, yaml_remaps)
     else:
-        logging.warning('remap tool was invoked but "remaps" configuration does exist on'
+        logging.warning('remap tool was invoked but "type_remaps" configuration does exist on'
                         f'"{remap_yaml_path}". Thus no remapping will be done.')
 
 
@@ -91,28 +91,18 @@ def __singleton_get_remap(yaml_dict: dict):
     :param yaml_dict:
     :return:
     """
-    remaps = {'remaps': dict()}
-
-    # In our airliner setup, we have a special key called "core"
-    if 'core' in yaml_dict:
-        if 'cfe' in yaml_dict['core']:
-            for module in yaml_dict['core']['cfe']:
-                if 'remaps' in yaml_dict['core']['cfe'][module]:
-                    for remap_key, remap_value in yaml_dict['core']['cfe'][module]['remaps'].items():
-                        if remap_key in remaps['remaps']:
-                            logging.error(f'The {remap_key} remap appears twice in the config file.'
-                                          f'Please review the configuration file.')
-                            raise Exception('Duplicate remapping in configuration file.')
-                        remaps['remaps'].update({remap_key: remap_value})
+    remaps = {'type_remaps': dict()}
 
     for module_key in yaml_dict['modules']:
-        if 'remaps' in yaml_dict['modules'][module_key]:
-            for symbol_remap in yaml_dict['modules'][module_key]['remaps']:
-                if symbol_remap in remaps['remaps']:
-                    logging.error(f'The {symbol_remap} remap appears twice in the config file.'
+        if 'type_remaps' in yaml_dict['modules'][module_key]:
+            for old_symbol, new_symbol in yaml_dict['modules'][module_key]['type_remaps'].items():
+                if old_symbol in remaps['type_remaps']:
+                    logging.error(f'The {old_symbol} remap appears twice in the config file.'
                                   f'Please review the configuration file.')
                     raise Exception('Duplicate remapping in configuration file.')
-                remaps['remaps'].update(symbol_remap)
+                remaps['type_remaps'].update({old_symbol: new_symbol})
+        if 'modules' in yaml_dict['modules'][module_key]:
+            remaps['type_remaps'].update(__singleton_get_remap(yaml_dict['modules'][module_key])['type_remaps'])
 
     return remaps
 
@@ -123,12 +113,12 @@ def __inline_get_remaps(yaml_data: dict):
     :param yaml_data:
     :return:
     """
-    out_remaps = dict({'remaps': dict()})
+    out_remaps = dict({'type_remaps': dict()})
     logging.info('Remapping synbols...')
-    if 'remaps' in yaml_data:
-        out_remaps['remaps'] = yaml_data['remaps']
+    if 'type_remaps' in yaml_data:
+        out_remaps['type_remaps'] = yaml_data['type_remaps']
     else:
-        logging.warning('remap tool was invoked but "remaps" configuration does exist on'
+        logging.warning('remap tool was invoked but "type_remaps" configuration does exist on'
                         f' configuration file.')
 
     return out_remaps
@@ -173,10 +163,10 @@ def inline_mode_handler(args: argparse.Namespace):
     if args.remap_yaml:
         yaml_remaps_dict = read_yaml(args.remap_yaml)
         yaml_remaps = __inline_get_remaps(yaml_remaps_dict)
-        if len(yaml_remaps['remaps']) > 0:
-            remap_symbols.remap_symbols(args.output_file, yaml_remaps['remaps'])
+        if len(yaml_remaps['type_remaps']) > 0:
+            remap_symbols.remap_symbols(args.output_file, yaml_remaps['type_remaps'])
         else:
-            logging.warning('No remaps configuration found. No remapping was done done.')
+            logging.warning('No type_remaps configuration found. No remapping was done done.')
 
     if args.sql_yaml:
         run_mod_sql(args.output_file, args.sql_yaml)
@@ -203,10 +193,10 @@ def singleton_mode_handler(args: argparse.Namespace):
 
     yaml_remaps = __singleton_get_remap(yaml_dict)
 
-    if len(yaml_remaps['remaps']) > 0:
-        remap_symbols.remap_symbols(args.output_file, yaml_remaps['remaps'])
+    if len(yaml_remaps['type_remaps']) > 0:
+        remap_symbols.remap_symbols(args.output_file, yaml_remaps['type_remaps'])
     else:
-        logging.warning('No remaps configuration found. No remapping was done done.')
+        logging.warning('No type_remaps configuration found. No type_remapping was done done.')
 
     merge_command_telemetry(args.singleton_yaml_path, args.output_file)
     run_msg_def_overrides(args.singleton_yaml_path, args.output_file)
