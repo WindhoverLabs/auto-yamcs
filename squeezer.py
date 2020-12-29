@@ -42,13 +42,14 @@ def merge_command_telemetry(yaml_path: str, sqlite_path: str):
 def get_elf_files(yaml_dict: dict):
     elf_files = []
 
-    # In our airliner setup, we have a special key called "core"
-    if 'core' in yaml_dict:
-        elf_files += yaml_dict['core']['elf_files']
-
     for module_key in yaml_dict['modules']:
-        for elf in yaml_dict['modules'][module_key]['elf_files']:
-            elf_files.append(elf)
+        if 'elf_files' in yaml_dict['modules'][module_key]:
+            for elf in yaml_dict['modules'][module_key]['elf_files']:
+                elf_files.append(elf)
+        if 'modules' in yaml_dict['modules'][module_key]:
+            child_elfs = get_elf_files(yaml_dict['modules'][module_key])
+            if len(child_elfs)>0:
+                elf_files.append(get_elf_files(yaml_dict['modules'][module_key]))
 
     return elf_files
 
