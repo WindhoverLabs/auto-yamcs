@@ -623,7 +623,7 @@ modules:
                 name: CFE_ES_STARTUP_SCRIPT_TIMEOUT_MSEC
                 value: 30000
 
-            remaps:
+            type_remaps:
               # CFE_ES_MemHandle_t is a void* that is wrapped in a macro. For now we are assuming 32-bit void*, which is the word size
               # of our machine. You can get this number in linux with the 'getconf WORD_BIT' command.
               CFE_ES_MemHandle_t: uint32
@@ -1011,7 +1011,7 @@ modules:
                 name: CFE_SB_START_TASK_FLAGS
                 value: OS_ENABLE_CORE_0
 
-            remaps:
+            type_remaps:
               CFE_SB_MsgId_t: uint16
               CFE_SB_PipeId_t: uint8
 
