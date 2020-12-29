@@ -1,6 +1,6 @@
 
 # You can remap database symbols in this config file
-remaps:
+type_remaps:
   CFE_SB_MsgId_t: uint16
   # CFE_ES_MemHandle_t is a void* that is wrapped in a macro. For now we are assuming 32-bit void*, which is the word size
   # of our machine. You can get this number in linux with the 'getconf WORD_BIT' command.
