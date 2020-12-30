@@ -3,8 +3,9 @@ import sys
 import os
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-sys.path.append(os.path.join(os.getcwd(), '../xtce_generator'))
-import squeezer
+# sys.path.append(os.path.join(os.getcwd(), '../xtce_generator'))
+sys.path.append(os.path.join(os.getcwd(), './src'))
+import src.squeezer as squeezer
 import sys
 from unittest.mock import patch
 
