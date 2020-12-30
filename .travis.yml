@@ -20,8 +20,9 @@ install:
   - sudo apt install build-essential
   - cd src
   - pip3 install -r requirements.txt
-  - pip3 install -r ../tlm_cmd_merger/requirements.txt
-  - pip3 install -r ../xtce_generator/requirements.txt
+  - cd ..
+  - pip3 install -r tlm_cmd_merger/requirements.txt
+  - pip3 install -r xtce_generator/requirements.txt
 
 script:
   pytest
