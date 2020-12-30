@@ -259,10 +259,10 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database,
                         if override['type'] != 'enumeration':
                             process_symbol_override(override, module_elf, db_handle)
                         else:
-                            process_enum_override(override, module_elf)
-                if 'modules' in def_overrides['modules'][module]:
-                    process_def_overrides(def_overrides['modules'][module], module_elf)
-                    module_elf = None
+                            process_enum_override(override, module_elf, db_handle)
+            if 'modules' in def_overrides['modules'][module]:
+                process_def_overrides(def_overrides['modules'][module], db_handle, module_elf)
+                module_elf = None
 
 
 def read_yaml(yaml_file: str) -> dict:
