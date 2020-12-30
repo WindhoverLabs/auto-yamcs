@@ -11,8 +11,8 @@ import msg_def_overrides
 import sqlite_utils
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-sys.path.append(os.path.join(os.getcwd(), 'xtce_generator'))
-sys.path.append(os.path.join(os.getcwd(), 'xtce_generator/src'))
+sys.path.append(os.path.join(os.getcwd(), '../xtce_generator'))
+sys.path.append(os.path.join(os.getcwd(), '../xtce_generator/src'))
 
 import xtce_generator.src.xtce_generator as xtce_generator
 
@@ -21,7 +21,7 @@ import mod_sql
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', '-f', output_path])
-    subprocess.run(['make', '-C', os.path.join(os.getcwd(), 'juicer')], check=True)
+    subprocess.run(['make', '-C', os.path.join(os.getcwd(), '../juicer')], check=True)
 
     logging.info('Squeezing files...')
     for file_path in elf_files:
@@ -29,7 +29,7 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
         if my_file.exists() and my_file.is_file():
             logging.info('Running juicer on {0}'.format(my_file))
             subprocess.run(
-                ['juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
+                ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
                 check=True)
 
 
