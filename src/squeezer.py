@@ -31,6 +31,8 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
             subprocess.run(
                 ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
                 check=True)
+        else:
+            logging.error(f'Elf file "{my_file}" does not exist. Revise your configuration file.')
 
 
 def merge_command_telemetry(yaml_path: str, sqlite_path: str):
