@@ -4,20 +4,19 @@ import os
 import logging
 from pathlib import Path
 import yaml
-import tlm_cmd_merger.src.tlm_cmd_merger as tlm_cmd_merger
 import sys
 import remap_symbols
 import msg_def_overrides
 import sqlite_utils
-
-# There does not seem to be a cleaner way of doing this in python when working with git submodules
-sys.path.append(os.path.join(os.getcwd(), '../xtce_generator'))
-sys.path.append(os.path.join(os.getcwd(), '../xtce_generator/src'))
-
-import xtce_generator.src.xtce_generator as xtce_generator
-
 import mod_sql
 
+# There does not seem to be a cleaner way of doing this in python when working with git submodules
+sys.path.append(os.path.realpath(os.path.join(os.getcwd(), '../xtce_generator/src')))
+sys.path.append(os.path.realpath(os.path.join(os.getcwd(), '../tlm_cmd_merger/src')))
+# NOTE:If using Pycharm, add the  "../xtce_generator/src" path to your interpreter,
+# otherwise pycharm will think xtce_generator is a folder
+import  xtce_generator
+import tlm_cmd_merger
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', '-f', output_path])
@@ -32,7 +31,7 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
                 ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
                 check=True)
         else:
-            logging.error(f'Elf file "{my_file}" does not exist. Revise your configuration file.')
+            logging.warning(f'Elf file "{my_file}" does not exist. Revise your configuration file.')
 
 
 def merge_command_telemetry(yaml_path: str, sqlite_path: str):
