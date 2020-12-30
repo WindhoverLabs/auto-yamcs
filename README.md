@@ -2,7 +2,8 @@
 # Table of Contents
 1.  [auto-yamcs](#auto-yamcs)
 2.  [Requirements](#Requirements)
-3.  [How To Use It](#how_to_use_it)
+3.  [How To Use It(quick and easy)](#how_to_use_it_quick)
+4.  [How to Use It(fine tuning)](#how_to_use_it_tuning)
 4.  [SQLite Manual Entries](#sqlite_manual_entries)
 5.  [Get Up And Running Quick with YAMCS and Open MCT](#open_mct_and_yamcs)
 6.  [YAML Verification](#yaml_verification)
@@ -29,15 +30,15 @@ A collection of tools to auto-generate everything needed to run a ground system.
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
 
-## How To Use It <a name="how_to_use_it"></a>
+## How To Use It(quick and easy)<a name="how_to_use_it_quick"></a>
 
 1.  To make this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
     Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
-    `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation.
+    `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation
+    are taken into consideration.
 
-To create a `tutorial/cfs` build for airliner:
+Assuming that airliner has been cloned, create a `tutorial/cfs` build for airliner:
 ```
-
 cd airliner
 git checkout add-documentation-to-airliner-tutorial
 make tutorial/cfs
@@ -51,9 +52,8 @@ fatal error: bits/libc-header-start.h: No such file or directory
 You can fix that by doing this:
 ```
 apt-get install gcc-multilib
+apt-get install g++-multilib
 ```
-
-`auto-yamcs` has been tested on the following 
 
 
 2. Clone the repo and update the submodules:
@@ -63,6 +63,34 @@ git clone https://github.com/WindhoverLabs/auto-yamcs.git
 cd  auto-yamcs
 git submodule update --init
 ```
+
+After cloning `airliner` and `auto-yamcs` be sure that you have the following structure:
+
+```
+
+~/
+├── airliner
+│   ├── apps
+│   ├── build
+│   ├── config
+│   ├── core
+│   ├── docs
+│   ├── mavlink
+│   └── tools
+├── auto-yamcs
+│   ├── config
+│   ├── juicer
+│   ├── schemas
+│   ├── src
+│   ├── tests
+│   ├── tlm_cmd_merger
+│   ├── venv
+│   └── xtce_generator
+
+```
+
+Having this directory structure will the next steps very easy.
+
 
 3. Start a virtual environment
 
@@ -77,8 +105,84 @@ python3.6 -m venv venv
 
 4. Install dependencies
 ```
+cd src
 pip install -r ./requirements.txt
 ```
+5. Generate XTCE  
+   **NOTE**:If this is *not* your first time using `auto-yamcs`, then you may skip to the [tuning](#how_to_use_it_tuning)
+for more flexible ways of using the tool. If you are a first-time user, then *do not* skp this section.
+
+Assuming auto-yamcs is being used alongside  `airliner` flight software, new users may use a convenience script to run
+auto-yamcs:
+
+```
+./generate_xtce.sh ../config/singleton_config.yaml newdb.sqlite  ../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml
+```
+
+The `generate_xtce.sh` script runs auto-yamcs in `singleton` mode; in this mode there is only one YAML
+file that drives the configuration of the entire workflow.
+
+While running the script, depending on your environment, you may see the following types of errors and warnings:
+```
+...
+WARNING: Cannot find data type.  Skipping.  464  errno=0 Dwarf_Error is NULL 
+WARNING:squeezer:Elf file "../../airliner/build/tutorial/cfs/target/target/exe/cf/apps/VC.so" does not exist. Revise your configuration file.
+ERROR:   Error in dwarf_attr(DW_AT_name).  1587  errno=114 DW_DLE_ATTR_FORM_BAD (114)
+...
+```
+These errors and warnings, while useful for advanced usage, are __perfectly ok__.
+Specially when parsing the `airliner` code base, this can take a couple of minutes. After a while, you should see
+the following messages at the end:
+```
+INFO:xtce_generator:Writing xtce object to file...
+INFO:xtce_generator:XTCE file has been written to "../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml"
+```
+
+As you can see auto-yamcs writes an XTCE file called cfs.xml to the yamcs-cfs configuration.
+
+Deactivate your virtual environment:
+```
+deactivate
+```
+
+6. Run YAMCS
+```
+cd airliner/tools/yamcs-cfs
+mvn yamcs:run
+```
+If the `mvn` command fails, this means you need Maven:
+```
+sudo apt-get install maven
+```
+
+After running `mvn yamcs:run`, you should see the following message:
+```
+...
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service XtceTmRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ParameterRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service AlarmRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service EventRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ReplayServer
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service SystemParametersCollector
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ProcessorCreatorService
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service CommandHistoryRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ParameterArchive
+17:38:22.756 _global [1] YamcsServer Yamcs started in 1642ms. Started 1 of 1 instances and 10 services
+17:38:22.756 _global [1] WebPlugin Website deployed at http://MightyPenguin:8090
+```
+
+The important part here is the address follows the **http**. Go to that website on your favorite browser.
+
+7. On a different shell/terminal, run airliner;
+```
+cd airliner/build/tutorial/cfs/target/target/exe
+./airliner
+```
+
+Now you can view telemetry and send commands on the YAMCS web interface!
+
+## How To Use It(fine tuning)<a name="how_to_use_it_tuning"></a>
+The following steps are meant for *advanced* users only.
 
 
 5. Once that builds successfully, you can run the `auto-yamcs` toolchain
@@ -539,4 +643,4 @@ what to override.
 
 For a full example, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
 
-Documentation updated on November 30, 2020
+Documentation updated on December 30, 2020
