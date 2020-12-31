@@ -62,7 +62,7 @@ apt-get install g++-multilib
 cd ..
 git clone https://github.com/WindhoverLabs/auto-yamcs.git
 cd  auto-yamcs
-git submodule update --init
+git submodule update --init --recusrive
 ```
 
 After cloning `airliner` and `auto-yamcs` be sure that you have the following directory structure:
@@ -645,6 +645,6 @@ modules:
 Notice the new `msg_def_overrides` key in the config file; that is what `msg_def_overrides.py` will use to know
 what to override.
 
-For a full example, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
+For a full example of the config file, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
 
-Documentation updated on December 30, 2020
+Documentation updated on December 31, 2020
