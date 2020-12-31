@@ -39,6 +39,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 
 Assuming that airliner has been cloned, create a `tutorial/cfs` build for airliner:
 ```
+git clone git@github.com:WindhoverLabs/airliner.git
 cd airliner
 git checkout integrate_yamcs
 make tutorial/cfs
@@ -60,7 +61,7 @@ apt-get install g++-multilib
 
 ```
 cd ..
-git clone https://github.com/WindhoverLabs/auto-yamcs.git
+git clone git@github.com:WindhoverLabs/auto-yamcs.git
 cd  auto-yamcs
 git submodule update --init --recusrive
 ```
