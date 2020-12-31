@@ -11,31 +11,37 @@ import src.squeezer as squeezer
 import sys
 from unittest.mock import patch
 
+print('cwd:', os.getcwd())
+# exit()
 
 def test_juicer(monkeypatch, get_tests_path):
     """
     Test juicer with "make run-tests"
     :return:
     """
-    monkeypatch.chdir(os.path.join(get_tests_path, '..'))
-    subprocess.run(['make', '-C', 'juicer', 'run-tests'], check=True)
+    monkeypatch.chdir(os.path.join(get_tests_path, '../src'))
+    print('test path:',os.path.join(get_tests_path, '../src'))
+    subprocess.run(['make', '-C', '../juicer', 'run-tests'], check=True)
 
 
 def test_squeezer(monkeypatch, get_tests_path):
+
     args = ['',
             'inline',
-            '--yaml_path',
-            'tests/data/test_combined.yml',
+            '--inline_yaml_path',
+            '../tests/data/test_combined.yml',
             '--output_file',
             'newdb.sqlite',
             '--xtce_config_yaml',
-            'tests/data/xtce_config.yaml',
+            '../tests/data/xtce_config.yaml',
             '--xtce_output_path',
             'cfs.xml',
             '--verbosity',
             '0']
 
-    monkeypatch.chdir(os.path.join(get_tests_path, '..'))
+    print('get_tests_path', get_tests_path)
+
+    monkeypatch.chdir(os.path.join(get_tests_path, '../src'))
 
     with patch.object(sys, 'argv', args):
         squeezer.main()

@@ -1,7 +1,7 @@
 modules:
   file1:
     elf_files:
-      - ./juicer/build/ut_obj/test_file1.o
+      - ../juicer/build/ut_obj/test_file1.o
     short_name: ak8963
     long_name: TBD
     events:
