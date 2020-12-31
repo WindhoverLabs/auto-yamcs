@@ -11,11 +11,11 @@ import sqlite_utils
 import mod_sql
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-sys.path.append(os.path.realpath(os.path.join(os.getcwd(), '../xtce_generator/src')))
-sys.path.append(os.path.realpath(os.path.join(os.getcwd(), '../tlm_cmd_merger/src')))
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../xtce_generator/src')))
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../tlm_cmd_merger/src')))
 # NOTE:If using Pycharm, add the  "../xtce_generator/src" path to your interpreter,
-# otherwise pycharm will think xtce_generator is a folder
-import  xtce_generator
+# otherwise pycharm will think xtce_generator is a directory/package
+import xtce_generator
 import tlm_cmd_merger
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):

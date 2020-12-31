@@ -3,8 +3,10 @@ import sys
 import os
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-# sys.path.append(os.path.join(os.getcwd(), '../xtce_generator'))
-sys.path.append(os.path.join(os.getcwd(), './src'))
+sys.path.append(os.path.realpath(os.path.join(os.path.realpath(__file__), '../../src')))
+# FIXME: This path busisness is getting out of hand; I have opened an issue on Github:https://github.com/WindhoverLabs/auto-yamcs/issues/17
+
+
 import src.squeezer as squeezer
 import sys
 from unittest.mock import patch
@@ -29,7 +31,9 @@ def test_squeezer(monkeypatch, get_tests_path):
             '--xtce_config_yaml',
             'tests/data/xtce_config.yaml',
             '--xtce_output_path',
-            'cfs.xml']
+            'cfs.xml',
+            '--verbosity',
+            '0']
 
     monkeypatch.chdir(os.path.join(get_tests_path, '..'))
 
