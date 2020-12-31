@@ -40,7 +40,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 Assuming that airliner has been cloned, create a `tutorial/cfs` build for airliner:
 ```
 cd airliner
-git checkout add-documentation-to-airliner-tutorial
+git checkout integrate_yamcs
 make tutorial/cfs
 ``` 
 
@@ -59,12 +59,13 @@ apt-get install g++-multilib
 2. Clone the repo and update the submodules:
 
 ```
+cd ..
 git clone https://github.com/WindhoverLabs/auto-yamcs.git
 cd  auto-yamcs
 git submodule update --init
 ```
 
-After cloning `airliner` and `auto-yamcs` be sure that you have the following structure:
+After cloning `airliner` and `auto-yamcs` be sure that you have the following directory structure:
 
 ```
 
@@ -84,7 +85,6 @@ After cloning `airliner` and `auto-yamcs` be sure that you have the following st
 │   ├── src
 │   ├── tests
 │   ├── tlm_cmd_merger
-│   ├── venv
 │   └── xtce_generator
 
 ```
@@ -138,7 +138,7 @@ INFO:xtce_generator:Writing xtce object to file...
 INFO:xtce_generator:XTCE file has been written to "../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml"
 ```
 
-As you can see auto-yamcs writes an XTCE file called cfs.xml to the yamcs-cfs configuration.
+As you can see auto-yamcs writes an XTCE file called `cfs.xml` to the yamcs-cfs configuration.
 
 Deactivate your virtual environment:
 ```
@@ -147,6 +147,7 @@ deactivate
 
 6. Run YAMCS
 ```
+cd ../..
 cd airliner/tools/yamcs-cfs
 mvn yamcs:run
 ```
@@ -185,11 +186,14 @@ Now you can view telemetry and send commands on the YAMCS web interface!
 The following steps are meant for *advanced* users only.
 
 
-5. Once that builds successfully, you can run the `auto-yamcs` toolchain
+5. Once airliner builds successfully and all dependencies have been installed in previous steps, you may `auto-yamcs` in `inline` mode. In this mode you have more flexibility;
+   every tool may be run separately, or may choose to not run certain tools.
+
+An example of running all of the tools in inline mode looks like the following command:
 ```
 python squeezer.py  --spacesystem tutorial --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml remap.yaml --xtce_config_yaml ./xtce_generator/src/config.yaml
 ```
-
+ 
 6. Now you can open the database with sqlite browser:
 ```
 sudo apt-get install sqlitebrowser
