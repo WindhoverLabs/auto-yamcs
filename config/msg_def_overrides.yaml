@@ -1,5 +1,8 @@
 modules:
   core:
+    #NOTE: An Elf file is required at least at the parent module when configuring overrides.
+    elf_files:
+      - ../../airliner/build/tutorial/cfs/target/target/exe/airliner
     modules:
       cfe:
         modules:
