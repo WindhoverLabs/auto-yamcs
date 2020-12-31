@@ -21,4 +21,4 @@ fi
 # Set working directory to the auto_yamcs directory.
 cd ${AUTO_YAMCS_DIR}
 
-python3 squeezer.py singleton --singleton_yaml_path "${YAML_PATH}"  --output_file "${OUTPUT_DB_FILE}" --verbosity 1 --xtce_output_path "${OUTPUT_XTCE_FILE}"
+python3 squeezer.py singleton --singleton_yaml_path "${YAML_PATH}"  --output_file "${OUTPUT_DB_FILE}" --verbosity 3 --xtce_output_path "${OUTPUT_XTCE_FILE}"
