@@ -154,13 +154,13 @@ def run_msg_def_overrides(yaml_path: str, sqlite_path: str):
 
 def inline_mode_handler(args: argparse.Namespace):
     logging.info('"inline" mode invoked.')
-    yaml_dict = read_yaml(args.yaml_path)
+    yaml_dict = read_yaml(args.inline_yaml_path)
     set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
-    merge_command_telemetry(args.yaml_path, args.output_file)
+    merge_command_telemetry(args.inline_yaml_path, args.output_file)
 
     if args.remap_yaml:
         yaml_remaps_dict = read_yaml(args.remap_yaml)
@@ -253,9 +253,9 @@ def parse_cli() -> argparse.Namespace:
     singleton_parser.set_defaults(func=singleton_mode_handler)
     inline_parser.set_defaults(func=inline_mode_handler)
 
-    inline_parser.add_argument('--yaml_path', type=str, required=True,
+    inline_parser.add_argument('--inline_yaml_path', type=str, required=True,
                                help='The yaml_path that will be passed to tlm_cmd_merger.py. '
-                                    'This script uses this config file'
+                                    'This script uses this config file '
                                     'as well to know which binary files to pass to juicer')
 
     inline_parser.add_argument('--xtce_config_yaml', type=str, required=True,
