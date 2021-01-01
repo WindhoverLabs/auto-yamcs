@@ -29,31 +29,43 @@ A collection of tools to auto-generate everything needed to run a ground system.
 ## Assumptions <a name="assumptions"></a>
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
+- The "python3" command launches **python3.6** or higher.
 
 ## How To Use It(quick and easy)<a name="how_to_use_it_quick"></a>
 
-1.  To make this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
+ To make this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
     Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
     `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation
     are taken into consideration.
 
-Assuming that airliner has been cloned, create a `tutorial/cfs` build for airliner:
+**NOTE**:If you want, you can start a python virtual environment such as [venv](https://docs.python.org/3/library/venv.html).
+Just ensure that you run **python3.6** or highgher.  
+
+
+1. Install airliner and juicer Dependencies
 ```
-git clone git@github.com:WindhoverLabs/airliner.git
+apt-get install libdwarf-dev
+apt-get install libelf-dev
+apt-get install libsqlite3-dev
+apt-get install cmake
+apt-get install gcc-multilib
+apt-get install g++-multilib
+apt-get install maven
+apt install default-jre
+apt-get install openjdk-8-jdk
+pip3 install yamlpath
+pip3 install yamlpath
+pip3 install cerberus
+
+```
+
+
+2. Assuming that airliner has been cloned, create a `tutorial/cfs` build for airliner:
+```
+git clone https://github.com/WindhoverLabs/airliner.git
 cd airliner
 git checkout integrate_yamcs
 make tutorial/cfs
-``` 
-
-**NOTE**: It's possible you might get this error when building `airliner`:
-```
-fatal error: bits/libc-header-start.h: No such file or directory
-```
-
-You can fix that by doing this:
-```
-apt-get install gcc-multilib
-apt-get install g++-multilib
 ```
 
 
@@ -61,9 +73,9 @@ apt-get install g++-multilib
 
 ```
 cd ..
-git clone git@github.com:WindhoverLabs/auto-yamcs.git
+git clone https://github.com/WindhoverLabs/auto-yamcs.git
 cd  auto-yamcs
-git submodule update --init --recusrive
+git submodule update --init --recursive
 ```
 
 After cloning `airliner` and `auto-yamcs` be sure that you have the following directory structure:
@@ -147,14 +159,11 @@ deactivate
 ```
 
 6. Run YAMCS
+**NOTE**:Ensure you have the `JAVA_HOME` environment variable set on your system.
 ```
 cd ../..
 cd airliner/tools/yamcs-cfs
 mvn yamcs:run
-```
-If the `mvn` command fails, this means you need Maven:
-```
-sudo apt-get install maven
 ```
 
 After running `mvn yamcs:run`, you should see the following message:
