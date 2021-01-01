@@ -39,7 +39,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
     are taken into consideration.
 
 **NOTE**:If you want, you can start a python virtual environment such as [venv](https://docs.python.org/3/library/venv.html).
-Just ensure that you run **python3.6** or highgher.  
+Just ensure that you run **python3.6** or higher.  
 
 
 1. Install airliner and juicer Dependencies
@@ -56,7 +56,6 @@ apt-get install openjdk-8-jdk
 pip3 install yamlpath
 pip3 install yamlpath
 pip3 install cerberus
-
 ```
 
 
@@ -69,7 +68,7 @@ make tutorial/cfs
 ```
 
 
-2. Clone the repo and update the submodules:
+3. Clone the repo and update the submodules:
 
 ```
 cd ..
@@ -102,21 +101,9 @@ After cloning `airliner` and `auto-yamcs` be sure that you have the following di
 
 ```
 
-Having this directory structure will the next steps very easy.
+Having this directory structure will make the next steps very easy.
 
-
-3. Start a virtual environment
-
-```
-python3.6 -m venv venv
-```
-```
-. ./venv/bin/activate
-```
-
-**NOTE**: Be sure that the venv python version is **3.6** or above.
-
-4. Install dependencies
+5. Install auto-yamcs dependencies
 ```
 cd src
 pip install -r ./requirements.txt
@@ -152,11 +139,6 @@ INFO:xtce_generator:XTCE file has been written to "../../airliner/tools/yamcs-cf
 ```
 
 As you can see auto-yamcs writes an XTCE file called `cfs.xml` to the yamcs-cfs configuration.
-
-Deactivate your virtual environment:
-```
-deactivate
-```
 
 6. Run YAMCS
 **NOTE**:Ensure you have the `JAVA_HOME` environment variable set on your system.
