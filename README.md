@@ -54,7 +54,6 @@ apt-get install maven
 apt install default-jre
 apt-get install openjdk-8-jdk
 pip3 install yamlpath
-pip3 install yamlpath
 pip3 install cerberus
 ```
 
