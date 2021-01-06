@@ -661,4 +661,4 @@ what to override.
 
 For a full example of the config file, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
 
-Documentation updated on January 4, 2021
+Documentation updated on January 6, 2021
