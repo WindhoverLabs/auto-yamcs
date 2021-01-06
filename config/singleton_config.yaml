@@ -625,7 +625,9 @@ modules:
 
             type_remaps:
               # CFE_ES_MemHandle_t is a void* that is wrapped in a macro. For now we are assuming 32-bit void*, which is the word size
-              # of our machine. You can get this number in linux with the 'getconf WORD_BIT' command.
+              # of our machine. You can get this number in linux with the 'getconf WORD_BIT' command. TO be specific it is
+              # type uintptr_t, which in most implementations, SHOULD be cast-able to and from void*. But beware that, technically speaking,
+              # this is implementation-defined behavior.
               CFE_ES_MemHandle_t: uint32
 
           cfe_evs:
