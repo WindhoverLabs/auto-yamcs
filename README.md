@@ -2,7 +2,8 @@
 # Table of Contents
 1.  [auto-yamcs](#auto-yamcs)
 2.  [Requirements](#Requirements)
-3.  [How To Use It](#how_to_use_it)
+3.  [How To Use It(quick and easy)](#how_to_use_it_quick)
+4.  [How to Use It(fine tuning)](#how_to_use_it_tuning)
 4.  [SQLite Manual Entries](#sqlite_manual_entries)
 5.  [Get Up And Running Quick with YAMCS and Open MCT](#open_mct_and_yamcs)
 6.  [YAML Verification](#yaml_verification)
@@ -28,75 +29,194 @@ A collection of tools to auto-generate everything needed to run a ground system.
 ## Assumptions <a name="assumptions"></a>
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
+- The "python3" command launches **python3.6** or higher.
 
-## How To Use It <a name="how_to_use_it"></a>
+## How To Use It(quick and easy)<a name="how_to_use_it_quick"></a>
 
-1.  You *must* have [airliner](https://github.com/WindhoverLabs/airliner.git)  built on your system in order to use this at the moment. `auto-yamcs` currently only works with the `tutorial/cfs` and `ocpoc` builds.
+ To make this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
+    Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
+    `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation
+    are taken into consideration.
 
-To create a `tutorial/cfs` build for airliner:
+**NOTE**:If you want, you can start a python virtual environment such as [venv](https://docs.python.org/3/library/venv.html).
+Just ensure that you run **python3.6** or higher.  
+
+
+1. Install airliner and juicer Dependencies
 ```
-
-cd airliner
-git checkout add-documentation-to-airliner-tutorial
-make tutorial/cfs
-``` 
-Or an `ocpoc` build:
-
-```
-cd airliner
-git checkout add-documentation-to-airliner-tutorial
-make ocpoc/default 
-```
-
-**NOTE**: It's possible you might get this error when building `airliner`:
-```
-fatal error: bits/libc-header-start.h: No such file or directory
-```
-
-You can fix that by doing this:
-```
+apt-get install libdwarf-dev
+apt-get install libelf-dev
+apt-get install libsqlite3-dev
+apt-get install cmake
 apt-get install gcc-multilib
+apt-get install g++-multilib
+apt-get install maven
+apt install default-jre
+apt-get install openjdk-8-jdk
+pip3 install pyyaml
+pip3 install ruamel-yaml
+pip3 install yamlpath
+pip3 install cerberus
 ```
 
-2. Clone the repo and update the submodules:
+
+2. Make a `tutorial/cfs` build for airliner:
+```
+git clone https://github.com/WindhoverLabs/airliner.git
+cd airliner
+git checkout develop
+make tutorial/cfs
+```
+
+
+3. Clone the repo and update the submodules:
 
 ```
+cd ..
 git clone https://github.com/WindhoverLabs/auto-yamcs.git
 cd  auto-yamcs
-git submodule update --init
+git submodule update --init --recursive
 ```
 
-3. Start a virtual environment
+After cloning `airliner` and `auto-yamcs` be sure that you have the following directory structure:
 
 ```
-python3.6 -m venv venv
-```
-```
-. ./venv/bin/activate
+
+~/
+├── airliner
+│   ├── apps
+│   ├── build
+│   ├── config
+│   ├── core
+│   ├── docs
+│   ├── mavlink
+│   └── tools
+├── auto-yamcs
+│   ├── config
+│   ├── juicer
+│   ├── schemas
+│   ├── src
+│   ├── tests
+│   ├── tlm_cmd_merger
+│   └── xtce_generator
+
 ```
 
-**NOTE**: Be sure that the venv python version is **3.6** or above.
+Having this directory structure will make the next steps very easy.
 
-4. Install dependencies
+5. Install auto-yamcs dependencies
 ```
-pip install -r ./requirements.txt
+cd src
+pip3 install -r ./requirements.txt
+```
+5. Generate XTCE  
+   **NOTE**:If this is *not* your first time using `auto-yamcs`, then you may skip to the [tuning section](#how_to_use_it_tuning)
+for more flexible ways of using the tool. If you are a first-time user, then *do not* skp this section.
+
+Assuming auto-yamcs is being used alongside  `airliner` flight software, new users may use a convenience script to run
+auto-yamcs:
+
+```
+./generate_xtce.sh ../../airliner/build/tutorial/cfs/target/wh_defs.yaml newdb.sqlite  ../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml
+```
+
+The `generate_xtce.sh` script runs auto-yamcs in `singleton` mode; in this mode there is only one YAML
+file that drives the configuration of the entire workflow.
+
+While running the script, depending on your environment, you may see the following errors and warnings:
+```
+...
+WARNING: Cannot find data type.  Skipping.  464  errno=0 Dwarf_Error is NULL 
+WARNING:squeezer:Elf file "../../airliner/build/tutorial/cfs/target/target/exe/cf/apps/VC.so" does not exist. Revise your configuration file.
+ERROR:   Error in dwarf_attr(DW_AT_name).  1587  errno=114 DW_DLE_ATTR_FORM_BAD (114)
+...
+```
+These errors and warnings, while useful for advanced usage, are __perfectly ok__.
+Specially when parsing the `airliner` code base, this can take a couple of minutes. After a while, you should see
+the following messages at the end:
+```
+INFO:xtce_generator:Writing xtce object to file...
+INFO:xtce_generator:XTCE file has been written to "../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml"
+```
+
+As you can see auto-yamcs writes an XTCE file called `cfs.xml` to the yamcs-cfs configuration.
+
+6. Run YAMCS  
+   **NOTE**:Ensure you have the `JAVA_HOME` environment variable set on your system.
+```
+cd ../..
+cd airliner/tools/yamcs-cfs
+mvn yamcs:run
+```
+
+After running `mvn yamcs:run`, you should see the following message:
+```
+...
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service XtceTmRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ParameterRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service AlarmRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service EventRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ReplayServer
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service SystemParametersCollector
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ProcessorCreatorService
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service CommandHistoryRecorder
+17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service ParameterArchive
+17:38:22.756 _global [1] YamcsServer Yamcs started in 1642ms. Started 1 of 1 instances and 10 services
+17:38:22.756 _global [1] WebPlugin Website deployed at http://MightyPenguin:8090
+```
+
+The important part here is the address follows the **http**. Go to that website on your favorite browser.
+
+7. On a different shell/terminal, run airliner;
+```
+cd airliner/build/tutorial/cfs/target/target/exe
+./airliner
+```
+
+Now you can view telemetry and send commands on the YAMCS web interface!
+
+## How To Use It(fine-tuning)<a name="how_to_use_it_tuning"></a>
+The following steps are meant for *advanced* users only. While this section assumes `airliner` is the flight software
+being used, one can use this as a template for any other flight software that is not airliner.
+
+
+5. Once airliner builds successfully and all dependencies have been installed in previous steps, you may run `auto-yamcs` in `inline` mode. In this mode you have more flexibility;
+   every tool may be run separately, or may choose to not run certain tools.
+
+An example of running all the tools in inline mode looks like the following command:
+```
+python3 squeezer.py inline --inline_yaml_path ../config/inline_config.yaml --remap_yaml ../config/remap.yaml  --output_file newdb.sqlite  --verbosity 3 --xtce_output_path airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml --xtce_config_yaml ../xtce_generator/config/config.yaml --override_yaml ../config/msg_def_overrides.yaml  
+```
+Notice how, as opposed  to `singleton` mode, there are several yaml files passed to auto-yamcs now. Most of these, except for inline_yaml_path,
+are optional. Keep reading for more details on each tool such as remap and override tools.
+
+When this is all done, there will be a `cfs.xml` in the `airliner/tools/yamcs-cfs/src/main/yamcs/mdb` directory. 
+You can use this on a ground system such as `yamcs`.
+
+6. Run YAMCS(assuming an airliner setup)
+```
+cd airliner/tools/yamcs-cfs
+mvn yamcs:run
 ```
 
 
-5. Once that builds successfully, you can run the `auto-yamcs` toolchain
+7. You can open the database with sqlite browser:
 ```
-python squeezer.py  --spacesystem ocpoc --yaml_path tlm_cmd_merger/src/combined.yml --output_file newdb.sqlite --verbosity 4 --remap_yaml remap.yaml --xtce_config_yaml ./xtce_generator/src/config.yaml
-```
-
-6. Now you can open the database with sqlite browser:
-```
-sudo apt-get install sqlitebrowser
+apt-get install sqlitebrowser
 ```
 ```
 xdg-open newdb.sqlite
 ```
 
-When this is all done, there will be a `ocpoc.xml` in your working directory. You can use this on a ground system such as `yamcs`.
+
+The database generated by `auto-yamcs` drives the *entire configuration* of auto-yamcs. There are several tools,
+invoked explicitly in the `inline` mode above, that essentially modify the database depending on your needs. 
+The following sections take a deep dive into each one of these tools. Notice that each one of them is
+configurable through YAML files. Once all the tuning is done, one may use [xtce_generator](https://github.com/WindhoverLabs/xtce_generator)
+to generated an xtce file that can be used for any xtce-compliant ground system such as [YAMCS](https://github.com/yamcs/yamcs).
+
+We hope that approach provides flexibility to all users, regardless of mission needs. 
+
 
 7. Remapping Database Symbols  
 There might be situations where you might want to remap a database symbols to some other type. Specifically this can
@@ -122,7 +242,7 @@ Suppose also that when we follow our `type` foreign key(109) to the symbols tabl
 Turns out that the symbol `CFE_SB_MsgId_t` does not map to an intrinsic type such as int32, int16, etc. We found out
 this is the result of `juicer` not supporting typedef'd types intrinsic types such as `typdef int16 CFE_SB_MsgId_t`. 
 For now this issue is no of high priority, but this workaround should fix issues if your code base has typedefs like the
-aforementioned one.
+aforementioned one. This is also extremely useful for something like the following:
 
 This is what the `--remap_yaml` option is for.
 
@@ -229,10 +349,11 @@ tables:
       module: hk
 ```
 
-This is a short version of the `sqlite_entries.yml` file.
+This is a short version of the `sqlite_entries.yml` file. There is also a schema of this config file in the `schemas`
+directory.
 
 ## Get Up And Running Quick with YAMCS and Open MCT <a name="open_mct_and_yamcs"></a>
-Once there is an xtce-compliant xml file such as `ocpoc.xml`, it is possible to run `yamcs` along with `Open MCT`.
+Once there is an xtce-compliant xml file such as `cfs.xml`, it is possible to run `yamcs` along with `Open MCT`.
 
 **NOTE**: This guide assumes that `airliner` was the code base that was passed to `jucier` in the guide above, however, this can be followed as a template for any other non-airliner projects.
 
@@ -248,9 +369,9 @@ git clone https://github.com/WindhoverLabs/yamcs-cfs.git
 cd yamcs-cfs
 git checkout update-yamcs-tools
 ```
-3. Copy our `ocpoc.xml` file to our yamcs database
+3. Copy our `tutorial.xml` file to our yamcs database
 ```
-cp ../auto-yamcs/ocpoc.xml src/main/yamcs/mdb
+cp ../auto-yamcs/tutorial.xml src/main/yamcs/mdb
 ```
 4. YAMCS will use the config file on `src/main/yamcs/etc/yamcs.yamcs-cfs.yaml ` to know which files to include in its internal database. We need to add this to the list of files
 
@@ -264,7 +385,7 @@ mdb:
     - type: "xtce"
       spec: "mdb/CFE_EVS.xml"
     - type: "xtce"
-      spec: "mdb/ocpoc.xml"
+      spec: "mdb/cfs.xml"
 ```
 
 5. Run YAMCS
@@ -274,7 +395,7 @@ mdb:
  
 If `yamcs` runs successfully, the terminal should look similar to this:
 ```
-18:57:42.192 _global [1] XtceStaxReader Parsing XTCE file mdb/ocpoc.xml
+18:57:42.192 _global [1] XtceStaxReader Parsing XTCE file mdb/tutorial.xml
 18:57:42.532 _global [1] XtceStaxReader XTCE file parsing finished, loaded: 39 parameters, 39 tm containers, 250 commands
 18:57:44.964 _global [1] XtceDbFactory Serialized database saved locally
 ...
@@ -286,12 +407,12 @@ If `yamcs` runs successfully, the terminal should look similar to this:
 The important part of this output is `WebPlugin Website deployed at http://b7a4a04ae4b8:8090` The `http`(might be `https` for you) part is the website where one can access the yamcs web interface. Just paste that into a browser to access yamcs.
 
 
-6. Assuming an `airliner` setup in another shell/terminal:
+6. Assuming an `airliner` setup, in another shell/terminal:
 ```
 cd airliner/build/tutorial/cfs/target/exe/
 ./airliner
 ```
-**NOTE**: The path to airliner will be *slightly* different if it was built for the `ocpoc` or any target other than `tutorial/cfs`.
+**NOTE**: The path to airliner will be *slightly* different if it was built for a different target other than `tutorial/cfs`.
 
 
 
@@ -406,7 +527,7 @@ This parser is known to work for telemetry and command messages.
 
 ### To Run
 ```
-python log_parser.py --structures_yaml structures.yaml --sqlite_path newdb.sqlite --input_file [PATH_TO_DS_LOG_FILE]
+python3 log_parser.py --structures_yaml structures.yaml --sqlite_path newdb.sqlite --input_file [PATH_TO_DS_LOG_FILE]
 ```
 
 ## Protocol Headers <a name="protocol_headers"></a>
@@ -415,7 +536,7 @@ python log_parser.py --structures_yaml structures.yaml --sqlite_path newdb.sqlit
 Assuming the database has been generated successfully by `auto-yamcs`, one may use `header_mod.py`:
 
 ```
-python header_mod.py --sqlite_path newdb.sqlite --header_definitions header_mod_config.yaml
+python3 header_mod.py --sqlite_path newdb.sqlite --header_definitions header_mod_config.yaml
 ```
 
 For an example of the structure of the config file, see `header_mod_config.yaml`.
@@ -539,6 +660,6 @@ modules:
 Notice the new `msg_def_overrides` key in the config file; that is what `msg_def_overrides.py` will use to know
 what to override.
 
-For a full example, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
+For a full example of the config file, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
 
-Documentation updated on November 30, 2020
+Documentation updated on January 6, 2021

@@ -1,0 +1,66 @@
+modules:
+  core:
+    #NOTE: An Elf file is required at least at the parent module when configuring overrides.
+    elf_files:
+      - ../../airliner/build/tutorial/cfs/target/target/exe/airliner
+    modules:
+      cfe:
+        modules:
+          cfe_es:
+            msg_def_overrides:
+              - parent: CFE_ES_AppInfo_t
+                member: Type
+                type: enumeration
+                enumerations:
+                  CFE_ES_APP_TYPE_CORE: 1
+                  CFE_ES_APP_TYPE_EXTERNAL: 2
+              - parent: CFE_ES_AppInfo_t
+                member: Name
+                type: string
+              - parent: CFE_ES_AppInfo_t
+                member: EntryPoint
+                type: string
+              - parent: CFE_ES_AppInfo_t
+                member: FileName
+                type: string
+              - parent: CFE_ES_AppInfo_t
+                member: MainTaskName
+                type: string
+              - parent: CFE_ES_OverWriteSysLogCmd_Payload_t
+                member: Mode
+                type: enumeration
+                enumerations:
+                  CFE_ES_LOG_OVERWRITE: 0
+                  CFE_ES_LOG_DISCARD: 1
+              - parent: CFE_ES_HkPacket_Payload_t
+                member: SysLogMode
+                type: enumeration
+                enumerations:
+                  OVERWRITE: 0
+                  DROP: 1
+              - parent: CFE_ES_StartAppCmd_Payload_t
+                member: Application
+                type: string
+              - parent: CFE_ES_StartAppCmd_Payload_t
+                member: AppEntryPoint
+                type: string
+              - parent: CFE_ES_StartAppCmd_Payload_t
+                member: AppFileName
+                type: string
+              - parent: CFE_ES_StartAppCmd_Payload_t
+                member: ExceptionAction
+                type: enumeration
+                enumerations:
+                  CFE_ES_APP_EXCEPTION_RESTART_APP: 0
+                  CFE_ES_APP_EXCEPTION_PROC_RESTART: 1
+              - parent: CFE_ES_AppNameCmd_Payload_t
+                member: Application
+                type: string
+          cfe_evs:
+            msg_def_overrides:
+              - parent: CFE_EVS_Packet_Payload_t
+                member: Message
+                type: string
+              - parent: CFE_EVS_PacketID_t
+                member: AppName
+                type: string
