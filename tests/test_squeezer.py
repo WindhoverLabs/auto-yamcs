@@ -4,6 +4,7 @@ import os
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
 sys.path.append(os.path.realpath(os.path.join(os.path.realpath(__file__), '../../src')))
+sys.path.append(os.path.realpath(os.path.join(os.path.realpath(__file__), '../../xtce-workspace/src')))
 # FIXME: This path busisness is getting out of hand; I have opened an issue on Github:https://github.com/WindhoverLabs/auto-yamcs/issues/17
 
 
