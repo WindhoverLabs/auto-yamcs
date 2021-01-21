@@ -192,25 +192,6 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                                           'VALUES (?, ?, ?, ?, ?)',
                                           (name, message_id, macro, symbol_id, modules_dict[module_name],))
 
-    if 'core' in telemetry_data:
-        for module in telemetry_data['core']['cfe'].keys():
-            if module != 'config':
-                for message in telemetry_data['core']['cfe'][module]['telemetry']:
-                    message_dict = telemetry_data['core']['cfe'][module]['telemetry'][message]
-                    name = message
-                    message_id = message_dict['msgID']
-                    symbol = get_symbol_id(message_dict['struct'], db_cursor)
-
-                    # If the symbol does not exist, we skip it
-                    if symbol:
-                        symbol_id = symbol[0]
-
-                        macro = name
-
-                        # Write our telemetry record to the database.
-                        db_cursor.execute('INSERT INTO telemetry(name, message_id, macro, symbol ,module) '
-                                          'VALUES (?, ?, ?, ?, ?)',
-                                          (name, message_id, macro, symbol_id, modules_dict[module_name],))
         if 'modules' in telemetry_data['modules'][module_name]:
             write_telemetry_records(telemetry_data['modules'][module_name], modules_dict, db_cursor)
 
@@ -277,31 +258,6 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
                                       'VALUES (?, ?, ?, ?, ?, ?)',
                                       (name, command_code, message_id, macro, symbol_id, modules_dict[module_name],))
 
-    if 'core' in command_data:
-        for module_name in command_data['core']['cfe'].keys():
-            if module_name != 'config':
-                for command in command_data['core']['cfe'][module_name]['commands']:
-                    command_dict = command_data['core']['cfe'][module_name]['commands'][command]
-                    message_id = command_dict['msgID']
-                    sub_commands = command_data['modules'][module_name]['commands']
-
-                    for sub_command in sub_commands[command]['commands']:
-                        sub_command_dict = sub_commands[command]['commands']
-                        name = sub_command
-
-                        symbol = get_symbol_id(sub_command_dict[name]['struct'], db_cursor)
-
-                        # If the symbol does not exist, we skip it
-                        if symbol:
-                            symbol_id = symbol[0]
-                            command_code = sub_command_dict[name]['cc']
-
-                            macro = command
-
-                            # Write our command record to the database.
-                            db_cursor.execute('INSERT INTO commands(name, command_code, message_id, macro, symbol ,module) '
-                                              'VALUES (?, ?, ?, ?, ?, ?)',
-                                              (name, command_code, message_id, macro, symbol_id, modules_dict[module_name],))
         if 'modules' in command_data['modules'][module_name]:
             write_command_records(command_data['modules'][module_name], modules_dict, db_cursor)
 
