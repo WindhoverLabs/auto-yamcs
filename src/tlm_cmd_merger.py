@@ -192,8 +192,8 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                                           'VALUES (?, ?, ?, ?, ?)',
                                           (name, message_id, macro, symbol_id, modules_dict[module_name],))
 
-        if 'modules' in telemetry_data['modules'][module_name]:
-            write_telemetry_records(telemetry_data['modules'][module_name], modules_dict, db_cursor)
+            if 'modules' in telemetry_data['modules'][module_name]:
+                write_telemetry_records(telemetry_data['modules'][module_name], modules_dict, db_cursor)
 
 
 def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sqlite3.Cursor):
