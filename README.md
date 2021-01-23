@@ -11,6 +11,7 @@
 8.  [DS Log Parser](#ds_log_parser)
 9.  [Protocol Headers](#protocol_headers) 
 10. [Overrides](#overrides)
+11. [jinjer](#jinjer)
 
 # auto-yamcs <a name="auto-yamcs"></a>
 A collection of tools to auto-generate everything needed to run a ground system.
@@ -662,4 +663,22 @@ what to override.
 
 For a full example of the config file, have a look at `auto-yamcs/tlm_cmd_merger/src/combined.yml`.
 
-Documentation updated on January 6, 2021
+
+## jinjer <a name="jinjer"></a>
+
+As you set up your ground system with YAMCS, you'll have an increasing need to displays. YAMCS Studio can be used for
+such task. And for _most_ displays, creating them manually is good enough. However, there are some displays that can become
+very painful to create manually as they depend of the specific build of flight software. This is where `jinjer` can help.
+
+
+### Usage
+
+```
+python3 jinjer.py --template_dir [template_dir] --yaml_path [yaml_path]  --output_dir [output_dir]
+```
+
+`jinjer` uses [jinja2](https://palletsprojects.com/p/jinja/) to generate files from templates. It scans
+`template_dir` for all files(including all subdirectories) and outputs a file with data from the data in yaml_path and
+outputs every single file to output_dir. This can be very useful for automating display creation in  [YAMCS Studio](https://github.com/yamcs/yamcs-studio).
+
+Documentation updated on January 22, 2021

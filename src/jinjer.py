@@ -46,7 +46,7 @@ def parse_cli() -> argparse.Namespace:
 
 def main():
     logging.getLogger().setLevel(logging.DEBUG)
-    
+
     args = parse_cli()
     # Load the template data form YAML
     yaml_data = read_yaml(args.yaml_path)
