@@ -60,7 +60,7 @@ def main():
     if output_dir_path.is_dir() is False:
         logging.error(f'{output_dir_path} is not a directory. Terminating.')
         # FIXME: I don't know about returning from here. Violates single point of exit standard.
-        # FIXME: It might be best to implement a validation pattern the entire codebase of auto-yamcs.
+        # FIXME: It might be best to implement a validation pattern throughout the entire codebase of auto-yamcs.
         # FIXME: If we had reliable validation, we wouldn't need these stick-in-the-mud types of checks.
         return -1
 
