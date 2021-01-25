@@ -666,7 +666,7 @@ For a full example of the config file, have a look at `auto-yamcs/tlm_cmd_merger
 
 ## jinjer <a name="jinjer"></a>
 
-As you set up your ground system with YAMCS, you'll have an increasing need to displays. YAMCS Studio can be used for
+As you set up your ground system with YAMCS, you'll have an increasing need for displays. YAMCS Studio can be used for
 such task. And for _most_ displays, creating them manually is good enough. However, there are some displays that can become
 very painful to create manually as they depend of the specific build of flight software. This is where `jinjer` can help.
 
