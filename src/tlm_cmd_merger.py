@@ -209,6 +209,7 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
         return
 
     for module_name in command_data['modules']:
+        #FIXME: We need that schema. If we had the schema, we wouldn't need all these checks and the code would look cleaner.
         if 'commands' in command_data['modules'][module_name]:
             if command_data['modules'][module_name]['commands'] is None:
                 # This has a command key, but no commands are defined.  Skip it.
@@ -228,35 +229,36 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
                     continue
 
                 sub_commands = command_data['modules'][module_name]['commands']
-
-                for sub_command in sub_commands[command]['commands']:
-                    if sub_commands[command]['commands'] is None:
-                        logging.error(f"modules.{module_name}.commands.{command}.{sub_command} command is empty.  Skipping.")
-                        continue
-
-                    sub_command_dict = sub_commands[command]['commands']
-                    name = sub_command
-
-                    symbol = get_symbol_id(sub_command_dict[name]['struct'], db_cursor)
-
-                    # If the symbol does not exist, we skip it
-                    if not symbol:
-                        logging.error(f"modules.{module_name}.commands.{command}.{sub_command}.{sub_command_dict[name]['struct']} was not found.  Skipping.")
-                    else:
-                        symbol_id = symbol[0]
-
-                        if sub_command_dict[name]['cc'] is None:
-                            logging.error(f"modules.{module_name}.commands.{command}.cc must not be empty.  Skipping.")
+                
+                if 'commands' in sub_commands[command]:
+                    for sub_command in sub_commands[command]['commands']:
+                        if sub_commands[command]['commands'] is None:
+                            logging.error(f"modules.{module_name}.commands.{command}.{sub_command} command is empty.  Skipping.")
                             continue
 
-                        command_code = sub_command_dict[name]['cc']
+                        sub_command_dict = sub_commands[command]['commands']
+                        name = sub_command
 
-                        macro = command
+                        symbol = get_symbol_id(sub_command_dict[name]['struct'], db_cursor)
 
-                        # Write our command record to the database.
-                        db_cursor.execute('INSERT INTO commands(name, command_code, message_id, macro, symbol ,module) '
-                                      'VALUES (?, ?, ?, ?, ?, ?)',
-                                      (name, command_code, message_id, macro, symbol_id, modules_dict[module_name],))
+                        # If the symbol does not exist, we skip it
+                        if not symbol:
+                            logging.error(f"modules.{module_name}.commands.{command}.{sub_command}.{sub_command_dict[name]['struct']} was not found.  Skipping.")
+                        else:
+                            symbol_id = symbol[0]
+
+                            if sub_command_dict[name]['cc'] is None:
+                                logging.error(f"modules.{module_name}.commands.{command}.cc must not be empty.  Skipping.")
+                                continue
+
+                            command_code = sub_command_dict[name]['cc']
+
+                            macro = command
+
+                            # Write our command record to the database.
+                            db_cursor.execute('INSERT INTO commands(name, command_code, message_id, macro, symbol ,module) '
+                                          'VALUES (?, ?, ?, ?, ?, ?)',
+                                          (name, command_code, message_id, macro, symbol_id, modules_dict[module_name],))
 
         if 'modules' in command_data['modules'][module_name]:
             write_command_records(command_data['modules'][module_name], modules_dict, db_cursor)
