@@ -147,44 +147,46 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
     :param modules_dict: A dictionary of the form {module_id: module_name}
     :return:
     """
-    name = None
-    message_id = None
-    macro = None
-    symbol_id = None
-
     if telemetry_data['modules'] is None:
         # This has a 'modules' key, but its empty.  Skip it.
         pass
     else:
         for module_name in telemetry_data['modules']:
+
             if 'telemetry' in telemetry_data['modules'][module_name]:
                 if telemetry_data['modules'][module_name]['telemetry'] is None:
                     # This has a 'telemetry' key, but its empty.  Skip it.
                     pass
                 else:
                     for message in telemetry_data['modules'][module_name]['telemetry']:
+                        message_id = None
+                        symbol = None
                         message_dict = telemetry_data['modules'][module_name]['telemetry'][message]
                         name = message
 
                         # Check for empty values
-                        if message_dict['msgID'] is None:
-                            logging.error(f"modules.{module_name}.telemetry.{name}.msgID must not be empty.  Skipping.")
-                            continue
-
-                        if message_dict['struct'] is None:
-                            logging.error(f"modules.{module_name}.telemetry.{name}.struct must not be empty.  Skipping.")
-                            continue
-
-                        message_id = message_dict['msgID']
-                        symbol = get_symbol_id(message_dict['struct'], db_cursor)
+                        # FIXME: This logic is starting to look convoluted. The schema might help with this.
+                        if 'msgID' in message_dict:
+                            if message_dict['msgID'] is None:
+                                logging.error(f"modules.{module_name}.telemetry.{name}.msgID must not be empty.  Skipping.")
+                                continue
+                            else:
+                                message_id = message_dict['msgID']
+                        
+                        if 'struct' in message_dict:
+                            if message_dict['struct'] is None:
+                                logging.error(f"modules.{module_name}.telemetry.{name}.struct must not be empty.  Skipping.")
+                                continue
+                            else:
+                                symbol = message_dict['struct']
 
                         # If the symbol does not exist, we skip it
-                        if not symbol:
+                        if symbol is None:
                             logging.error(f"modules.{module_name}.telemetry.{name}.struct could not be found.  Skipping.")
                         else:
                             symbol_id = symbol[0]
 
-                            # FIXME: Not sure if we'll read the macro in this step of the chain
+                            # FIXME:Is there a point to this statement?
                             macro = name
 
                             # Write our telemetry record to the database.
