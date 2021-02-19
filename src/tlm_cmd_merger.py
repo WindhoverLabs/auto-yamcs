@@ -178,7 +178,7 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                                 logging.error(f"modules.{module_name}.telemetry.{name}.struct must not be empty.  Skipping.")
                                 continue
                             else:
-                                symbol = message_dict['struct']
+                                symbol = get_symbol_id(message_dict['struct'], db_cursor)
 
                         # If the symbol does not exist, we skip it
                         if symbol is None:
