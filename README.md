@@ -31,10 +31,11 @@ A collection of tools to auto-generate everything needed to run a ground system.
 - Ubuntu 16.04, 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
 - The "python3" command launches **python3.6** or higher.
+- [YAMCS>=5.4.0](https://github.com/yamcs/yamcs/releases/tag/yamcs-5.4.0) is installed in `opt/yamcs`.
 
 ## How To Use It(quick and easy)<a name="how_to_use_it_quick"></a>
 
- To make this quickstart guide work without any issues, it is highly recommended to have [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
+ To make this quickstart guide work without any issues, it is required having [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
     Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
     `auto-yamcs` should work with any non-airliner code as long as the caveats stated on [juicer's](https://github.com/WindhoverLabs/juicer/tree/master) documentation
     are taken into consideration.
@@ -54,19 +55,18 @@ apt-get install g++-multilib
 apt-get install maven
 apt install default-jre
 apt-get install openjdk-8-jdk
-pip3 install pyyaml
 pip3 install ruamel-yaml
 pip3 install yamlpath
-pip3 install cerberus
 ```
 
 
-2. Make a `tutorial/cfs` build for airliner:
+2. Make a `bebop2/sitl` build for airliner:
 ```
 git clone https://github.com/WindhoverLabs/airliner.git
 cd airliner
 git checkout develop
-make tutorial/cfs
+make submodule-update
+make bebop2/sitl
 ```
 
 
@@ -79,56 +79,28 @@ cd  auto-yamcs
 git submodule update --init --recursive
 ```
 
-After cloning `airliner` and `auto-yamcs` be sure that you have the following directory structure:
-
-```
-
-~/
-├── airliner
-│   ├── apps
-│   ├── build
-│   ├── config
-│   ├── core
-│   ├── docs
-│   ├── mavlink
-│   └── tools
-├── auto-yamcs
-│   ├── config
-│   ├── juicer
-│   ├── schemas
-│   ├── src
-│   ├── tests
-│   ├── tlm_cmd_merger
-│   └── xtce_generator
-
-```
-
-Having this directory structure will make the next steps very easy.
-
 5. Install auto-yamcs dependencies
 ```
-cd src
+cd airliner/core/tools/auto-yamcs/src
 pip3 install -r ./requirements.txt
 ```
 5. Generate XTCE  
    **NOTE**:If this is *not* your first time using `auto-yamcs`, then you may skip to the [tuning section](#how_to_use_it_tuning)
 for more flexible ways of using the tool. If you are a first-time user, then *do not* skp this section.
 
-Assuming auto-yamcs is being used alongside  `airliner` flight software, new users may use a convenience script to run
-auto-yamcs:
+Assuming auto-yamcs is being used alongside  `airliner` flight software, users may build what is known as the __commander workspace__
 
 ```
-./generate_xtce.sh ../../airliner/build/tutorial/cfs/target/wh_defs.yaml newdb.sqlite  ../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml
+cd airliner/build/bebop2/sitl/target
+make commander_workspace
 ```
+This _will_ take a while. The commander workspace auto-generates everything needed for the ground system;
+XTCE definitions, configuration, YAMCS Studio Displays, etc.
 
-The `generate_xtce.sh` script runs auto-yamcs in `singleton` mode; in this mode there is only one YAML
-file that drives the configuration of the entire workflow.
-
-While running the script, depending on your environment, you may see the following errors and warnings:
+While creating the workspace, depending on your environment, you may see the following errors and warnings:
 ```
 ...
 WARNING: Cannot find data type.  Skipping.  464  errno=0 Dwarf_Error is NULL 
-WARNING:squeezer:Elf file "../../airliner/build/tutorial/cfs/target/target/exe/cf/apps/VC.so" does not exist. Revise your configuration file.
 ERROR:   Error in dwarf_attr(DW_AT_name).  1587  errno=114 DW_DLE_ATTR_FORM_BAD (114)
 ...
 ```
@@ -137,20 +109,20 @@ Specially when parsing the `airliner` code base, this can take a couple of minut
 the following messages at the end:
 ```
 INFO:xtce_generator:Writing xtce object to file...
-INFO:xtce_generator:XTCE file has been written to "../../airliner/tools/yamcs-cfs/src/main/yamcs/mdb/cfs.xml"
+INFO:xtce_generator:XTCE file has been written to "airliner/build/bebop2/sitl/target/commander_workspace/mdb/cfs.xml"
 ```
 
-As you can see auto-yamcs writes an XTCE file called `cfs.xml` to the yamcs-cfs configuration.
+As you can see auto-yamcs writes an XTCE file called `cfs.xml` to worskapce configuration.
 
 6. Run YAMCS  
    **NOTE**:Ensure you have the `JAVA_HOME` environment variable set on your system.
 ```
-cd ../..
-cd airliner/tools/yamcs-cfs
-mvn yamcs:run
+cd airliner/build/bebop2/sitl/target
+make start-yamcs
 ```
+**NOTE**: As stated above, YAMCS _must_ be installed in order for the `make start-yamcs` command to work.
 
-After running `mvn yamcs:run`, you should see the following message:
+After running `make start-yamcs`, you should see the following message:
 ```
 ...
 17:38:22.754 yamcs-cfs [1] YamcsServerInstance Awaiting start of service XtceTmRecorder
