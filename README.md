@@ -33,7 +33,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 - The "python3" command launches **python3.6** or higher.
 - [YAMCS>=5.4.0](https://github.com/yamcs/yamcs/releases/tag/yamcs-5.4.0) is installed in `opt/yamcs`.
 
-## How To Use It(quick and easy)<a name="how_to_use_it_quick"></a>
+## How To Use It(quick and easy) with airliner<a name="how_to_use_it_quick"></a>
 
  To make this quickstart guide work without any issues, it is required having [airliner](https://github.com/WindhoverLabs/airliner.git) built on your system in order to use.
     Once users get through this guide, they should be able to easily use this guide as a template to run `auto-yamcs` on a non-airliner code base.
@@ -69,26 +69,16 @@ make submodule-update
 make bebop2/sitl
 ```
 
-
-3. Clone the repo and update the submodules:
-
-```
-cd ..
-git clone https://github.com/WindhoverLabs/auto-yamcs.git
-cd  auto-yamcs
-git submodule update --init --recursive
-```
-
 5. Install auto-yamcs dependencies
 ```
 cd airliner/core/tools/auto-yamcs/src
 pip3 install -r ./requirements.txt
 ```
-5. Generate XTCE  
+5. Generate XTCE and Commander Workspace  
    **NOTE**:If this is *not* your first time using `auto-yamcs`, then you may skip to the [tuning section](#how_to_use_it_tuning)
 for more flexible ways of using the tool. If you are a first-time user, then *do not* skp this section.
 
-Assuming auto-yamcs is being used alongside  `airliner` flight software, users may build what is known as the __commander workspace__
+Assuming auto-yamcs is being used alongside `airliner` flight software, users may build what is known as the __commander workspace__
 
 ```
 cd airliner/build/bebop2/sitl/target
@@ -142,7 +132,7 @@ The important part here is the address follows the **http**. Go to that website 
 
 7. On a different shell/terminal, run airliner;
 ```
-cd airliner/build/tutorial/cfs/target/target/exe
+cd airliner/build/bebop2/sitl/target/target/exe
 ./airliner
 ```
 
@@ -155,6 +145,9 @@ being used, one can use this as a template for any other flight software that is
 
 5. Once airliner builds successfully and all dependencies have been installed in previous steps, you may run `auto-yamcs` in `inline` mode. In this mode you have more flexibility;
    every tool may be run separately, or may choose to not run certain tools.
+
+**NOTE**: Notice that  in the example above `auto-aymcs` was used as a _submodule_ of airliner. For fine-tuning
+you  may want to clone this repo as a standalone repository and follow the following steps.
 
 An example of running all the tools in inline mode looks like the following command:
 ```
@@ -655,7 +648,7 @@ outputs every single file to output_dir. This can be very useful for automating 
 
 ## Ubuntu16 and Simulation Software
 
-While auto-yamcs, as stated above, supports Ubuntu16. Simulation software such as `gazeebo` is _not_ supported for Ubuntu16.
+While auto-yamcs, as stated above, supports Ubuntu16. Simulation software such as `gazebo` is _not_ supported for Ubuntu16.
 So if you need to run simulation with airliner, keep this in mind.
 
 Documentation updated on February 23, 2021
