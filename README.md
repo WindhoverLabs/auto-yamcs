@@ -28,7 +28,7 @@ A collection of tools to auto-generate everything needed to run a ground system.
 
 
 ## Assumptions <a name="assumptions"></a>
-- Ubuntu 16.04, 18.04 or 20.04
+- Ubuntu 16.04[*](#ubuntu16-and-sim), 18.04 or 20.04
 - The dependencies of [juicer](https://github.com/WindhoverLabs/juicer/tree/master) are satisfied.
 - The "python3" command launches **python3.6** or higher.
 - [YAMCS>=5.4.0](https://github.com/yamcs/yamcs/releases/tag/yamcs-5.4.0) is installed in `opt/yamcs`.
@@ -653,4 +653,9 @@ python3 jinjer.py --template_dir [template_dir] --yaml_path [yaml_path]  --outpu
 `template_dir` for all files(including all subdirectories) and outputs a file with data from the data in yaml_path and
 outputs every single file to output_dir. This can be very useful for automating display creation in  [YAMCS Studio](https://github.com/yamcs/yamcs-studio).
 
-Documentation updated on January 22, 2021
+## Ubuntu16 and Simulation Software
+
+While auto-yamcs, as stated above, supports Ubuntu16. Simulation software such as `gazeebo` is _not_ supported for Ubuntu16.
+So if you need to run simulation with airliner, keep this in mind.
+
+Documentation updated on February 23, 2021
