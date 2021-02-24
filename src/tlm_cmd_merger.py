@@ -152,7 +152,6 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
         pass
     else:
         for module_name in telemetry_data['modules']:
-
             if 'telemetry' in telemetry_data['modules'][module_name]:
                 if telemetry_data['modules'][module_name]['telemetry'] is None:
                     # This has a 'telemetry' key, but its empty.  Skip it.
@@ -168,17 +167,21 @@ def write_telemetry_records(telemetry_data: dict, modules_dict: dict, db_cursor:
                         # FIXME: This logic is starting to look convoluted. The schema might help with this.
                         if 'msgID' in message_dict:
                             if message_dict['msgID'] is None:
-                                logging.error(f"modules.{module_name}.telemetry.{name}.msgID must not be empty.  Skipping.")
+                                logging.error(f"modules.{module_name}.telemetry.{name}.msgID must not be empty. Skipping.")
                                 continue
                             else:
                                 message_id = message_dict['msgID']
+                        else:
+                            logging.error(f"modules.{module_name}.telemetry.{name}.msgID key must exist.  Skipping.")
                         
                         if 'struct' in message_dict:
                             if message_dict['struct'] is None:
-                                logging.error(f"modules.{module_name}.telemetry.{name}.struct must not be empty.  Skipping.")
+                                logging.error(f"modules.{module_name}.telemetry.{name}.struct must not be empty. Skipping.")
                                 continue
                             else:
                                 symbol = get_symbol_id(message_dict['struct'], db_cursor)
+                        else:
+                            logging.error(f"modules.{module_name}.telemetry.{name}.struct key must exist. Skipping.")
 
                         # If the symbol does not exist, we skip it
                         if symbol is None:
