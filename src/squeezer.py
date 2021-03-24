@@ -54,9 +54,13 @@ def get_elf_files(yaml_dict: dict):
 
     return elf_files
 
+def get_cpu_id(yaml_dict: dict):
+    if 'cpu_id' in yaml_dict:
+        return yaml_dict['cpu_id']
+    return ''
 
-def run_xtce_generator(sqlite_path: str, xtce_yaml: dict, verbosity: str, output_path):
-    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, output_path, xtce_yaml['root_spacesystem'], verbosity)
+def run_xtce_generator(sqlite_path: str, xtce_yaml: dict, verbosity: str, output_path, cpu_id):
+    xtce_generator.generate_xtce(sqlite_path, xtce_yaml, output_path, cpu_id, verbosity)
 
 
 def read_yaml(yaml_file: str) -> dict:
@@ -193,6 +197,8 @@ def singleton_mode_handler(args: argparse.Namespace):
     elfs = get_elf_files(yaml_dict)
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
+    cpu_id = get_cpu_id(yaml_dict)
+
     yaml_remaps = __singleton_get_remap(yaml_dict)
 
     if len(yaml_remaps['type_remaps']) > 0:
@@ -210,7 +216,7 @@ def singleton_mode_handler(args: argparse.Namespace):
                         'No configuration will be applied when generating xtce file.')
         xtce_config_data = None
 
-    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path)
+    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, cpu_id)
 
 def parse_cli() -> argparse.Namespace:
     """
