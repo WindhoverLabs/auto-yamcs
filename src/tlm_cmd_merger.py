@@ -229,6 +229,10 @@ def write_command_records(command_data: dict, modules_dict: dict, db_cursor: sql
 
                 message_id = command_dict['msgID']
 
+                if message_id is None:
+                    logging.error(f"modules.{module_name}.commands.{command} message does not have any msgID defined. Skipping.")
+                    continue
+
                 if command_data['modules'][module_name]['commands'] is None:
                     logging.error(f"modules.{module_name}.commands.{command} message does not have any actual commands defined.  Skipping.")
                     continue
