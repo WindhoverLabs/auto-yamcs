@@ -293,6 +293,10 @@ def write_event_records(event_data: dict, modules_dict: dict, db_cursor: sqlite3
             for event in event_data['modules'][module_name]['events']:
                 event_dict = event_data['modules'][module_name]['events'][event]
 
+                if event_dict is None:
+                    logging.error(f"modules.{module_name} .events.{event} must not be empty.  Skipping.")
+                    continue
+
                 if event_dict['id'] is None:
                     logging.error(f"modules.{module_name} .events.{event}.id must not be empty.  Skipping.")
                     continue
