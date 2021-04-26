@@ -64,9 +64,10 @@ pip3 install yamlpath
 ```
 git clone https://github.com/WindhoverLabs/airliner.git
 cd airliner
-git checkout develop
 make submodule-update
+make python-env 
 make bebop2/sitl
+source venv/bin/activate                                                    
 ```
 
 5. Install auto-yamcs dependencies
