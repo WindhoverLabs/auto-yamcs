@@ -1425,12 +1425,16 @@ class XTCEManager:
 
         self.__namespace_dict[namespace_name] = new_namespace
 
-    def __get_telemetry_header_length(self, symblold_id):
+    def __get_telemetry_header_length(self, symbol_id):
         """
         Calculate the the size of the telemetry header inside of the struct with id of symbol_id in the database.
         :return: The size of the telemetry header in bits.
         """
-        offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?', (symblold_id,)).fetchall()
+        offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?', (symbol_id,)).fetchall()
+        if type(offsets) != list or not offsets:
+            logging.error(f'symbol {symbol_id} has no fields defined.')
+            return None
+        
         offsets.sort()
         return offsets[1]
 
@@ -1640,10 +1644,11 @@ class XTCEManager:
             for symbol in self.db_cursor.execute('select * from symbols where id=?',
                                                  (command_symbol_id,)).fetchall():
                 logging.debug(f'symbol{symbol} for tlm:{command_name}')
+                
 
                 aggregate_type = self.__get_aggregate_argtype(symbol, module_name,
                                                               header_size=self.__get_command_base_container_length())
-
+                
                 if aggregate_type and len(aggregate_type.get_MemberList().get_Member()) > 0:
                     if self.__aggrregate_argtype_exists(symbol[2], module_name) is False:
                         base_argtype_set.add_AggregateArgumentType(aggregate_type)
