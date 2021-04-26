@@ -10998,9 +10998,6 @@ modules:
       PX4_SENSOR_CORRECTION_MID:
         msgID: 0x0a5b
         struct: PX4_SensorCorrectionMsg_t
-      FLOW_FRAME_MID:
-        msgID: 0x0ce5
-        struct: PX4_OpticalFlowFrameMsg_t
     commands: {}
     perfids: {}
     config: {}
