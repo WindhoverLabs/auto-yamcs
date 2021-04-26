@@ -1431,9 +1431,6 @@ class XTCEManager:
         :return: The size of the telemetry header in bits.
         """
         offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?', (symbol_id,)).fetchall()
-        if type(offsets) != list or not offsets:
-            logging.error(f'symbol {symbol_id} has no fields defined.')
-            return None
         
         offsets.sort()
         return offsets[1]
@@ -1476,8 +1473,6 @@ class XTCEManager:
 
                 aggregate_type = self.__get_aggregate_paramtype(symbol, module_name,
                                                                 header_size=self.__get_telemetry_base_container_length())
-
-                self.__get_telemetry_header_length(tlm_symbol_id)
 
                 if aggregate_type and len(aggregate_type.get_MemberList().get_Member()) > 0:
                     if self.__aggrregate_paramtype_exists(symbol[2], module_name) is False:
