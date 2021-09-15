@@ -21,7 +21,7 @@ from enum import Enum
 import sys
 import os
 
-# FIXME:Not sure if I shhould move these to another file. Especially given the fact there will be more constants in the future.
+# FIXME:Not sure if I should move these to another file. Especially given the fact there will be more constants in the future.
 _ROOT_SPACESYSTEM_KEY = "root_spacesystem"
 _CPU_ID_KEY = "cpu_id"
 
@@ -51,7 +51,7 @@ class RefType(int, Enum):
 
 class XTCEManager:
     UNKNOWN_TYPE = 'UNKNOWN'  # A type for anything that, for some reason, we don't understand from the database
-    BASE_TYPE_NAMESAPCE = 'BaseType'
+    BASE_TYPE_NAMESPACE = 'BaseType'
     NAMESPACE_SEPARATOR = '/'
 
     def __init__(self, root_space_system: str, file_path: str, sqlite_path: str, config: dict, cpu_id: str = None):
@@ -499,7 +499,7 @@ class XTCEManager:
         :return:
         """
         base_set = xtce.ParameterTypeSetType()
-        base_space_system = self[self.BASE_TYPE_NAMESAPCE]
+        base_space_system = self[self.BASE_TYPE_NAMESPACE]
 
         # Add base types such as int, float, bool, etc
         for bit in range(1, 65):
@@ -548,7 +548,7 @@ class XTCEManager:
         :return:
         """
         base_set = xtce.ArgumentTypeSetType()
-        base_space_system = self[self.BASE_TYPE_NAMESAPCE]
+        base_space_system = self[self.BASE_TYPE_NAMESPACE]
 
         # Add int types
         for bit in range(1, 65):
@@ -581,25 +581,25 @@ class XTCEManager:
         in our ground system.
         :return:
         """
-        # FIXME: I don't think the BaseType namesapce should be argument, there is very little reason to make that configurable.
-        self.BASE_TYPE_NAMESAPCE = namespace
-        self.add_namespace(self.BASE_TYPE_NAMESAPCE)
+        # FIXME: I don't think the BaseType namespace should be argument, there is very little reason to make that configurable.
+        self.BASE_TYPE_NAMESPACE = namespace
+        self.add_namespace(self.BASE_TYPE_NAMESPACE)
         self.__add_telemetry_base_types()
         self.__add_commands_base_types()
 
     def __get_all_arg_basetypes(self) -> set([xtce.NameDescriptionType]):
         """
-        Get all base types names in BASE_TYPE_NAMESAPCE. Do note that the base type names returned do not have the
-        namesapce include in them. In other words, even though the absolute reference path to 'int16_LE' is
-        'BASE_TYPE_NAMESAPCE/int16_LE', this function will return 'int16_LE' for that type. As the name suggests,
+        Get all base types names in BASE_TYPE_NAMESPACE. Do note that the base type names returned do not have the
+        namespace include in them. In other words, even though the absolute reference path to 'int16_LE' is
+        'BASE_TYPE_NAMESPACE/int16_LE', this function will return 'int16_LE' for that type. As the name suggests,
         this function only returns type names that are *ArgumentTypes.
         """
         all_types = self[
-                        self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() + \
-                    self[self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_FloatArgumentType() + \
+                        self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() + \
+                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_FloatArgumentType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType() + \
-                    self[self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()
+                        self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType() + \
+                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()
 
         all_type_names = []
 
@@ -610,19 +610,19 @@ class XTCEManager:
 
     def __get_all_param_basetypes(self):
         """
-        Get all base types names in BASE_TYPE_NAMESAPCE. Do note that the base type names returned do not have the
-        namesapce include in them. In other words, even though the absolute reference path to 'int16_LE' is
-        'BASE_TYPE_NAMESAPCE/int16_LE', this function will return 'int16_LE' for that type. As the name suggests,
+        Get all base types names in BASE_TYPE_NAMESPACE. Do note that the base type names returned do not have the
+        namespace include in them. In other words, even though the absolute reference path to 'int16_LE' is
+        'BASE_TYPE_NAMESPACE/int16_LE', this function will return 'int16_LE' for that type. As the name suggests,
         this function only returns type names that are *ParameterTypes.
         """
         all_types = self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() + \
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() + \
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() + \
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType()
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType()
 
         all_type_names = []
 
@@ -633,28 +633,28 @@ class XTCEManager:
 
     def __get_all_basetypes(self) -> set([xtce.NameDescriptionType]):
         """
-        Get all base types names in BASE_TYPE_NAMESAPCE. Do note that the base type names returned do not have the
-        namesapce include in them. In other words, even though the absolute reference path to 'int16_LE' is
-        'BASE_TYPE_NAMESAPCE/int16_LE', this function will return 'int16_LE' for that type. This does mean that this function
+        Get all base types names in BASE_TYPE_NAMESPACE. Do note that the base type names returned do not have the
+        namespace include in them. In other words, even though the absolute reference path to 'int16_LE' is
+        'BASE_TYPE_NAMESPACE/int16_LE', this function will return 'int16_LE' for that type. This does mean that this function
         makes no distinction between Argument Types and Parameter Types. If you are interested in *ArgumentTypes or
         *ParameterTypes specifically then look at the __get_all_arg_basetypes and __get_all_arg_basetypes functions.
 
         :return: A set of type names.
         """
         all_types = self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() + \
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_IntegerParameterType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() + \
+                        self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_IntegerArgumentType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() + \
-                    self[self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_FloatArgumentType() + \
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_FloatParameterType() + \
+                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_FloatArgumentType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() + \
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType() + \
+                        self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType() + \
                     self[
-                        self.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType() + \
-                    self[self.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType() + \
+                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()
 
         all_type_names = []
 
@@ -665,24 +665,24 @@ class XTCEManager:
 
     def __basetype_exists(self, type_name) -> bool:
         """
-        Checks if the base type with type_name exists in the BaseType namesapce. type_name is assumed to just be the type
-        name without the namesapce. For example "string320_LE", NOT "BaseType/string320_LE".
+        Checks if the base type with type_name exists in the BaseType namespace. type_name is assumed to just be the type
+        name without the namespace. For example "string320_LE", NOT "BaseType/string320_LE".
         """
         return type_name in self.__get_all_basetypes()
 
     def __arg_basetype_exists(self, type_name) -> bool:
         """
-        Checks if the base type with type_name exists in the BaseType namesapce. type_name is assumed to just be the type
-        name without the namesapce. For example "string320_LE", NOT "BaseType/string320_LE". As the function name suggests,
-        onyl *ArgumentTypes are checked.
+        Checks if the base type with type_name exists in the BaseType namespace. type_name is assumed to just be the type
+        name without the namespace. For example "string320_LE", NOT "BaseType/string320_LE". As the function name suggests,
+        only *ArgumentTypes are checked.
         """
         return type_name in self.__get_all_arg_basetypes()
 
     def __param_basetype_exists(self, type_name) -> bool:
         """
-        Checks if the base type with type_name exists in the BaseType namesapce. type_name is assumed to just be the type
-        name without the namesapce. For example "string320_LE", NOT "BaseType/string320_LE". As the function name suggests,
-        onyl *ParameterTypes are checked.
+        Checks if the base type with type_name exists in the BaseType namespace. type_name is assumed to just be the type
+        name without the namespace. For example "string320_LE", NOT "BaseType/string320_LE". As the function name suggests,
+        only *ParameterTypes are checked.
         """
         return type_name in self.__get_all_param_basetypes()
 
@@ -694,11 +694,11 @@ class XTCEManager:
         to bit_size. Same goes for float, strings, etc.
         :param bit_size: How many bits does this base type contain.
         :param little_endian: A bool describing whether the type is encoded using Little Endian or big Endian.
-        :return: The full basetype name. Note that this function DOES check the BaseType namesapce of our root SpaceSystem.
+        :return: The full basetype name. Note that this function DOES check the BaseType namespace of our root SpaceSystem.
         We return the fully-constructed basetype name even if we don't find it in out BaseType namespace. However,
         we do warn the user that this base type name was not found.
 
-        NOTE: strings are special. They are special because, as opposed instrinsic types such as integer, they very
+        NOTE: strings are special. They are special because, as opposed intrinsic types such as integer, they very
         in size in non-predictable way.  Therefore the type 'string' is passed to this function, then the string type will
         be created if it does not exist. Not sure if this is the best way to handle strings, but this is what we will do
         for now.
@@ -712,7 +712,7 @@ class XTCEManager:
         logging.debug(f'basename:{basename}')
 
         if typename in all_basetypes:
-            out_type_ref = XTCEManager.BASE_TYPE_NAMESAPCE + XTCEManager.NAMESPACE_SEPARATOR + typename
+            out_type_ref = XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + typename
         else:
             logging.warning(
                 f'{typename} was looked up as a base type, but it was not found in the BaseType namespace. ')
@@ -871,7 +871,7 @@ class XTCEManager:
 
     def __get_enum_arg_type(self, symbol_id: int) -> xtce.EnumeratedArgumentType:
         """
-        Factory function that creates a EnumeratedArgumentrType that is described by the symbol with symbol_id
+        Factory function that creates a EnumeratedArgumentType that is described by the symbol with symbol_id
         in the database. This function assumes that the caller has ensured that there is an enumeration
         associated to the symbol_id in the database.
         :param symbol_id: id of symbol that points to this enumeration type in the database.
@@ -913,7 +913,7 @@ class XTCEManager:
 
     def __aggregate_param_exists(self, param_name: str, namespace: str) -> bool:
         """
-        Checks if the aggregate type with type_name exists in the telemetry child of the namesapce space system.
+        Checks if the aggregate type with type_name exists in the telemetry child of the namespace space system.
         :return:
         """
         does_aggregate_exist = False
@@ -930,9 +930,9 @@ class XTCEManager:
 
         return does_aggregate_exist
 
-    def __aggrregate_paramtype_exists(self, type_name: str, namespace: str):
+    def __aggregate_paramtype_exists(self, type_name: str, namespace: str):
         """
-        Checks if the aggregate type with type_name exists in the telemetry child of the namesapce space system.
+        Checks if the aggregate type with type_name exists in the telemetry child of the namespace space system.
         :return:
         """
         does_aggregate_exist = False
@@ -972,7 +972,7 @@ class XTCEManager:
 
     def find_aggregate_arg_type(self, type_name: str, namespace: str) -> xtce.AggregateArgumentType:
         """
-        Returns an argument type with the name of tyoe_name. Note that this type_name is the same
+        Returns an argument type with the name of type_name. Note that this type_name is the same
         name of a symbol that appears in the database. The namespace refers to the spacesystem inside the XTCE. The
         namespace is the same as the modules in the database. Please note that the type returned is local to the namespace.
         :param type_name:
@@ -1063,7 +1063,7 @@ class XTCEManager:
         out_param = xtce.AggregateParameterType(name=symbol_record[2])
 
         # If the symbol exists already in our xtce, we don't need to explore it any further
-        if self.__aggrregate_paramtype_exists(symbol_record[2], module_name):
+        if self.__aggregate_paramtype_exists(symbol_record[2], module_name):
             return self.find_aggregate_param_type(symbol_record[2], module_name)
 
         logging.debug(f'symbol record-->{symbol_record}')
@@ -1115,7 +1115,7 @@ class XTCEManager:
                             type_ref_name = new_enum.get_name()
 
                     elif base_type_val[0]:
-                        # This is a basetype, so we can just get a type from our BaseType namesapce
+                        # This is a basetype, so we can just get a type from our BaseType namespace
                         # TODO: Make a distinction between unsigned and int types
                         type_ref_name = self.__get_basetype_name(base_type_val[1], symbol_type[3] * 8,
                                                                  self.is_little_endian(symbol_type[1]))
@@ -1127,7 +1127,7 @@ class XTCEManager:
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
                         child = self.__get_aggregate_paramtype(child_symbol, module_name)
-                        if self.__aggrregate_paramtype_exists(child_symbol[2], module_name) is False:
+                        if self.__aggregate_paramtype_exists(child_symbol[2], module_name) is False:
                             self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
                                 child)
                         type_ref_name = child.get_name()
@@ -1140,11 +1140,11 @@ class XTCEManager:
                             # Create a string type if it does not exist.
                             new_string_type = self.__get_string_paramtype(field_multiplicity * 8, field_little_endian)
                             self[
-                                XTCEManager.BASE_TYPE_NAMESAPCE].get_TelemetryMetaData().get_ParameterTypeSet().add_StringParameterType(
+                                XTCEManager.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().add_StringParameterType(
                                 new_string_type)
-                            type_ref_name = XTCEManager.BASE_TYPE_NAMESAPCE + XTCEManager.NAMESPACE_SEPARATOR + new_string_type.get_name()
+                            type_ref_name = XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + new_string_type.get_name()
                         else:
-                            type_ref_name = XTCEManager.BASE_TYPE_NAMESAPCE + XTCEManager.NAMESPACE_SEPARATOR + string_type_name
+                            type_ref_name = XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + string_type_name
                         # If the field is a string, then it is a special kind of array that ends in a null terminator.
 
                         member = xtce.MemberType()
@@ -1208,7 +1208,7 @@ class XTCEManager:
                         logging.debug(f'child symbol-->{child_symbol}')
                         logging.debug(f'field id-->{field_id})')
                         child = self.__get_aggregate_paramtype(child_symbol, module_name)
-                        if self.__aggrregate_paramtype_exists(child_symbol[2], module_name) is False:
+                        if self.__aggregate_paramtype_exists(child_symbol[2], module_name) is False:
                             self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
                                 child)
                         type_ref_name = child.get_name()
@@ -1221,7 +1221,7 @@ class XTCEManager:
         logging.debug(f'out_param--> {out_param.get_name()}')
         return out_param
 
-    def __aggrregate_argtype_exists(self, type_name: str, namespace: str):
+    def __aggregate_argtype_exists(self, type_name: str, namespace: str):
         """
         Checks if the aggregate type with type_name exists in the command child of the space system namespace.
         :return:
@@ -1249,14 +1249,14 @@ class XTCEManager:
         :return: If the symbol is processed successfully, an aggregateArgumentType representing that symbol(struct) is returned.
         If the symbol already exists, then a reference to the aggregateArgumentType that represents that symbol  is returned.
         Beware that if this function finds a field of the symbol record
-        whose type does not exist(sucha as a field that has a struct type not defined in our xtce), then function takes
+        whose type does not exist(such as a field that has a struct type not defined in our xtce), then function takes
         the liberty of adding it to the telemetry object in the xtce object.
         """
 
         out_param = xtce.AggregateArgumentType(name=symbol_record[2])
 
         # If the symbol exists already in our xtce, we don't need to explore it any further
-        if self.__aggrregate_argtype_exists(symbol_record[2], module_name):
+        if self.__aggregate_argtype_exists(symbol_record[2], module_name):
             return self.find_aggregate_arg_type(symbol_record[2], module_name)
 
         logging.debug(f'symbol record-->{symbol_record}')
@@ -1318,7 +1318,7 @@ class XTCEManager:
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
                         child = self.__get_aggregate_argtype(child_symbol, module_name, False)
-                        if self.__aggrregate_argtype_exists(child_symbol[2], module_name) is False:
+                        if self.__aggregate_argtype_exists(child_symbol[2], module_name) is False:
                             self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
                                 child)
                         type_ref_name = child.get_name()
@@ -1331,11 +1331,11 @@ class XTCEManager:
                             # Create a string type if it does not exist.
                             new_string_type = self.__get_string_argtype(field_multiplicity * 8, field_little_endian)
                             self[
-                                XTCEManager.BASE_TYPE_NAMESAPCE].get_CommandMetaData().get_ArgumentTypeSet().add_StringArgumentType(
+                                XTCEManager.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().add_StringArgumentType(
                                 new_string_type)
-                            type_ref_name = XTCEManager.BASE_TYPE_NAMESAPCE + XTCEManager.NAMESPACE_SEPARATOR + new_string_type.get_name()
+                            type_ref_name = XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + new_string_type.get_name()
                         else:
-                            type_ref_name = XTCEManager.BASE_TYPE_NAMESAPCE + XTCEManager.NAMESPACE_SEPARATOR + string_type_name
+                            type_ref_name = XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + string_type_name
 
                         # If the field is a string, then it is a special kind of array that ends in a null terminator.
                         member = xtce.MemberType()
@@ -1397,7 +1397,7 @@ class XTCEManager:
                         logging.debug(f'child symbol-->{child_symbol}')
                         logging.debug(f'field id-->{field_id})')
                         child = self.__get_aggregate_argtype(child_symbol, module_name, False)
-                        if self.__aggrregate_argtype_exists(child_symbol[2], module_name) is False:
+                        if self.__aggregate_argtype_exists(child_symbol[2], module_name) is False:
                             self[module_name].get_CommandMetaData().get_ArgumentTypeSet().add_AggregateArgumentType(
                                 child)
                         type_ref_name = child.get_name()
@@ -1475,7 +1475,7 @@ class XTCEManager:
                                                                 header_size=self.__get_telemetry_base_container_length())
 
                 if aggregate_type and len(aggregate_type.get_MemberList().get_Member()) > 0:
-                    if self.__aggrregate_paramtype_exists(symbol[2], module_name) is False:
+                    if self.__aggregate_paramtype_exists(symbol[2], module_name) is False:
                         base_paramtype_set.add_AggregateParameterType(aggregate_type)
 
                 telemetry_param = xtce.ParameterType(name=aggregate_type.get_name(),
@@ -1504,7 +1504,7 @@ class XTCEManager:
 
                     container_set.add_SequenceContainer(seq_container)
 
-    def __get_command_argument_assigment_list(self, apid: tuple, command_code: tuple, command_length: tuple):
+    def __get_command_argument_assignment_list(self, apid: tuple, command_code: tuple, command_length: tuple):
         # FIXME: There does not seem to be point to passing self here. Will re-visit.
         """
         Factory function that creates a ArgumentAssignmentListType containing three ArgumentAssignment objects;
@@ -1540,12 +1540,12 @@ class XTCEManager:
         out_length = 0
         fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                         (symbol_id,)).fetchall()
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplcity, field_little_endian, bit_offset, bit_size in \
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian, bit_offset, bit_size in \
                 fields:
             size_of_symbol = self.db_cursor.execute('SELECT byte_size from symbols where id=?',
                                                     (field_type,)).fetchone()[0]
-            if field_multiplcity > 0:
-                size_of_symbol *= field_multiplcity
+            if field_multiplicity > 0:
+                size_of_symbol *= field_multiplicity
             out_length += size_of_symbol
 
         if out_length < self.custom_config['global']['CommandMetaData']['BaseContainer']['size'] / 8:
@@ -1555,7 +1555,7 @@ class XTCEManager:
 
     def __get_argtype_from_typeref(self, type_ref: str, namesapce: str):
         out_arg_type = self.UNKNOWN_TYPE
-        if self.BASE_TYPE_NAMESAPCE in type_ref:
+        if self.BASE_TYPE_NAMESPACE in type_ref:
             out_arg_type = RefType.BaseType
         elif type_ref in [aggregate_type.get_name() for aggregate_type in
                           self[namesapce].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
@@ -1568,7 +1568,7 @@ class XTCEManager:
 
         return out_arg_type
 
-    def __extract_members_from_aggregate_argtype(self, aggregate: xtce.AggregateArgumentType, namesapce: str):
+    def __extract_members_from_aggregate_argtype(self, aggregate: xtce.AggregateArgumentType, namespace: str):
         """
         Returns a list of the members inside of a xtce.AggregateArgumentType, essentially flattening the
         entire Aggregate. This is especially useful when populating an ArgumentList in CommandMetaData
@@ -1579,7 +1579,7 @@ class XTCEManager:
         for member in aggregate.get_MemberList().get_Member():
             type_ref = member.get_typeRef()
             new_member = xtce.MemberType()
-            arg_type = self.__get_argtype_from_typeref(type_ref, namesapce)
+            arg_type = self.__get_argtype_from_typeref(type_ref, namespace)
             if arg_type == RefType.BaseType:
                 new_member.set_name(member.get_name())
                 new_member.set_typeRef(type_ref)
@@ -1593,9 +1593,9 @@ class XTCEManager:
             elif arg_type == RefType.AGGREGATE:
                 # FIXME: Make this more readable
                 aggregate_members = self.__extract_members_from_aggregate_argtype(
-                    [aggregate_type for aggregate_type in self[namesapce].
+                    [aggregate_type for aggregate_type in self[namespace].
                         get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType()
-                     if aggregate_type.get_name() == type_ref][0], namesapce)
+                     if aggregate_type.get_name() == type_ref][0], namespace)
                 for aggregate_member in aggregate_members.get_Member():
                     new_member = xtce.MemberType()
 
@@ -1645,7 +1645,7 @@ class XTCEManager:
                                                               header_size=self.__get_command_base_container_length())
                 
                 if aggregate_type and len(aggregate_type.get_MemberList().get_Member()) > 0:
-                    if self.__aggrregate_argtype_exists(symbol[2], module_name) is False:
+                    if self.__aggregate_argtype_exists(symbol[2], module_name) is False:
                         base_argtype_set.add_AggregateArgumentType(aggregate_type)
 
                     # If the list is not flattened, then YAMCS does not allow us to send the command from the Web Interface
@@ -1664,12 +1664,12 @@ class XTCEManager:
             base_command = None
             if parent_command:
                 base_command = xtce.BaseMetaCommandType(metaCommandRef=parent_command)
-                argument_assigment_list = self.__get_command_argument_assigment_list(
+                argument_assignment_list = self.__get_command_argument_assignment_list(
                     ('ccsds-apid', self.__get_apid(command_message_id)),
                     ('cfs-cmd-code', command_code),
                     ('ccsds-length', self.__get_command_length(command_symbol_id)))
 
-                base_command.set_ArgumentAssignmentList(argument_assigment_list)
+                base_command.set_ArgumentAssignmentList(argument_assignment_list)
 
             if base_command:
                 meta_command.set_BaseMetaCommand(base_command)
@@ -1684,14 +1684,14 @@ class XTCEManager:
         """
         for module_id in set(self.db_cursor.execute('select module from telemetry').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
-            logging.info(f'Adding telemetry containers to namesapace "{module[1]}".')
+            logging.info(f'Adding telemetry containers to namespace "{module[1]}".')
             self.add_telemetry_containers(module[1], module[0],
                                           self.custom_config['global']['TelemetryMetaData']['BaseContainer'][
                                               'container_ref'])
 
         for module_id in set(self.db_cursor.execute('select module from commands').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
-            logging.info(f'Adding command containers to namesapce "{module[1]}"')
+            logging.info(f'Adding command containers to namespace "{module[1]}"')
             self.add_command_containers(module[1], module[0],
                                         self.custom_config['global']['CommandMetaData']['BaseContainer'][
                                             'container_ref'])
@@ -1755,7 +1755,7 @@ class XTCEManager:
 
 def parse_cli() -> argparse.Namespace:
     """
-    Parses cli argyments.
+    Parses cli arguments.
     :return: The namespace that has all of the arguments that have been parsed.
     """
 
