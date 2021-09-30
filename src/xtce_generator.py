@@ -728,6 +728,23 @@ class XTCEManager:
         for index in range(multiplicity):
             self.__get_aggregate_paramtype()
 
+    def __get_array(self, field_id) -> []:
+        """
+        Fetches all of the dimension_lists records that match field_id.
+        :return: A list with all of the records fetched from dimension_lists. If no records are found,
+        an empty list is returned.
+        """
+        dim_list_records = self.db_cursor.execute('SELECT * FROM dimension_lists WHERE field_id=?',
+                                                  (field_id,)).fetchall()
+        return dim_list_records
+
+    def __get__array_param_type(self, dims: [], type_ref: str) -> xtce.ArrayArgumentType:
+        out_array_type = xtce.ArrayParameterType()
+        # TODO: Decide what to do about naming. Keep mind that there is a (very small) chance of this name
+        # colliding with other types in the database. Actually never mind. If we make it part of the
+        # BaseType namespace, we don't have much to worry about.
+        return out_array_type
+
     def __is_base_type(self, type_name: str) -> tuple:
         """
         Checks if type_name is a base type as it appears in the database.
@@ -1088,8 +1105,24 @@ class XTCEManager:
         member_list = xtce.MemberListType()
         out_param.set_MemberList(member_list)
         symbol_id = str(symbol_record[0])
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian, bit_size, bit_offset in fields:
+        # field_multiplicity
+
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_size, bit_offset in fields:
             # If this field is standalone array, ignore it for now
+            array = self.__get_array(field_id)
+
+            field_multiplicity = self.__get_array(field_id)
+            if field_id == 44:
+                print(f"field_multiplicity for multiplicity$$$$$$$$$$$$$$$$$-->{field_multiplicity}")
+
+            if len(field_multiplicity) > 0:
+                print(f'field_multiplicity------------>{self.__get_array(field_id)}')
+                field_multiplicity = field_multiplicity[0][3] + 1
+            else:
+                field_multiplicity = 0
+            if field_name == 'filename':
+                print(f'array size for {field_name} is {self.__get_array(field_id)}')
+
             if field_type == field_symbol:
                 continue
             elif field_multiplicity > 0 and field_type != field_symbol:
@@ -1280,7 +1313,23 @@ class XTCEManager:
 
         member_list = xtce.MemberListType()
         out_param.set_MemberList(member_list)
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian, bit_size, bit_offset in fields:
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_size, bit_offset in fields:
+            field_multiplicity = 0
+
+            array = self.__get_array(field_id)
+
+            field_multiplicity = self.__get_array(field_id)
+            if field_id == 44:
+                print(f"field_multiplicity for multiplicity$$$$$$$$$$$$$$$$$-->{field_multiplicity}")
+
+            if len(field_multiplicity) > 0:
+                print(f'field_multiplicity------------>{self.__get_array(field_id)}')
+                field_multiplicity = field_multiplicity[0][3] + 1
+            else:
+                field_multiplicity = 0
+
+            if field_name == 'filename':
+                print(f'array size for {field_name} is {self.__get_array(field_id)}')
             if field_type == field_symbol:
                 # This means this field is a standalone array; we skip those for now
                 continue
@@ -1540,8 +1589,16 @@ class XTCEManager:
         out_length = 0
         fields = self.db_cursor.execute('SELECT * FROM fields where symbol=?',
                                         (symbol_id,)).fetchall()
-        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_multiplicity, field_little_endian, bit_offset, bit_size in \
+        for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_offset, bit_size in \
                 fields:
+            field_multiplicity = self.__get_array(field_id)
+            print(f'{field_name} field_multiplicity for __get_command_length------------>{self.__get_array(field_id)} '
+                  f'for symbol id:{symbol_id}')
+            if len(field_multiplicity) > 0:
+                field_multiplicity = field_multiplicity[0][3]
+            else:
+                field_multiplicity = 0
+
             size_of_symbol = self.db_cursor.execute('SELECT byte_size from symbols where id=?',
                                                     (field_type,)).fetchone()[0]
             if field_multiplicity > 0:
@@ -1771,7 +1828,7 @@ def parse_cli() -> argparse.Namespace:
                         help='An config file to apply extra settings to the xtce generation such as'
                              'mapping an Aggregate Type to a base type, or to another aggregate type altogether. This'
                              'is where the root spacesystem is defined as well.')
-    parser.add_argument('--output_path', type=str, default=None,
+    parser.add_argument('--output_path', type=str, default=None, required=True,
                         help='The file path to write the output xtce file to. The default is the current directory.')
 
     return parser.parse_args()
