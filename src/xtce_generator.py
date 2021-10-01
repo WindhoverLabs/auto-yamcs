@@ -10,6 +10,7 @@ of XTCE, which is mostly complaint with the standard.
 [3]:https://yamcs.org/
 """
 from pathlib import Path
+import random
 from typing import Union
 
 import xtce
@@ -53,6 +54,7 @@ class XTCEManager:
     UNKNOWN_TYPE = 'UNKNOWN'  # A type for anything that, for some reason, we don't understand from the database
     BASE_TYPE_NAMESPACE = 'BaseType'
     NAMESPACE_SEPARATOR = '/'
+    ARRAY_BASE_NAME = "Array"
 
     def __init__(self, root_space_system: str, file_path: str, sqlite_path: str, config: dict, cpu_id: str = None):
         """
@@ -73,14 +75,14 @@ class XTCEManager:
         """
         self.root = xtce.SpaceSystemType(name=root_space_system)
 
-        #This is a horrid hack, I know. Will try to come up with something more elegant.
-        #The problem is sometimes CPU_ID is present, sometimes it is not.
+        # This is a horrid hack, I know. Will try to come up with something more elegant.
+        # The problem is sometimes CPU_ID is present, sometimes it is not.
         self.nested_root = False
         if cpu_id:
             # FIXME:This will work, but it's really wack. We should be using nested namespaces(?)
             self.nested_root = True
             self.root.add_SpaceSystem(xtce.SpaceSystemType(name=cpu_id))
-            self.root = self.root.get_SpaceSystem()[len(self.root.get_SpaceSystem())-1]
+            self.root = self.root.get_SpaceSystem()[len(self.root.get_SpaceSystem()) - 1]
 
         self.telemetry_metadata = xtce.TelemetryMetaDataType()
         self.command_metadata = xtce.CommandMetaDataType()
@@ -522,8 +524,8 @@ class XTCEManager:
             xtce.BooleanParameterType(name='boolean8_LE', IntegerDataEncoding=xtce.IntegerDataEncodingType()))
         base_set.add_BooleanParameterType(
             xtce.BooleanParameterType(name='boolean8_BE', IntegerDataEncoding=xtce.IntegerDataEncodingType(sizeInBits=8,
-                                                                   bitOrder=xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST,
-                                                                   encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT)))
+                                                                                                           bitOrder=xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST,
+                                                                                                           encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT)))
 
         # Add string type
         size_in_bits = xtce.SizeInBitsType()
@@ -622,7 +624,8 @@ class XTCEManager:
                     self[
                         self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() + \
                     self[
-                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType()
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType() + \
+                    self[self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_ArrayParameterType()
 
         all_type_names = []
 
@@ -654,7 +657,10 @@ class XTCEManager:
                         self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType() + \
                     self[
                         self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType() + \
-                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()
+                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()    + \
+                    self[self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_ArrayParameterType() + \
+                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_ArrayArgumentType()
+
 
         all_type_names = []
 
@@ -678,7 +684,7 @@ class XTCEManager:
         """
         return type_name in self.__get_all_arg_basetypes()
 
-    def __param_basetype_exists(self, type_name) -> bool:
+    def __param_basetype_exists(self, type_name: str) -> bool:
         """
         Checks if the base type with type_name exists in the BaseType namespace. type_name is assumed to just be the type
         name without the namespace. For example "string320_LE", NOT "BaseType/string320_LE". As the function name suggests,
@@ -738,11 +744,53 @@ class XTCEManager:
                                                   (field_id,)).fetchall()
         return dim_list_records
 
-    def __get__array_param_type(self, dims: [], type_ref: str) -> xtce.ArrayArgumentType:
+    def __is_array(self, field_id) -> bool:
+        """
+        Return True if the field with field_id is an array. Otherwise, return False.
+        """
+        dim_list_records = self.db_cursor.execute('SELECT * FROM dimension_lists WHERE field_id=?',
+                                                  (field_id,)).fetchall()
+        return len(dim_list_records) > 0
+
+    def __get_dimension_list_param_type(self, field_id) -> xtce.DimensionListType:
+        """
+        Return the size of the array mapped to field_id in the database.
+        This function assumes the following schema for the dimension_lists table:
+        (id, field_id, dim_order, upper_bound)
+        If the field is not an array, this function returns 0.
+        """
+        # In XTCE DimensionListType is the parameter version of this type
+        dim_list_param_type = xtce.DimensionListType()
+        dim_list_records = self.db_cursor.execute('SELECT * FROM dimension_lists WHERE field_id=?',
+                                                  (field_id,)).fetchall()
+        # Enforce order by dim_order
+        dim_list_records.sort(key=lambda dim_list_record: dim_list_record[3])
+
+        if len(dim_list_records) > 0:
+            for dim in dim_list_records:
+                new_dimension = xtce.DimensionType()
+                upper_bound = dim[3]
+                new_dimension.set_StartingIndex(xtce.FixedType(0))
+                new_dimension.set_EndingIndex(xtce.FixedType(upper_bound))
+                dim_list_param_type.add_Dimension(new_dimension)
+
+        return dim_list_param_type
+
+    def __get_array_param_type(self, field_id: [], type_ref: str) -> xtce.ArrayArgumentType:
+        """
+        Construct a ArrayParameterType with the dimensions of the field_id in the dimension_lists table. This function
+        assumes thar type_ref exists. If field_id is not an array, then a ArrayParameterType with an empty DimensionListType
+        is returned.
+        """
         out_array_type = xtce.ArrayParameterType()
-        # TODO: Decide what to do about naming. Keep mind that there is a (very small) chance of this name
-        # colliding with other types in the database. Actually never mind. If we make it part of the
-        # BaseType namespace, we don't have much to worry about.
+        dimensions = self.__get_dimension_list_param_type(field_id)
+        out_array_type.set_DimensionList(dimensions)
+        out_array_name = self.ARRAY_BASE_NAME
+        for dim in dimensions.get_Dimension():
+            out_array_name += '_' + str(dim.get_EndingIndex().get_FixedValue()) + 'Dim'
+        out_array_type.set_name(out_array_name)
+        out_array_type.set_arrayTypeRef(type_ref)
+
         return out_array_type
 
     def __is_base_type(self, type_name: str) -> tuple:
@@ -1105,28 +1153,13 @@ class XTCEManager:
         member_list = xtce.MemberListType()
         out_param.set_MemberList(member_list)
         symbol_id = str(symbol_record[0])
-        # field_multiplicity
 
         for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_size, bit_offset in fields:
             # If this field is standalone array, ignore it for now
-            array = self.__get_array(field_id)
-
-            field_multiplicity = self.__get_array(field_id)
-            if field_id == 44:
-                print(f"field_multiplicity for multiplicity$$$$$$$$$$$$$$$$$-->{field_multiplicity}")
-
-            if len(field_multiplicity) > 0:
-                print(f'field_multiplicity------------>{self.__get_array(field_id)}')
-                field_multiplicity = field_multiplicity[0][3] + 1
-            else:
-                field_multiplicity = 0
-            if field_name == 'filename':
-                print(f'array size for {field_name} is {self.__get_array(field_id)}')
 
             if field_type == field_symbol:
                 continue
-            elif field_multiplicity > 0 and field_type != field_symbol:
-
+            elif self.__is_array(field_id) > 0 and field_type != field_symbol:
                 logging.debug(f'comparing {field_type} and {field_symbol}')
 
                 symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
@@ -1166,6 +1199,7 @@ class XTCEManager:
                         type_ref_name = child.get_name()
 
                     if self.__is__symbol_string(field_type) is True:
+                        field_multiplicity = self.__get_array(field_id)[0][3] + 1
                         # FIXME: Don't love the way I'm handling this, looks kind of ugly and wack. Will revise.
                         endianness_postfix = self.__get_endianness_postfix(field_little_endian)
                         string_type_name = 'string' + str(field_multiplicity * 8) + endianness_postfix
@@ -1185,26 +1219,27 @@ class XTCEManager:
                         member.set_typeRef(type_ref_name)
                         member_list.add_Member(member)
 
-
                     else:
-                        for index in range(field_multiplicity):
-                            child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
-                                                                  (field_type,)).fetchone()
+                        if base_type_val[0] is True:
+                            type_ref_name = type_ref_name
+                        else:
+                            type_ref_name = module_name + XTCEManager.NAMESPACE_SEPARATOR + type_ref_name
 
-                            # FIXME: This entire function needs to be decoupled (?)
-                            logging.debug(f'field_symbol id on array:{field_symbol}')
-                            logging.debug(f'child symbol-->{child_symbol}')
+                        new_array = self.__get_array_param_type(field_id, type_ref_name)
 
-                            member = xtce.MemberType()
-                            member.set_name(f'{field_name}_{index}_')
-                            member.set_typeRef(type_ref_name)
-                            member_list.add_Member(member)
+                        if self.__param_basetype_exists(new_array.get_name()) is False:
+                            self[
+                                XTCEManager.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().add_ArrayParameterType(
+                                new_array)
+
+                        member = xtce.MemberType()
+                        member.set_name(f'{field_name}')
+                        member.set_typeRef(XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + new_array.get_name())
+                        member_list.add_Member(member)
 
                 else:
                     type_ref_name = 'BaseType/UNKNOWN'
                     logging.warning('BaseType/UNKNOWN is being used as array type')
-
-
 
             else:
                 logging.debug('else block')
@@ -1315,21 +1350,11 @@ class XTCEManager:
         out_param.set_MemberList(member_list)
         for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_size, bit_offset in fields:
             field_multiplicity = 0
+            if self.__is_array(field_id):
+                # Add 1 to upper bound since it is a zero-indexed and inclusive bound
+                field_multiplicity = self.__get_array(field_id)[0][3] + 1
+            # TODO: When YAMCS adds support for array arguments, update this to use XTCE ArgumentArrayType
 
-            array = self.__get_array(field_id)
-
-            field_multiplicity = self.__get_array(field_id)
-            if field_id == 44:
-                print(f"field_multiplicity for multiplicity$$$$$$$$$$$$$$$$$-->{field_multiplicity}")
-
-            if len(field_multiplicity) > 0:
-                print(f'field_multiplicity------------>{self.__get_array(field_id)}')
-                field_multiplicity = field_multiplicity[0][3] + 1
-            else:
-                field_multiplicity = 0
-
-            if field_name == 'filename':
-                print(f'array size for {field_name} is {self.__get_array(field_id)}')
             if field_type == field_symbol:
                 # This means this field is a standalone array; we skip those for now
                 continue
@@ -1480,7 +1505,7 @@ class XTCEManager:
         :return: The size of the telemetry header in bits.
         """
         offsets = self.db_cursor.execute('select byte_offset from fields where symbol=?', (symbol_id,)).fetchall()
-        
+
         offsets.sort()
         return offsets[1]
 
@@ -1534,8 +1559,9 @@ class XTCEManager:
 
                 # Ensure that we do not duplicate a parameter name.
                 if self.__aggregate_param_exists(telemetry_param.get_name(), module_name) is False:
-                    logging.warning(f'The parameter {telemetry_param.get_name()} is being used multiple times. This might be a '
-                                    f'sign of something wrong in configuration or flight software.')
+                    logging.warning(
+                        f'The parameter {telemetry_param.get_name()} is being used multiple times. This might be a '
+                        f'sign of something wrong in configuration or flight software.')
                     base_param_set.add_Parameter(telemetry_param)
 
                 container_entry_list.add_ParameterRefEntry(container_param_ref)
@@ -1592,8 +1618,7 @@ class XTCEManager:
         for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_offset, bit_size in \
                 fields:
             field_multiplicity = self.__get_array(field_id)
-            print(f'{field_name} field_multiplicity for __get_command_length------------>{self.__get_array(field_id)} '
-                  f'for symbol id:{symbol_id}')
+
             if len(field_multiplicity) > 0:
                 field_multiplicity = field_multiplicity[0][3]
             else:
@@ -1696,11 +1721,10 @@ class XTCEManager:
             for symbol in self.db_cursor.execute('select * from symbols where id=?',
                                                  (command_symbol_id,)).fetchall():
                 logging.debug(f'symbol{symbol} for tlm:{command_name}')
-                
 
                 aggregate_type = self.__get_aggregate_argtype(symbol, module_name,
                                                               header_size=self.__get_command_base_container_length())
-                
+
                 if aggregate_type and len(aggregate_type.get_MemberList().get_Member()) > 0:
                     if self.__aggregate_argtype_exists(symbol[2], module_name) is False:
                         base_argtype_set.add_AggregateArgumentType(aggregate_type)
@@ -1793,10 +1817,10 @@ class XTCEManager:
             out_root = self[namespace]
 
         out_root.export(xtce_file, 0, namespacedef_='xmlns:xml="http://www.w3.org/XML/1998/namespace" '
-                                                           'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
-                                                           'xmlns:xtce="http://www.omg.org/spec/XTCE/20180204" '
-                                                           'xsi:schemaLocation="http://www.omg.org/spec/XTCE/20180204 SpaceSystem.xsd "',
-                               namespaceprefix_='xtce:')
+                                                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                                                    'xmlns:xtce="http://www.omg.org/spec/XTCE/20180204" '
+                                                    'xsi:schemaLocation="http://www.omg.org/spec/XTCE/20180204 SpaceSystem.xsd "',
+                        namespaceprefix_='xtce:')
 
     def resolve_root_sapcesystem(config_data: dict):
         root_space_system = None
@@ -1809,6 +1833,7 @@ class XTCEManager:
             logging.error(f'No {_ROOT_SPACESYSTEM_KEY} key found in configuration ')
 
         return root_space_system
+
 
 def parse_cli() -> argparse.Namespace:
     """
@@ -1858,7 +1883,7 @@ def set_log_level(log_level: str):
 
 
 def generate_xtce(database_path: str, config_yaml: dict, output_path: str, root_spacesystem: str = 'airliner',
-                  log_level: str = '0', cpu_id: str= None):
+                  log_level: str = '0', cpu_id: str = None):
     """
     Generate an xtce file from the database at database_path. This database is assumed to have
     been generated by juicer. To read about more about juicer, look at [1]. It should at least comply with the schema
@@ -1890,8 +1915,6 @@ def generate_xtce(database_path: str, config_yaml: dict, output_path: str, root_
     logging.info(f'XTCE file has been written to "{xtce_obj.output_file}"')
 
 
-
-
 def main():
     logging.info('Parsing CLI arguments...')
 
@@ -1905,9 +1928,11 @@ def main():
     if _ROOT_SPACESYSTEM_KEY in config_data:
         if _CPU_ID_KEY in config_data:
             cpu_id = config_data[_CPU_ID_KEY]
-            generate_xtce(args.sqlite_path, config_data, args.output_path, config_data[_ROOT_SPACESYSTEM_KEY], args.log_level, cpu_id=cpu_id)
+            generate_xtce(args.sqlite_path, config_data, args.output_path, config_data[_ROOT_SPACESYSTEM_KEY],
+                          args.log_level, cpu_id=cpu_id)
         else:
-            generate_xtce(args.sqlite_path, config_data, args.output_path, config_data[_ROOT_SPACESYSTEM_KEY],args.log_level)
+            generate_xtce(args.sqlite_path, config_data, args.output_path, config_data[_ROOT_SPACESYSTEM_KEY],
+                          args.log_level)
     else:
         logging.error(f'No root_spacesystem key found in configuration "{args.config_yaml}"')
 
