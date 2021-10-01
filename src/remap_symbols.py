@@ -59,7 +59,11 @@ def parse_cli() -> argparse.Namespace:
 def main():
     args = parse_cli()
 
-    yaml_remaps = read_yaml(args.yaml_path)['remaps']
+    yaml = read_yaml(args.yaml_path)
+    if 'remaps' in yaml:
+        yaml_remaps = read_yaml(args.yaml_path)['remaps']
+    else:
+        yaml_remaps = read_yaml(args.yaml_path)['type_remaps']
 
     remap_symbols(args.database, yaml_remaps)
 
