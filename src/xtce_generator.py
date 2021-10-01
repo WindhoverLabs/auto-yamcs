@@ -1156,10 +1156,10 @@ class XTCEManager:
 
         for field_id, field_symbol, field_name, field_byte_offset, field_type, field_little_endian, bit_size, bit_offset in fields:
             # If this field is standalone array, ignore it for now
-
             if field_type == field_symbol:
                 continue
-            elif self.__is_array(field_id) > 0 and field_type != field_symbol:
+
+            elif self.__is_array(field_id):
                 logging.debug(f'comparing {field_type} and {field_symbol}')
 
                 symbol_type = self.db_cursor.execute('SELECT * FROM symbols where id=?',
@@ -1358,7 +1358,7 @@ class XTCEManager:
             if field_type == field_symbol:
                 # This means this field is a standalone array; we skip those for now
                 continue
-            elif field_multiplicity > 0 and field_type != field_symbol:
+            elif field_multiplicity > 0:
 
                 logging.debug(f'comparing{field_type} and {field_symbol}')
 
