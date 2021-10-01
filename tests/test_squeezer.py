@@ -21,11 +21,10 @@ def test_juicer(monkeypatch, get_tests_path):
     :return:
     """
     monkeypatch.chdir(os.path.join(get_tests_path, '../src'))
-    print('test path:',os.path.join(get_tests_path, '../src'))
     subprocess.run(['make', '-C', '../juicer', 'run-tests'], check=True)
 
 
-def test_squeezer(monkeypatch, get_tests_path):
+def test_squeezer_inline_mode(monkeypatch, get_tests_path):
 
     args = ['',
             'inline',
