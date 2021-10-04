@@ -27,4 +27,4 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Run tests with pytest
-        run: pytest 
+        run: pytest --cov=src
