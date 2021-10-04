@@ -29,6 +29,8 @@ jobs:
       - name: Run tests with pytest
         run: pytest --cov=src
       - name: Coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run:  |
           coveralls --service=github
 
