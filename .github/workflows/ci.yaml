@@ -20,5 +20,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r src/requirements.txt
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
       - name: Run tests with pytest
         run: pytest 
