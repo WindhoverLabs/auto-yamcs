@@ -6,3 +6,6 @@ sqlite_utils==2.21
 cerberus==1.3.2
 yamlpath>=3.4.0
 Jinja2==2.11.2
+coverage<5.0
+pytest-cov
+coveralls>=2.1.0
