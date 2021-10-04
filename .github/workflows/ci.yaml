@@ -27,7 +27,7 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Run tests with pytest
-        run: pytest --cov=src
+        run: pytest --cov=src --cov=xtce_generator --cov=tlm_cmd_merger
       - name: Coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
