@@ -1,4 +1,5 @@
 [![Run Python Tests](https://github.com/WindhoverLabs/auto-yamcs/actions/workflows/ci.yaml/badge.svg)](https://github.com/WindhoverLabs/auto-yamcs/actions/workflows/ci.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/WindhoverLabs/auto-yamcs/badge.svg?branch=xtce_generator_update)](https://coveralls.io/github/WindhoverLabs/auto-yamcs?branch=xtce_generator_update)
 # Table of Contents
 1.  [auto-yamcs](#auto-yamcs)
 2.  [Requirements](#Requirements)
