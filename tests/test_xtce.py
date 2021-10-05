@@ -27,29 +27,58 @@ def test_xtce_no_cpu_id(monkeypatch, get_tests_path):
             '--verbosity',
             '0']
 
-    monkeypatch.chdir(os.path.join(get_tests_path, '../src'))
-
     with patch.object(sys, 'argv', args):
-        squeezer.main()
+        monkeypatch.chdir(os.path.join(get_tests_path, '../src'))
 
-    os.remove('cfs.xml')
-    # set_log_level(log_level)
+        args = squeezer.parse_cli()
 
-    xtce_obj = xtce_generator.XTCEManager("cfs", 'cfs.xml', 'newdb.sqlite', '../tests/data/xtce_config.yaml', None)
-    xtce_obj.add_base_types('TestBaseType')
-    #
-    # logging.info('Adding aggregate types to xtce...')
-    # xtce_obj.add_aggregate_types()
-    #
-    # logging.info('Writing xtce object to file...')
-    # xtce_obj.write_to_file(namespace=root_spacesystem)
-    #
-    # logging.info(f'XTCE file has been written to "{xtce_obj.output_file}"')
+        yaml_dict = squeezer.read_yaml(args.inline_yaml_path)
+        squeezer.set_log_level(args.verbosity)
 
-    # TODO: The correctness of the database should be tested.
+        elfs = squeezer.get_elf_files(yaml_dict)
 
-    # os.remove('newdb.sqlite')
-    # os.remove('cfs.xml')
+        squeezer.squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
+        squeezer.merge_command_telemetry(args.inline_yaml_path, args.output_file)
+
+        if args.remap_yaml:
+            yaml_remaps_dict = squeezer.read_yaml(args.remap_yaml)
+            yaml_remaps = squeezer.__inline_get_remaps(yaml_remaps_dict)
+            if len(yaml_remaps['type_remaps']) > 0:
+                squeezer.remap_symbols.remap_symbols(args.output_file, yaml_remaps['type_remaps'])
+            else:
+                squeezer.logging.warning('No type_remaps configuration found. No remapping was done done.')
+
+        if args.sql_yaml:
+            squeezer.run_mod_sql(args.output_file, args.sql_yaml)
+
+        if args.override_yaml:
+            squeezer.run_msg_def_overrides(args.override_yaml, args.output_file)
+
+        xtce_obj = xtce_generator.XTCEManager("cfs", 'cfs.xml', 'newdb.sqlite', '../tests/data/xtce_config.yaml', None)
+        xtce_obj.add_base_types('TestBaseType')
+
+        assert xtce_obj.root is not None
+        assert xtce_obj.root.get_SpaceSystem is not None
+        assert xtce_obj['TestBaseType'] is not None
+        assert xtce_obj.BASE_TYPE_NAMESPACE == 'TestBaseType'
+        assert xtce_obj['TestBaseType'].get_name() == 'TestBaseType'
+        assert xtce_obj['TestBaseType'].get_TelemetryMetaData() is not None
+
+        assert xtce_obj['TestBaseType'].get_TelemetryMetaData().get_ParameterTypeSet() is not None
+        assert xtce_obj['TestBaseType'].get_CommandMetaData().get_ArgumentTypeSet() is not None
+
+        #
+        # logging.info('Adding aggregate types to xtce...')
+        # xtce_obj.add_aggregate_types()
+        #
+        # logging.info('Writing xtce object to file...')
+        # xtce_obj.write_to_file(namespace=root_spacesystem)
+        #
+        # logging.info(f'XTCE file has been written to "{xtce_obj.output_file}"')
+        #
+        # # TODO: The correctness of the database should be tested.
+        # os.remove('newdb.sqlite')
+        # os.remove('cfs.xml')
 
 if __name__ == '__main__':
     unittest.main()
