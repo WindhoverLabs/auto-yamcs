@@ -52,7 +52,7 @@ dimension_lists:
       dim_order:
         type: integer # Some data formats(such as SQL) do not enforce order. The dim_order field can be used to determine
                       # order of each dimension of the array.
-      upper_bound: # Inclusive. Arrays such as "int[2]" would have an upper bound of 2.
+      upper_bound: # Inclusive and zero-indexed. Arrays such as "int[2]" would have an upper bound of 1.
         type: integer
         min: 0
 
