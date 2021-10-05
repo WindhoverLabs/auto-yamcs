@@ -181,7 +181,7 @@ def inline_mode_handler(args: argparse.Namespace):
         run_msg_def_overrides(args.override_yaml, args.output_file)
 
     xtce_config_data = read_yaml(args.xtce_config_yaml)
-    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path)
+    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, None)
 
 
 def singleton_mode_handler(args: argparse.Namespace):
