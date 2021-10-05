@@ -1357,6 +1357,7 @@ class XTCEManager:
 
             if field_type == field_symbol:
                 # This means this field is a standalone array; we skip those for now
+                logging.warning(f'Stand-alone arrays are not parsed at the moment.')
                 continue
             elif field_multiplicity > 0:
 
@@ -1419,6 +1420,15 @@ class XTCEManager:
 
                     else:
                         # It's not a string, so it must be a regular array
+                        dim_list = self.__get_array(field_id)
+                        if len(dim_list) > 1:
+                            logging.warning(f'Array {field_name} has more than one dimension.'
+                                            f'This array will be flattened. '
+                                            f'Look at ticket:https://github.com/WindhoverLabs/xtce_generator/issues/35')
+                            field_multiplicity = 1
+                            for dim in dim_list:
+                                field_multiplicity *= dim[0][3]+1
+
                         for index in range(field_multiplicity):
                             child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
                                                                   (field_type,)).fetchone()
