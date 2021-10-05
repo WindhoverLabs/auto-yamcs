@@ -79,5 +79,7 @@ to
 After renaming that parameter, you are good to go! 
 **NOTE: **Beware that if you do not change this, `yamcs` will *not* run.
 
+#Testing
+All testing of this tool is done with [auto-yamcs](https://github.com/WindhoverLabs/auto-yamcs)
 
-Documentation updated on March 23, 2021
+Documentation updated on October 5, 2021
