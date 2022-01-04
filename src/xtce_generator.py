@@ -786,8 +786,16 @@ class XTCEManager:
         dimensions = self.__get_dimension_list_param_type(field_id)
         out_array_type.set_DimensionList(dimensions)
         out_array_name = self.ARRAY_BASE_NAME
+
+        # Clean up type_ref name to avoid circular references in BaseType namespace.
+        if type_ref.find('/') != 1:
+            type_ref_name = type_ref[type_ref.find('/') + 1:]
+        else:
+            type_ref_name = type_ref
+
         for dim in dimensions.get_Dimension():
             out_array_name += '_' + str(dim.get_EndingIndex().get_FixedValue()) + 'Dim'
+            out_array_name += '_' + type_ref_name
         out_array_type.set_name(out_array_name)
         out_array_type.set_arrayTypeRef(type_ref)
 
