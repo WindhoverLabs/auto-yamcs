@@ -786,7 +786,7 @@ class XTCEManager:
         """
         Construct a ArrayParameterType with the dimensions of the field_id in the dimension_lists table. This function
         assumes thar type_ref exists. If field_id is not an array, then a ArrayParameterType with an empty DimensionListType
-        is returned.
+        is returned. It is assumed that type_ref is a fully qualified name such as "/simlink/apps/to/TO_MessageFlowDiagTlm_t".
         """
         out_array_type = xtce.ArrayParameterType()
         dimensions = self.__get_dimension_list_param_type(field_id)
@@ -795,7 +795,7 @@ class XTCEManager:
 
         # Clean up type_ref name to avoid circular references in BaseType namespace.
         if type_ref.find('/') != 1:
-            type_ref_name = type_ref[type_ref.find('/') + 1:]
+            type_ref_name = type_ref.replace(XTCEManager.NAMESPACE_SEPARATOR, "_")
         else:
             type_ref_name = type_ref
 
