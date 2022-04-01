@@ -27,7 +27,7 @@ _ROOT_SPACESYSTEM_KEY = "root_spacesystem"
 _CPU_ID_KEY = "cpu_id"
 
 
-# TODO:Implementation to enable nesting of spacesystems beyond depth of root+1
+# # TODO:Implementation to enable nesting of spacesystems beyond depth of root+1
 # class NameSpace(xtce.SpaceSystemType):
 #     def __init__(self, shortDescription=None, LongDescription=None, AliasSet=None, AncillaryDataSet=None, name=None,
 #                  operationalStatus=None, base=None, Header=None, TelemetryMetaData=None, CommandMetaData=None,
@@ -35,10 +35,11 @@ _CPU_ID_KEY = "cpu_id"
 #         super(NameSpace, self).__init__(shortDescription, LongDescription, AliasSet, AncillaryDataSet, name,
 #                                         operationalStatus, base, Header, TelemetryMetaData,
 #                                         CommandMetaData,
-#                                         ServiceSet, SpaceSystem, gds_collector_,**kwargs_)
-#         self.__namespace_dict = dict({name:self})
+#                                         ServiceSet, SpaceSystem, gds_collector_, **kwargs_)
+#         self.__namespace_dict = dict({name:{name: self}})
 #
 #     def __getitem__(self, key: str):
+#         pass
 
 
 class RefType(int, Enum):
@@ -73,6 +74,7 @@ class XTCEManager:
         decoupling protocols such as CCSDS and MAVLink in a ground system.
         :param cpu_id: The id of the flight computer(CPD, PPD, etc).
         """
+
         self.root = xtce.SpaceSystemType(name=root_space_system)
 
         # This is a horrid hack, I know. Will try to come up with something more elegant.
@@ -94,7 +96,11 @@ class XTCEManager:
         self.root.set_TelemetryMetaData(self.telemetry_metadata)
         self.root.set_CommandMetaData(self.command_metadata)
 
-        self.__namespace_dict = dict({root_space_system: self.root})
+        if not(XTCEManager.NAMESPACE_SEPARATOR in root_space_system):
+            self.__namespace_dict = dict({XTCEManager.NAMESPACE_SEPARATOR + root_space_system: self.root})
+        else:
+            self.__namespace_dict = dict({root_space_system: self.root})
+
 
         # FIXME: Would like to avoid initializing database connection in constructor.
         db_handle = sqlite3.connect(sqlite_path)
@@ -577,14 +583,12 @@ class XTCEManager:
 
         base_space_system.get_CommandMetaData().set_ArgumentTypeSet(base_set)
 
-    def add_base_types(self, namespace: str = 'BaseType'):
+    def add_base_types(self):
         """
         Create a namespace BaseType and add all base types to it. Please refer to the docs for how we define a base type
         in our ground system.
         :return:
         """
-        # FIXME: I don't think the BaseType namespace should be argument, there is very little reason to make that configurable.
-        self.BASE_TYPE_NAMESPACE = namespace
         self.add_namespace(self.BASE_TYPE_NAMESPACE)
         self.__add_telemetry_base_types()
         self.__add_commands_base_types()
@@ -625,7 +629,8 @@ class XTCEManager:
                         self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_BooleanParameterType() + \
                     self[
                         self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType() + \
-                    self[self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_ArrayParameterType()
+                    self[
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_ArrayParameterType()
 
         all_type_names = []
 
@@ -657,10 +662,11 @@ class XTCEManager:
                         self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_BooleanArgumentType() + \
                     self[
                         self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_StringParameterType() + \
-                    self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType()    + \
-                    self[self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_ArrayParameterType() + \
+                    self[
+                        self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_StringArgumentType() + \
+                    self[
+                        self.BASE_TYPE_NAMESPACE].get_TelemetryMetaData().get_ParameterTypeSet().get_ArrayParameterType() + \
                     self[self.BASE_TYPE_NAMESPACE].get_CommandMetaData().get_ArgumentTypeSet().get_ArrayArgumentType()
-
 
         all_type_names = []
 
@@ -1242,7 +1248,8 @@ class XTCEManager:
 
                         member = xtce.MemberType()
                         member.set_name(f'{field_name}')
-                        member.set_typeRef(XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + new_array.get_name())
+                        member.set_typeRef(
+                            XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR + new_array.get_name())
                         member_list.add_Member(member)
 
                 else:
@@ -1435,7 +1442,7 @@ class XTCEManager:
                                             f'Look at ticket:https://github.com/WindhoverLabs/xtce_generator/issues/35')
                             field_multiplicity = 1
                             for dim in dim_list:
-                                field_multiplicity *= dim[0][3]+1
+                                field_multiplicity *= dim[0][3] + 1
 
                         for index in range(field_multiplicity):
                             child_symbol = self.db_cursor.execute('SELECT * FROM symbols where id=?',
@@ -1775,6 +1782,25 @@ class XTCEManager:
                 meta_command.set_CommandContainer(command_container)
                 meta_command_set.add_MetaCommand(meta_command)
 
+    def __inspect_parent_modules(self, child_module_name: str, out_parent_modules: list):
+        """
+        inspect all parent modules of child_module_name and add them to out_parent_modules.
+        Very useful for constructing qualified namespaces such as "obc/simlink/apps/simlink"
+        """
+        out_parent_modules.append(child_module_name)
+        parent_key = self.db_cursor.execute('select parent_module from modules where name=?', (child_module_name, )).fetchone()[0]
+        if parent_key is not None:
+            new_parent = self.db_cursor.execute('select name from modules where id=?', (parent_key,)).fetchone()
+            self.__inspect_parent_modules(new_parent[0], out_parent_modules)
+
+    def __get_qualified_namespace(self, module_list):
+        qualified_name = XTCEManager.NAMESPACE_SEPARATOR + self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR
+        for name in module_list:
+            qualified_name += name
+            qualified_name += XTCEManager.NAMESPACE_SEPARATOR
+
+        return qualified_name
+
     def add_aggregate_types(self):
         """
         Iterate through all of the symbols in the database and add them to the TelemetryMetaDataType and
@@ -1784,14 +1810,23 @@ class XTCEManager:
         for module_id in set(self.db_cursor.execute('select module from telemetry').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             logging.info(f'Adding telemetry containers to namespace "{module[1]}".')
-            self.add_telemetry_containers(module[1], module[0],
+
+            modules = []
+            self.__inspect_parent_modules(module[1], modules)
+            modules.reverse()
+            qualified_module_name = self.__get_qualified_namespace(modules)
+            self.add_telemetry_containers(qualified_module_name, module[0],
                                           self.custom_config['global']['TelemetryMetaData']['BaseContainer'][
                                               'container_ref'])
 
         for module_id in set(self.db_cursor.execute('select module from commands').fetchall()):
             module = self.db_cursor.execute('select id, name from modules where id=?', (module_id[0],)).fetchone()
             logging.info(f'Adding command containers to namespace "{module[1]}"')
-            self.add_command_containers(module[1], module[0],
+            modules = []
+            self.__inspect_parent_modules(module[1], modules)
+            modules.reverse()
+            qualified_module_name = self.__get_qualified_namespace(modules)
+            self.add_command_containers(qualified_module_name, module[0],
                                         self.custom_config['global']['CommandMetaData']['BaseContainer'][
                                             'container_ref'])
 
@@ -1801,7 +1836,27 @@ class XTCEManager:
         :param namespace_name:
         :return:
         """
+        namespace_name = namespace_name.rstrip(XTCEManager.NAMESPACE_SEPARATOR)
         return self.__namespace_dict[namespace_name]
+
+    def __query_spacesystem_from_qualified_name(self, qualified_name: str):
+        """
+        """
+        qualified_name = qualified_name.strip(XTCEManager.NAMESPACE_SEPARATOR)
+        current_name = ""
+        current_space_system = self.root
+        for space_system_name in qualified_name.split(XTCEManager.NAMESPACE_SEPARATOR):
+            current_name += XTCEManager.NAMESPACE_SEPARATOR + space_system_name
+            if not(current_name in self.__namespace_dict):
+                new_namespace = xtce.SpaceSystemType(name=space_system_name)
+                current_space_system.add_SpaceSystem(new_namespace)
+                new_namespace.set_TelemetryMetaData(xtce.TelemetryMetaDataType())
+                new_namespace.set_CommandMetaData(xtce.CommandMetaDataType())
+                self.__namespace_dict[current_name] = new_namespace
+                current_space_system = new_namespace
+            else:
+                current_space_system = self.__get_namespace(current_name)
+        current_name += XTCEManager.NAMESPACE_SEPARATOR
 
     def __getitem__(self, key: str) -> xtce.SpaceSystemType:
         """
@@ -1811,11 +1866,15 @@ class XTCEManager:
         :param key: The name of the namespace.
         :return:
         """
-        if key not in self.__namespace_dict:
-            # self.__namespace_dict[key] = xtce.SpaceSystemType(name=key)
-            # self.__get_namespace(key).set_CommandMetaData(xtce.CommandMetaDataType())
-            # self.__get_namespace(key).set_TelemetryMetaData(xtce.TelemetryMetaDataType())
-            self.add_namespace(key)
+        if not(XTCEManager.NAMESPACE_SEPARATOR in key):
+            if key not in self.__namespace_dict:
+                key = XTCEManager.NAMESPACE_SEPARATOR + self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR + key
+                # self.__namespace_dict[key] = xtce.SpaceSystemType(name=key)
+                # self.__get_namespace(key).set_CommandMetaData(xtce.CommandMetaDataType())
+                # self.__get_namespace(key).set_TelemetryMetaData(xtce.TelemetryMetaDataType())
+                self.add_namespace(XTCEManager.NAMESPACE_SEPARATOR + self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR + key)
+        else:
+            self.__query_spacesystem_from_qualified_name(key)
 
         return self.__get_namespace(key)
 
@@ -1832,7 +1891,7 @@ class XTCEManager:
             out_root.add_SpaceSystem(self[namespace])
 
         else:
-            out_root = self[namespace]
+            out_root = self[XTCEManager.NAMESPACE_SEPARATOR + namespace]
 
         out_root.export(xtce_file, 0, namespacedef_='xmlns:xml="http://www.w3.org/XML/1998/namespace" '
                                                     'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
@@ -1900,7 +1959,7 @@ def set_log_level(log_level: str):
     logging.getLogger().name = 'xtce_generator'
 
 
-def generate_xtce(database_path: str, config_yaml: dict, output_path: str, root_spacesystem: str = 'airliner',
+def generate_xtce(database_path: str, config_yaml: dict, output_path: str, root_spacesystem: str = '/airliner',
                   log_level: str = '0', cpu_id: str = None):
     """
     Generate an xtce file from the database at database_path. This database is assumed to have
@@ -1919,6 +1978,7 @@ def generate_xtce(database_path: str, config_yaml: dict, output_path: str, root_
     set_log_level(log_level)
 
     logging.info('Building xtce object...')
+
     xtce_obj = XTCEManager(root_spacesystem, output_path, database_path, config_yaml, cpu_id)
 
     logging.info('Adding base_types to xtce...')
