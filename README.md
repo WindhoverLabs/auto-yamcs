@@ -118,7 +118,7 @@ Our argument types, as per XTCE design and standard, are *always* defined under 
 
 ### Arrays Inside Structures(*AggregateType)
 
-**Standalone( that is it does not appear inside a structure) arrays are _not_ supported**
+**Standalone( that is it does not appear inside a structure) arrays are _not_ supported**  
 The following is the example of a structure(`AggregateParamterType`) using an array:
 ```
                         <AggregateParameterType name="CFE_ES_MemPoolStats_t">
