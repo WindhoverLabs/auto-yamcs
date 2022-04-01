@@ -55,17 +55,17 @@ def test_xtce_no_cpu_id(monkeypatch, get_tests_path):
             squeezer.run_msg_def_overrides(args.override_yaml, args.output_file)
 
         xtce_obj = xtce_generator.XTCEManager("cfs", 'cfs.xml', 'newdb.sqlite', '../tests/data/xtce_config.yaml', None)
-        xtce_obj.add_base_types('TestBaseType')
+        xtce_obj.add_base_types()
 
         assert xtce_obj.root is not None
         assert xtce_obj.root.get_SpaceSystem is not None
-        assert xtce_obj['TestBaseType'] is not None
-        assert xtce_obj.BASE_TYPE_NAMESPACE == 'TestBaseType'
-        assert xtce_obj['TestBaseType'].get_name() == 'TestBaseType'
-        assert xtce_obj['TestBaseType'].get_TelemetryMetaData() is not None
+        assert xtce_obj['BaseType'] is not None
+        assert xtce_obj.BASE_TYPE_NAMESPACE == 'BaseType'
+        assert xtce_obj['BaseType'].get_name() == 'BaseType'
+        assert xtce_obj['BaseType'].get_TelemetryMetaData() is not None
 
-        assert xtce_obj['TestBaseType'].get_TelemetryMetaData().get_ParameterTypeSet() is not None
-        assert xtce_obj['TestBaseType'].get_CommandMetaData().get_ArgumentTypeSet() is not None
+        assert xtce_obj['BaseType'].get_TelemetryMetaData().get_ParameterTypeSet() is not None
+        assert xtce_obj['BaseType'].get_CommandMetaData().get_ArgumentTypeSet() is not None
 
         #
         # logging.info('Adding aggregate types to xtce...')
