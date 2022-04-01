@@ -86,7 +86,7 @@ After renaming that parameter, you are good to go!
 
 
 # XTCE Patterns and Conventions <a name="XTCE-Patterns-and-Conventions"></a>
-While we strive for 100% XTCE compliance, we lean towards YAMCS's version of XTCE, which is *almost* fully XTCE compliant. Below are the specifications of the patterns, naming conventions and overall structure we follow  to generate our XTCE files .
+While we strive for 100% XTCE compliance, we lean towards YAMCS's version of XTCE, which is *almost* fully XTCE compliant. Below are the specifications of the patterns, naming conventions and overall structure we follow  to generate our XTCE files.
 
 
 ## Namespaces
@@ -112,30 +112,27 @@ Our argument types, as per XTCE design and standard, are *always* defined under 
 ## User-defined Types
 `EnumeratedParameterType`, `AggregateParamterType`, `AggregateArgumentType` and `EnumeratedArgumentType` types are what we consider user-defined types. This means that these types are *not* part of the `BaseType` namespace.  `EnumeratedParameterType` and `AggregateParamterType` types are *always* defined on `<TelemetryMetaData>`. `AggregateArgumentType` and  `EnumeratedArgumentType` are *always* defined on `<CommandMetaData>`. 
 
+`AggregateArgumentType` members are flattened. This won't affect much of anything since the outcome is the same as if they were bundled inside an AAggregate.
 
 ## Arrays
 
-## Standalone arrays
-We define Standalone arrays as arrays whose size can be known at compile-time. An example of standalone arrays is `int points[128];`. Dynamic arrays(such as a runtime-allocated array by a malloc/new call) are not meant to be extracted by tools like `Juicer`. Therefore, do not expect our auto-generated XTCE files to have anything useful on dynamic arrays.
-Statically allocated standalone arrays can take the form of a `ArrayParamterType`, which as stated before will *always* appear as part of `<TelemetryMetaData>`. They can also be of the form `ArrayArgumentType`, which will *always* appear as part of `<CommandMetaData>`.  Our naming conventions for user-defined types wil *always* be [name][under_score]["t"]. The token "t" is an invariant; ALL user-defined types will have the character "t" appended at the end.
-
 ### Arrays Inside Structures(*AggregateType)
 
-As of the YAMCS version we use at the moment(5.1.3), arrays inside `AggregateParamterType` or `AggregateArgumentType` are *not* supported. Because of this, we have to come up with our own paradigm of defining arrays inside a structure. Here is an example of how we define an array inside a structure:
+**Standalone( that is it does not appear inside a structure) arrays are _not_ supported**
+The following is the example of a structure(`AggregateParamterType`) using an array:
 ```
-	<AggregateParameterType name="Payload_t">
-				<MemberList>
-					<Member name="CommandCounter" typeRef="cfs-ccsds/BaseType/uint8_LE"></Member>
-					<Member typeRef="CFE_EVS_AppTlmData_t" name="AppData[0]"></Member>
-					<Member typeRef="CFE_EVS_AppTlmData_t" name="AppData[1]"></Member>
-					<Member typeRef="CFE_EVS_AppTlmData_t" name="AppData[2]"></Member>
-					<Member typeRef="CFE_EVS_AppTlmData_t" name="AppData[3]"></Member>
-					<Member typeRef="CFE_EVS_AppTlmData_t" name="AppData[4]"></Member>
-					<Member typeRef="CFE_EVS_AppTlmData_t" name="AppData[5]"></Member>
-				</MemberList>
-			</AggregateParameterType>
+                        <AggregateParameterType name="CFE_ES_MemPoolStats_t">
+                            <MemberList>
+                                <Member name="PoolSize" typeRef="BaseType/uint32_LE"/>
+                                <Member name="NumBlocksRequested" typeRef="BaseType/uint32_LE"/>
+                                <Member name="CheckErrCtr" typeRef="BaseType/uint32_LE"/>
+                                <Member name="NumFreeBytes" typeRef="BaseType/uint32_LE"/>
+                                <Member name="BlockStats" typeRef="BaseType/Array_16Dim__simlink_core_cfe_cfe_es_CFE_ES_BlockStats_t"/>
+                            </MemberList>
+                        </AggregateParameterType>
 ```
-Here we have a structure called `Payload_t`(notice the naming convention explained above). It has a field called `CommandCounter` and an array that has 6 elements of type `CFE_EVS_AppTlmData_t`. We tried our best to make the naming convention for arrays intuitive. As you can see it looks like a regular array access in code!
+Here we have a structure called `CFE_ES_MemPoolStats_t`(notice the naming convention explained above). It has an array called BlockStats which points to an array in BaseType namespace.  
+The way arrays are constructed was heavily inspired by [DWARF4](https://dwarfstd.org/doc/DWARF4.pdf) and [XTCE](https://www.omg.org/spec/XTCE/1.2/PDF) standards.
 
 ## Base types(Intrinsic types)
 The types shown above such as uint16_LE are what is known as a base type. These are the types that represent things like int, float, char, etc in code. As mentioned above these *will* always be part of the `BaseType` namespace. Below is a table with all of our base types. Please note that this table is subject as we have not fully standarized our xtce format yet.
