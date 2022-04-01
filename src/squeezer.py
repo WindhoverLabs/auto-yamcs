@@ -50,8 +50,9 @@ def get_elf_files(yaml_dict: dict):
         if 'modules' in yaml_dict['modules'][module_key]:
             child_elfs = get_elf_files(yaml_dict['modules'][module_key])
             if len(child_elfs)>0:
-                elf_files.append(get_elf_files(yaml_dict['modules'][module_key]))
+                elf_files = elf_files + get_elf_files(yaml_dict['modules'][module_key])
 
+    print(elf_files)
     return elf_files
 
 def get_cpu_id(yaml_dict: dict):
@@ -195,6 +196,7 @@ def singleton_mode_handler(args: argparse.Namespace):
     set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
+    
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
     cpu_id = get_cpu_id(yaml_dict)
