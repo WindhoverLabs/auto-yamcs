@@ -782,7 +782,7 @@ class XTCEManager:
 
         return dim_list_param_type
 
-    def __get_array_param_type(self, field_id: [], type_ref: str) -> xtce.ArrayArgumentType:
+    def __get_array_param_type(self, field_id: [], type_ref: str) -> xtce.ArrayParameterType:
         """
         Construct a ArrayParameterType with the dimensions of the field_id in the dimension_lists table. This function
         assumes thar type_ref exists. If field_id is not an array, then a ArrayParameterType with an empty DimensionListType
@@ -796,6 +796,11 @@ class XTCEManager:
         # Clean up type_ref name to avoid circular references in BaseType namespace.
         if type_ref.find('/') != 1:
             type_ref_name = type_ref.replace(XTCEManager.NAMESPACE_SEPARATOR, "_")
+        #     Strip the root from name
+            if type_ref.find(XTCEManager.BASE_TYPE_NAMESPACE) == 0:
+                type_ref = type_ref[type_ref.find(XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR):]
+            else:
+                type_ref = type_ref[type_ref.find(self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR):]
         else:
             type_ref_name = type_ref
 
@@ -1577,7 +1582,7 @@ class XTCEManager:
                     if self.__aggregate_paramtype_exists(symbol[2], module_name) is False:
                         base_paramtype_set.add_AggregateParameterType(aggregate_type)
 
-                telemetry_param = xtce.ParameterType(name=aggregate_type.get_name(),
+                telemetry_param = xtce.ParameterType(name=tlm_name,
                                                      parameterTypeRef=aggregate_type.get_name())
 
                 container_param_ref = xtce.ParameterRefEntryType(parameterRef=telemetry_param.get_name())
