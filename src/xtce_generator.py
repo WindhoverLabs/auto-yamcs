@@ -859,7 +859,7 @@ class XTCEManager:
         """
         does_type_exist = (False, self.UNKNOWN_TYPE)
 
-        if self.custom_config and spacesystem in self.__namespace_dict:
+        if self.custom_config and self.namespace_exists(spacesystem):
             if spacesystem in self.custom_config['spacesystems'] and \
                     type_name in self.custom_config['spacesystems'][spacesystem]['remap'].keys():
                 does_type_exist = (True, self.custom_config['spacesystems'][spacesystem]['remap'][type_name])
@@ -997,7 +997,7 @@ class XTCEManager:
         """
         does_aggregate_exist = False
 
-        if namespace in self.__namespace_dict:
+        if self.namespace_exists(namespace):
             if self[namespace].get_TelemetryMetaData().get_ParameterSet():
                 types = [name.get_name() for name in
                          self[namespace].get_TelemetryMetaData().get_ParameterSet().get_Parameter() if
@@ -1016,7 +1016,7 @@ class XTCEManager:
         """
         does_aggregate_exist = False
 
-        if namespace in self.__namespace_dict:
+        if self.namespace_exists(namespace):
             if self[namespace].get_TelemetryMetaData().get_ParameterTypeSet():
                 types = [aggregate_name.get_name() for aggregate_name in
                          self[namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_AggregateParameterType() if
@@ -1037,7 +1037,7 @@ class XTCEManager:
         :return: The  param type object. If the parameter with name of type_name does not exist None is returned.
         """
         out_param_type_ref = None
-        if namespace in self.__namespace_dict:
+        if self.namespace_exists(namespace):
             if self[namespace].get_TelemetryMetaData().get_ParameterTypeSet():
                 types = [aggregate_name for aggregate_name in
                          self[namespace].get_TelemetryMetaData().get_ParameterTypeSet().get_AggregateParameterType() if
@@ -1060,7 +1060,7 @@ class XTCEManager:
         with name of type_name does not exist None is returned.
         """
         out_arg_type_ref = None
-        if namespace in self.__namespace_dict:
+        if self.namespace_exists(namespace):
             if self[namespace].get_CommandMetaData().get_ArgumentTypeSet():
                 types = [aggregate_name for aggregate_name in
                          self[namespace].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType() if
@@ -1085,7 +1085,7 @@ class XTCEManager:
         if len(type_name) > 0:
             enum_symbol = self.db_cursor.execute('SELECT * FROM symbols WHERE id=?',
                                                  (symbol_id,)).fetchall()[0][2]
-            if namespace in self.__namespace_dict:
+            if self.namespace_exists(namespace):
                 if self[namespace].get_TelemetryMetaData().get_ParameterTypeSet():
                     types = [enum_name.get_name() for enum_name in
                              self[
@@ -1111,7 +1111,7 @@ class XTCEManager:
         if len(type_name) > 0:
             enum_symbol = self.db_cursor.execute('SELECT * FROM symbols WHERE id=?',
                                                  (symbol_id,)).fetchall()[0][2]
-            if namespace in self.__namespace_dict:
+            if self.namespace_exists(namespace):
                 if self[namespace].get_CommandMetaData().get_ArgumentTypeSet():
                     types = [enum_name.get_name() for enum_name in
                              self[
@@ -1311,7 +1311,7 @@ class XTCEManager:
         """
         does_aggregate_exist = False
 
-        if namespace in self.__namespace_dict:
+        if self.namespace_exists(namespace):
             if self[namespace].get_CommandMetaData().get_ArgumentTypeSet():
                 types = [aggregate_name.get_name() for aggregate_name in
                          self[namespace].get_CommandMetaData().get_ArgumentTypeSet().get_AggregateArgumentType() if
@@ -1838,6 +1838,16 @@ class XTCEManager:
         """
         namespace_name = namespace_name.rstrip(XTCEManager.NAMESPACE_SEPARATOR)
         return self.__namespace_dict[namespace_name]
+
+    def namespace_exists(self, namespace_name: str) -> xtce.SpaceSystemType:
+        """
+        Returns whether or not the namespace exists. Please if you are a user(and not an API author)
+        always use this function instead of accessigng __namespace_dict directly,
+        :param namespace_name:
+        :return:
+        """
+        namespace_name = namespace_name.rstrip(XTCEManager.NAMESPACE_SEPARATOR)
+        return namespace_name in self.__namespace_dict
 
     def __query_spacesystem_from_qualified_name(self, qualified_name: str):
         """
