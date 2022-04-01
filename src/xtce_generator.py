@@ -1237,7 +1237,7 @@ class XTCEManager:
                         if base_type_val[0] is True:
                             type_ref_name = type_ref_name
                         else:
-                            type_ref_name = module_name + XTCEManager.NAMESPACE_SEPARATOR + type_ref_name
+                            type_ref_name = module_name.rstrip(XTCEManager.NAMESPACE_SEPARATOR) + XTCEManager.NAMESPACE_SEPARATOR + type_ref_name
 
                         new_array = self.__get_array_param_type(field_id, type_ref_name)
 
