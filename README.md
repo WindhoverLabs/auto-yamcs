@@ -407,7 +407,13 @@ We consider _bit_ ordering for all of our types for the rare case where there is
 
 ## Caveats
 - The name `string` is special. Any type in the database with the type name of `string` is assumed to be a string
-  and parsed as such by the XTCE tool.
+  and parsed as such by the XTCE tool. This means do *not* do things like this in code:  
+  ```
+  struct string
+  {
+    char buffer[64];
+  };
+   ```
 
 ## YAMCS-XTCE Quirks
 Our xtce flavor adheres to yamcs. In the future, we'll try our best to design our toolchain in such a way we can
