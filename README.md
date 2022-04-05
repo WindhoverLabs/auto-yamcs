@@ -4,7 +4,7 @@
 A tool to generate xtce files from a sqlite databse. 
 We follow the XTCE specifications described on **XTCE Verison 1.2** as per OMG document number:**formal/18-10-04**. You may find this document [here](https://www.omg.org/spec/XTCE/1.2/PDF).
 
-[XTCE Patterns and Conventions](#XTCE-Patterns-and-Conventions)
+[XTCE Patterns, Conventions and Caveats](#XTCE-Patterns-and-Conventions)
 
 ## Dependencies
 `six>=1.15.0`
@@ -402,6 +402,9 @@ We consider _bit_ ordering for all of our types for the rare case where there is
 | float32_LE | A signed floating point number. |  32  | signed  | Little Endian  |
 | float32_BE | A signed floating point number. |  32  | signed  | Big Endian  |
 | boolean8_LE | A boolean. "1" means TRUE; "0" FALSE. |  8  | N/A  | Little Endian  |
+
+## Caveats
+
 
 ## YAMCS-XTCE Quirks
 Our xtce flavor adheres to yamcs. In the future, we'll try our best to design our toolchain in such a way we can
