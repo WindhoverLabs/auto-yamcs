@@ -401,10 +401,13 @@ We consider _bit_ ordering for all of our types for the rare case where there is
 | int64_LE | A signed integer. |  64  | signed  | Little Endian  |
 | float32_LE | A signed floating point number. |  32  | signed  | Little Endian  |
 | float32_BE | A signed floating point number. |  32  | signed  | Big Endian  |
+| float64_LE | A signed floating point number. |  64  | signed  | Little Endian  |
+| float64_BE | A signed floating point number. |  64  | signed  | Big Endian  |
 | boolean8_LE | A boolean. "1" means TRUE; "0" FALSE. |  8  | N/A  | Little Endian  |
 
 ## Caveats
-
+- The name `string` is special. Any type in the database with the type name of `string` is assumed to be a string
+  and parsed as such by the XTCE tool.
 
 ## YAMCS-XTCE Quirks
 Our xtce flavor adheres to yamcs. In the future, we'll try our best to design our toolchain in such a way we can
@@ -416,4 +419,4 @@ so far:
 # Testing
 All testing of this tool is done with [auto-yamcs](https://github.com/WindhoverLabs/auto-yamcs)
 
-Documentation updated on April 1, 2022
+Documentation updated on April 5, 2022
