@@ -524,6 +524,8 @@ class XTCEManager:
         # Add floating types
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, True))
         base_set.add_FloatParameterType(self.__get_float_paramtype(32, False))
+        base_set.add_FloatParameterType(self.__get_float_paramtype(64, True))
+        base_set.add_FloatParameterType(self.__get_float_paramtype(64, False))
         base_set.add_IntegerParameterType(
             xtce.IntegerParameterType(name=XTCEManager.UNKNOWN_TYPE, signed=False, sizeInBits='32'))
         base_set.add_BooleanParameterType(
@@ -842,7 +844,7 @@ class XTCEManager:
             out_base_type = (True, 'int')
         elif type_name == 'boolean':
             out_base_type = (True, 'boolean')
-        elif type_name == 'float':
+        elif type_name == 'float' or type_name == 'double':
             out_base_type = (True, 'float')
         elif type_name[:8] == '_padding':
             out_base_type = (True, '_padding')
@@ -1847,7 +1849,7 @@ class XTCEManager:
     def namespace_exists(self, namespace_name: str) -> xtce.SpaceSystemType:
         """
         Returns whether or not the namespace exists. Please if you are a user(and not an API author)
-        always use this function instead of accessigng __namespace_dict directly,
+        always use this function instead of accessing __namespace_dict directly,
         :param namespace_name:
         :return:
         """
