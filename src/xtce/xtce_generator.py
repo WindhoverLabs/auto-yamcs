@@ -44,7 +44,7 @@ from pathlib import Path
 import random
 from typing import Union
 
-import xtce
+from xtce_generator.src.xtce import xtce
 import argparse
 import sqlite3
 import logging

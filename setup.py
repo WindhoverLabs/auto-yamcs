@@ -1,3 +1,4 @@
+import setuptools
 from setuptools import setup, find_packages
 
 requires = [
@@ -11,14 +12,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='xtce_generator',
-    version='1.0.1',
+    version='1.0.2',
     url='https://github.com/WindhoverLabs/xtce_generator',
     license='3BSD-3-Clause',
     author='Lorenzo Gomez',
     author_email='lgomez@windhoverlabs.com',
     description='A tool to generate xtce files from a sqlite database. ',
     install_requires=requires,
-    packages=find_packages(),
+    packages=setuptools.find_namespace_packages(where="src"),
+    package_dir={'':'src'},
     python_requires='>=3.6.0',
 #   FIXME:Add entry_points
 )
