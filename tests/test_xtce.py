@@ -4,10 +4,10 @@ from unittest.mock import patch
 import sys
 import os
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-sys.path.append(os.path.realpath(os.path.join(os.path.realpath(__file__), '../../src')))
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../')))
 sys.path.append(os.path.realpath(os.path.join(os.path.realpath(__file__), '../../xtce-generator/src')))
 import src.squeezer as squeezer
-import xtce_generator
+import xtce_generator.src.xtce.xtce_generator as xtce_generator
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
