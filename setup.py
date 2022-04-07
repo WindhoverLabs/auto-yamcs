@@ -11,7 +11,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='xtce_generator',
-    version='1.0.0',
+    version='1.0.1',
     url='https://github.com/WindhoverLabs/xtce_generator',
     license='3BSD-3-Clause',
     author='Lorenzo Gomez',
