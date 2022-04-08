@@ -12,7 +12,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='xtce_generator',
-    version='1.0.3',
+    version='1.0.4',
     url='https://github.com/WindhoverLabs/xtce_generator',
     license='3BSD-3-Clause',
     author='Lorenzo Gomez',
