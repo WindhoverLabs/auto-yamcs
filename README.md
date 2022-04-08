@@ -6,6 +6,8 @@ We follow the XTCE specifications described on **XTCE Verison 1.2** as per OMG d
 
 [XTCE Patterns, Conventions and Caveats](#XTCE-Patterns-and-Conventions)
 
+[Notes For Developers](#Dev_Notes)
+
 ## Dependencies
 `six==1.15.0`
 `PyYAML~=5.3.1`
@@ -72,6 +74,7 @@ In the future we will strive to be 100% xtce compliant. However, given that we u
 ### XTCE  Data Structures
 Our xtce data structures are generated with `generateDS 2.36.2`. There is a quirk with this tool where it will be name `SpaceSystem` objects to  `SpaceSystemType` after generating the python code the xtce schema. This is very easy to fix.
 
+
 Go to the `export` method of your  `SpaceSystemType`.
 Change it from 
 ```
@@ -85,6 +88,7 @@ to
 
 After renaming that parameter, you are good to go! 
 **NOTE: **Beware that if you do not change this, `yamcs` will *not* run.
+
 
 
 
@@ -425,6 +429,15 @@ be 100% compliant with `xtce`, but at the moment we adhere to yamcs-flavored xtc
 need to deal with any quirks this yamcs-flavored xtce standard may have. Below are a list of quirks we've discovered
 so far:
 - It seems that yamcs has issues processing any `Paramter` entries that have a '#' in the name.
+
+
+# Notes For Developers <a name="Dev_Notes"></a>
+This project can also be used as a library and devs can obtain it from Pypi(particularly useful to parse XTCE files):
+```
+pip install xtce-generator
+```
+
+Make *sure* you have `lxml>=4.6` installed. Otherwise some the parse methods will not work properly on `xtce` module.  
 
 # Testing
 All testing of this tool is done with [auto-yamcs](https://github.com/WindhoverLabs/auto-yamcs)
