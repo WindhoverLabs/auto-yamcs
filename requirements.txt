@@ -3,3 +3,5 @@ PyYAML~=5.3.1
 setuptools~=50.3.2
 flake8
 twine
+generateDS==2.36.2
+lxml>=4.6
