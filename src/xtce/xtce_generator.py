@@ -43,8 +43,10 @@ of XTCE, which is mostly complaint with the standard.
 from pathlib import Path
 import random
 from typing import Union
-
-from xtce_generator.src.xtce import xtce
+try:
+    from xtce_generator.src.xtce import xtce
+except ModuleNotFoundError:
+    import xtce.xtce as xtce
 import argparse
 import sqlite3
 import logging
