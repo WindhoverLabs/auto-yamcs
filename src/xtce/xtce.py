@@ -41035,7 +41035,7 @@ class SpaceSystemType(NameDescriptionType):
 
     def add_SpaceSystem(self, value):
         self.SpaceSystem.append(value)
-        self.set_parent(self)
+        value.set_parent(self)
 
     def insert_SpaceSystem_at(self, index, value):
         self.SpaceSystem.insert(index, value)
