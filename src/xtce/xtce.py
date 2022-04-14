@@ -1718,7 +1718,7 @@ class TelemetryMetaDataType(GeneratedsSuper):
     def set_ParameterSet(self, ParameterSet):
         self.ParameterSet = ParameterSet
 
-    def get_ContainerSet(self):
+    def get_ContainerSet(self) -> 'ContainerSetType':
         return self.ContainerSet
 
     def set_ContainerSet(self, ContainerSet):
@@ -2501,7 +2501,7 @@ class ContainerSetType(GeneratedsSuper):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_SequenceContainer(self):
+    def get_SequenceContainer(self)  -> ['SequenceContainer']:
         return self.SequenceContainer
 
     def set_SequenceContainer(self, SequenceContainer):
@@ -2662,7 +2662,7 @@ class EntryListType(GeneratedsSuper):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_ParameterRefEntry(self):
+    def get_ParameterRefEntry(self) -> '[ParameterRefEntryType]':
         return self.ParameterRefEntry
 
     def set_ParameterRefEntry(self, ParameterRefEntry):
@@ -23212,6 +23212,7 @@ class NameDescriptionType(DescriptionType):
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
+        self.qualified_name = None
         super(NameDescriptionType, self).__init__(shortDescription, LongDescription, AliasSet, AncillaryDataSet,
                                                   extensiontype_, **kwargs_)
         self.name = _cast(None, name)
@@ -23230,6 +23231,12 @@ class NameDescriptionType(DescriptionType):
             return NameDescriptionType(*args_, **kwargs_)
 
     factory = staticmethod(factory)
+
+    def set_qualified_name(self, q_name):
+        self.qualified_name = q_name
+
+    def get_qualified_name(self):
+        return self.qualified_name
 
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -40951,6 +40958,7 @@ class SpaceSystemType(NameDescriptionType):
     def __init__(self, shortDescription=None, LongDescription=None, AliasSet=None, AncillaryDataSet=None, name=None,
                  operationalStatus=None, base=None, Header=None, TelemetryMetaData=None, CommandMetaData=None,
                  ServiceSet=None, SpaceSystem=None, gds_collector_=None, **kwargs_):
+        self.parent = None
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -41027,6 +41035,7 @@ class SpaceSystemType(NameDescriptionType):
 
     def add_SpaceSystem(self, value):
         self.SpaceSystem.append(value)
+        self.set_parent(self)
 
     def insert_SpaceSystem_at(self, index, value):
         self.SpaceSystem.insert(index, value)
@@ -41178,6 +41187,12 @@ class SpaceSystemType(NameDescriptionType):
             self.SpaceSystem.append(obj_)
             obj_.original_tagname_ = 'SpaceSystem'
         super(SpaceSystemType, self).buildChildren(child_, node, nodeName_, True)
+
+    def set_parent(self, p: 'SpaceSystemType'):
+        self.parent = p
+    
+    def get_parent(self):
+        return self.parent
 
 
 # end class SpaceSystemType
