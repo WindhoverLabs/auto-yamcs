@@ -27,4 +27,3 @@ setup(
     python_requires='>=3.6.0',
 #   FIXME:Add entry_points
 )
-
