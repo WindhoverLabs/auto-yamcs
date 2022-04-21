@@ -1617,19 +1617,19 @@ class XTCEManager:
                     if self.__aggregate_paramtype_exists(symbol[2], module_name) is False:
                         base_paramtype_set.add_AggregateParameterType(aggregate_type)
 
-                telemetry_param = xtce.ParameterType(name=tlm_name,
-                                                     parameterTypeRef=aggregate_type.get_name())
+                    telemetry_param = xtce.ParameterType(name=tlm_name,
+                                                         parameterTypeRef=aggregate_type.get_name())
 
-                container_param_ref = xtce.ParameterRefEntryType(parameterRef=telemetry_param.get_name())
+                    container_param_ref = xtce.ParameterRefEntryType(parameterRef=telemetry_param.get_name())
 
-                # Ensure that we do not duplicate a parameter name.
-                if self.__aggregate_param_exists(telemetry_param.get_name(), module_name) is False:
-                    logging.warning(
-                        f'The parameter {telemetry_param.get_name()} is being used multiple times. This might be a '
-                        f'sign of something wrong in configuration or flight software.')
-                    base_param_set.add_Parameter(telemetry_param)
+                    # Ensure that we do not duplicate a parameter name.
+                    if self.__aggregate_param_exists(telemetry_param.get_name(), module_name) is False:
+                        logging.warning(
+                            f'The parameter {telemetry_param.get_name()} is being used multiple times. This might be a '
+                            f'sign of something wrong in configuration or flight software.')
+                        base_param_set.add_Parameter(telemetry_param)
 
-                container_entry_list.add_ParameterRefEntry(container_param_ref)
+                    container_entry_list.add_ParameterRefEntry(container_param_ref)
                 if parent_container:
                     seq_container.set_BaseContainer(
                         xtce.BaseContainerType(containerRef=parent_container + '/cfs-tlm-hdr'))
