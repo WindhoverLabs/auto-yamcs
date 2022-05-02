@@ -1181,6 +1181,9 @@ class XTCEManager:
         # FIXME: This entire function needs to be decoupled; it's far too big
         out_param = xtce.AggregateParameterType(name=symbol_record[2])
 
+        if out_param.get_name() == "PX4_PositionSetpointTripletMsg_t":
+            print("break")
+
         # If the symbol exists already in our xtce, we don't need to explore it any further
         if self.__aggregate_paramtype_exists(symbol_record[2], module_name):
             return self.find_aggregate_param_type(symbol_record[2], module_name)
@@ -1246,7 +1249,7 @@ class XTCEManager:
 
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
-                        child = self.__get_aggregate_paramtype(child_symbol, module_name)
+                        child = self.__get_aggregate_paramtype(child_symbol, module_name, False)
                         if self.__aggregate_paramtype_exists(child_symbol[2], module_name) is False:
                             self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
                                 child)
@@ -1330,7 +1333,7 @@ class XTCEManager:
                         logging.debug(f'field_symbol id:{field_symbol}')
                         logging.debug(f'child symbol-->{child_symbol}')
                         logging.debug(f'field id-->{field_id})')
-                        child = self.__get_aggregate_paramtype(child_symbol, module_name)
+                        child = self.__get_aggregate_paramtype(child_symbol, module_name, False)
                         if self.__aggregate_paramtype_exists(child_symbol[2], module_name) is False:
                             self[module_name].get_TelemetryMetaData().get_ParameterTypeSet().add_AggregateParameterType(
                                 child)
