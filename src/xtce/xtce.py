@@ -1495,7 +1495,7 @@ class CommandMetaDataType(GeneratedsSuper):
     def set_ArgumentTypeSet(self, ArgumentTypeSet):
         self.ArgumentTypeSet = ArgumentTypeSet
 
-    def get_MetaCommandSet(self):
+    def get_MetaCommandSet(self) -> 'MetaCommandSetType':
         return self.MetaCommandSet
 
     def set_MetaCommandSet(self, MetaCommandSet):
@@ -8254,7 +8254,7 @@ class CommandContainerEntryListType(GeneratedsSuper):
     def replace_ArrayParameterRefEntry_at(self, index, value):
         self.ArrayParameterRefEntry[index] = value
 
-    def get_ArgumentRefEntry(self):
+    def get_ArgumentRefEntry(self) -> 'ArgumentArgumentRefEntryType':
         return self.ArgumentRefEntry
 
     def set_ArgumentRefEntry(self, ArgumentRefEntry):
@@ -32311,7 +32311,7 @@ class BaseDataType(NameDescriptionType):
     def set_FloatDataEncoding(self, FloatDataEncoding):
         self.FloatDataEncoding = FloatDataEncoding
 
-    def get_IntegerDataEncoding(self):
+    def get_IntegerDataEncoding(self) -> 'IntegerDataEncodingType':
         return self.IntegerDataEncoding
 
     def set_IntegerDataEncoding(self, IntegerDataEncoding):
@@ -34622,7 +34622,7 @@ class MetaCommandType(NameDescriptionType):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_BaseMetaCommand(self):
+    def get_BaseMetaCommand(self) -> 'BaseMetaCommandType':
         return self.BaseMetaCommand
 
     def set_BaseMetaCommand(self, BaseMetaCommand):
@@ -46107,7 +46107,7 @@ class CommandContainerType(ContainerType):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_EntryList(self):
+    def get_EntryList(self) -> 'CommandContainerEntryListType':
         return self.EntryList
 
     def set_EntryList(self, EntryList):
