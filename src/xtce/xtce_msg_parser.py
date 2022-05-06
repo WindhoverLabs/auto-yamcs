@@ -118,12 +118,12 @@ class XTCEParser:
     HOST_PARAM = 'host'
     COMMAND_CONTAINER = "command_container"
 
-    def __init__(self, xml_files: [str], root_space_system: str, yaml_paths: [str]):
+    def __init__(self, xml_files: [str], root_space_system: str, yaml_path: str):
         # # Code should be inherited from XTCEManager. See https://github.com/WindhoverLabs/xtce_generator/issues/5
         self.high_level_roots = []
         self.root = xtce.parse(root_space_system, silence=True)
         self.high_level_roots.append(self.root)
-        self.yaml_paths = yaml_paths
+        self.yaml_path = yaml_path
         for file in xml_files:
             logging.info(f"Parsing:{file}")
             xtce_obj = xtce.parse(file, silence=True)
@@ -140,14 +140,39 @@ class XTCEParser:
                               Loader=yaml.FullLoader)
         return yaml_data
 
+    def __map_all_yaml(self, root: dict, out: list, depth: int = 0):
+        """
+        Map all of the subsystems names under root.
+        """
+        # FIXME:This function should be simplified. Don't like how complex this is.
+        out = out[:depth]
+        out.append(root.get_name())
+        spacesystem_qualifiedname = self.__child_names_to_qualified_name(out)
+        self.__namespace_dict[spacesystem_qualifiedname] = dict()
+        # FIXME: Move these magical keys to const variables
+        self.__namespace_dict[spacesystem_qualifiedname][XTCEParser.SPACE_SYSTEM_KEY] = root
+        if len(root.get_SpaceSystem()) > 0:
+            s: xtce.SpaceSystemType
+            for s in root.get_SpaceSystem():
+                s.set_parent(root)
+                self.__map_all_spacesystems(s, out, depth + 1)
+        else:
+            spacesystem_qualifiedname = self.__child_names_to_qualified_name(out)
+            self.__namespace_dict[spacesystem_qualifiedname] = dict()
+            self.__namespace_dict[spacesystem_qualifiedname][XTCEParser.SPACE_SYSTEM_KEY] = root
+
+
+    def __get_tlm_from_namespace(self, namespace: str, yaml: dict):
+        for module in yaml['modules']:
+            pass
 
     def __map_yaml(self):
         """
         Maps all of the message ids
         """
-        for yaml in self.yaml_paths:
-            yaml_dict = self.read_yaml(yaml)
-
+        yaml_dict = self.read_yaml(self.yaml_path)
+        for namespace in self.__namespace_dict:
+            tlm = self.__get_tlm_from_namespace(namespace, yaml)
 
 
     def set_qualified_names(self, root: xtce.SpaceSystemType, parent: str):
