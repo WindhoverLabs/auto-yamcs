@@ -8,6 +8,8 @@ from typing import Union, List
 
 from bitarray import bitarray
 from bitarray.util import pprint, ba2int, ba2hex
+from reportlab.lib import yaml
+
 from xtce import xtce, xtce_generator
 from xtce.xtce_generator import XTCEManager
 from enum import Enum
@@ -116,12 +118,12 @@ class XTCEParser:
     HOST_PARAM = 'host'
     COMMAND_CONTAINER = "command_container"
 
-    def __init__(self, xml_files: [str], root_space_system: str):
+    def __init__(self, xml_files: [str], root_space_system: str, yaml_paths: [str]):
         # # Code should be inherited from XTCEManager. See https://github.com/WindhoverLabs/xtce_generator/issues/5
         self.high_level_roots = []
         self.root = xtce.parse(root_space_system, silence=True)
         self.high_level_roots.append(self.root)
-
+        self.yaml_paths = yaml_paths
         for file in xml_files:
             logging.info(f"Parsing:{file}")
             xtce_obj = xtce.parse(file, silence=True)
@@ -132,6 +134,21 @@ class XTCEParser:
         self.__namespace_dict = {}
         self.__map_all_spacesystems(self.root, names)
         self.__map_all_containers()
+
+    def read_yaml(self, yaml_file: str) -> dict:
+        yaml_data = yaml.load(open(yaml_file, 'r'),
+                              Loader=yaml.FullLoader)
+        return yaml_data
+
+
+    def __map_yaml(self):
+        """
+        Maps all of the message ids
+        """
+        for yaml in self.yaml_paths:
+            yaml_dict = self.read_yaml(yaml)
+
+
 
     def set_qualified_names(self, root: xtce.SpaceSystemType, parent: str):
         q_name = ""
