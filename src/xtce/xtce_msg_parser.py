@@ -124,6 +124,7 @@ class XTCEParser:
         self.root = xtce.parse(root_space_system, silence=True)
         self.high_level_roots.append(self.root)
         self.yaml_path = yaml_path
+        self.__map_msg_ids()
         for file in xml_files:
             logging.info(f"Parsing:{file}")
             xtce_obj = xtce.parse(file, silence=True)
@@ -135,44 +136,38 @@ class XTCEParser:
         self.__map_all_spacesystems(self.root, names)
         self.__map_all_containers()
 
-    def read_yaml(self, yaml_file: str) -> dict:
+    @staticmethod
+    def __get_dict_at_path(self, paths: [str], root_dict: dict):
+        dict_partition = root_dict
+        for path in paths:
+            if path in dict_partition:
+                dict_partition = dict_partition[path]
+            else:
+                dict_partition = None
+                logging.error(f"Failed to resolve path {'/'.join(paths)} at {path} node")
+
+        return dict_partition
+
+    def __read_yaml(self, yaml_file: str) -> dict:
         yaml_data = yaml.load(open(yaml_file, 'r'),
                               Loader=yaml.FullLoader)
         return yaml_data
-
-    def __map_all_yaml(self, root: dict, out: list, depth: int = 0):
-        """
-        Map all of the subsystems names under root.
-        """
-        # FIXME:This function should be simplified. Don't like how complex this is.
-        out = out[:depth]
-        out.append(root.get_name())
-        spacesystem_qualifiedname = self.__child_names_to_qualified_name(out)
-        self.__namespace_dict[spacesystem_qualifiedname] = dict()
-        # FIXME: Move these magical keys to const variables
-        self.__namespace_dict[spacesystem_qualifiedname][XTCEParser.SPACE_SYSTEM_KEY] = root
-        if len(root.get_SpaceSystem()) > 0:
-            s: xtce.SpaceSystemType
-            for s in root.get_SpaceSystem():
-                s.set_parent(root)
-                self.__map_all_spacesystems(s, out, depth + 1)
-        else:
-            spacesystem_qualifiedname = self.__child_names_to_qualified_name(out)
-            self.__namespace_dict[spacesystem_qualifiedname] = dict()
-            self.__namespace_dict[spacesystem_qualifiedname][XTCEParser.SPACE_SYSTEM_KEY] = root
-
 
     def __get_tlm_from_namespace(self, namespace: str, yaml: dict):
         for module in yaml['modules']:
             pass
 
-    def __map_yaml(self):
+    def __map_msg_ids(self):
         """
         Maps all of the message ids
         """
-        yaml_dict = self.read_yaml(self.yaml_path)
+        yaml_dict = self.__read_yaml(self.yaml_path)
+        namespace: str
         for namespace in self.__namespace_dict:
-            tlm = self.__get_tlm_from_namespace(namespace, yaml)
+            path_dict = self.__get_dict_at_path(namespace.split(XTCEManager.NAMESPACE_SEPARATOR), yaml_dict)
+            # if 'telemetry' in path_dict:
+
+            # tlm = self.__get_tlm_from_namespace(namespace, yaml)
 
 
     def set_qualified_names(self, root: xtce.SpaceSystemType, parent: str):
@@ -198,7 +193,7 @@ class XTCEParser:
                                          + xtce_generator.XTCEManager.NAMESPACE_SEPARATOR
                                          + c.get_name()
                                          )
-        #        TODO:Add qualifed names for commands as well
+        #        TODO:Add qualified names for commands as well
         for s in root.get_SpaceSystem():
             self.set_qualified_names(s, s.get_name())
 
