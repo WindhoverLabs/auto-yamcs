@@ -5,7 +5,8 @@ requires = [
     'six==1.15.0',
     'PyYAML~=5.3.1',
     'setuptools~=50.3.2',
-    'lxml>=4.6'
+    'lxml>=4.6',
+    'bitarray'
 ]
 
 with open("README.md", "r", encoding="utf-8") as fh:

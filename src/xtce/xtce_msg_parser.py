@@ -8,14 +8,21 @@ from typing import Union, List
 
 from bitarray import bitarray
 from bitarray.util import pprint, ba2int, ba2hex
-from reportlab.lib import yaml
 
-from xtce import xtce, xtce_generator
-from xtce.xtce_generator import XTCEManager
+
+try:
+    from xtce import xtce, xtce_generator
+    from xtce.xtce_generator import XTCEManager
+except ModuleNotFoundError:
+    import xtce.xtce as xtce
+    import xtce.xtce_generator as xtce_generator
+    import xtce.xtce_generator.XTCEManager as XTCEManager
+
 from enum import Enum
 
-from pyliner.app import App
 import logging
+import yaml
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -124,7 +131,6 @@ class XTCEParser:
         self.root = xtce.parse(root_space_system, silence=True)
         self.high_level_roots.append(self.root)
         self.yaml_path = yaml_path
-        self.__map_msg_ids()
         for file in xml_files:
             logging.info(f"Parsing:{file}")
             xtce_obj = xtce.parse(file, silence=True)
@@ -135,9 +141,10 @@ class XTCEParser:
         self.__namespace_dict = {}
         self.__map_all_spacesystems(self.root, names)
         self.__map_all_containers()
+        self.__map_msg_ids()
 
     @staticmethod
-    def __get_dict_at_path(self, paths: [str], root_dict: dict):
+    def __get_dict_at_path(paths: [str], root_dict: dict):
         dict_partition = root_dict
         for path in paths:
             if path in dict_partition:
@@ -145,6 +152,7 @@ class XTCEParser:
             else:
                 dict_partition = None
                 logging.error(f"Failed to resolve path {'/'.join(paths)} at {path} node")
+                break
 
         return dict_partition
 
@@ -1341,7 +1349,3 @@ class ValueEvaluator(Evaluator):
         if comp_value == val:
             valid = True
         return valid
-
-
-class XTCEMsgParserApp(App):
-    pass

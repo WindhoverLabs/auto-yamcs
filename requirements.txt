@@ -5,3 +5,4 @@ flake8
 twine
 generateDS==2.36.2
 lxml>=4.6
+bitarray
