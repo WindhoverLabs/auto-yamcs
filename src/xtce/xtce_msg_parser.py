@@ -142,7 +142,7 @@ class XTCEParser:
         self.__map_all_containers()
         self.__map_msg_ids()
 
-    def get_msg_id_at(self, path: str):
+    def get_msg_ids_at(self, path: str):
         """
         Return the telemetry node(message ids) for the path. If there no telemetry is found for path, None is returned.
         path is expected in the format of "/cfs/simlink/core/cfe/cfe_time"
