@@ -96,6 +96,10 @@ def test_xtce_msg_parser(monkeypatch, get_data_path):
     ccscds = Path('./mdb/cfs-ccsds.xml').resolve()
 
     parser = XTCEParser([str(ppd), str(cpd), str(simlink)], str(ccscds), "registry.yaml")
+    tlm_map = parser.get_msg_id_at('/cfs/cpd/core/cfe/cfe_es')
+
+    assert tlm_map is not None
+    assert tlm_map['CFE_ES_HK_TLM_MID']['msgID'] == 2575
 
 
 if __name__ == '__main__':
