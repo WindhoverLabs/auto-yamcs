@@ -9,7 +9,6 @@ from typing import Union, List
 from bitarray import bitarray
 from bitarray.util import pprint, ba2int, ba2hex
 
-
 try:
     from xtce import xtce, xtce_generator
     from xtce.xtce_generator import XTCEManager
@@ -22,7 +21,6 @@ from enum import Enum
 
 import logging
 import yaml
-
 
 logging.basicConfig(level=logging.INFO)
 
@@ -128,6 +126,7 @@ class XTCEParser:
     def __init__(self, xml_files: [str], root_space_system: str, yaml_path: str):
         # # Code should be inherited from XTCEManager. See https://github.com/WindhoverLabs/xtce_generator/issues/5
         self.high_level_roots = []
+        self.root: xtce.SpaceSystemType
         self.root = xtce.parse(root_space_system, silence=True)
         self.high_level_roots.append(self.root)
         self.yaml_path = yaml_path
@@ -143,15 +142,30 @@ class XTCEParser:
         self.__map_all_containers()
         self.__map_msg_ids()
 
+    def get_msg_id_at(self, path: str):
+        """
+        Return the telemetry node(message ids) for the path. If there no telemetry is found for path, None is returned.
+        path is expected in the format of "/cfs/simlink/core/cfe/cfe_time"
+        """
+        if 'telemetry' in self.__namespace_dict[path]:
+            return self.__namespace_dict[path]['telemetry']
+        else:
+            logging.warning(f"No telemetry found for {path}")
+            return None
+
     @staticmethod
     def __get_dict_at_path(paths: [str], root_dict: dict):
-        dict_partition = root_dict
+        dict_partition = root_dict['modules']
         for path in paths:
-            if path in dict_partition:
-                dict_partition = dict_partition[path]
+            if path in dict_partition.keys():
+                if 'modules' in dict_partition[path]:
+                    dict_partition = dict_partition[path]['modules']
+                else:
+                    dict_partition = dict_partition[path]
+            #         TODO:Check that this is the last node of the path.
             else:
                 dict_partition = None
-                logging.error(f"Failed to resolve path {'/'.join(paths)} at {path} node")
+                logging.warning(f"Failed to resolve path {'/'.join(paths)} at {path} node")
                 break
 
         return dict_partition
@@ -167,16 +181,18 @@ class XTCEParser:
 
     def __map_msg_ids(self):
         """
-        Maps all of the message ids
+        Maps all of the message ids to all XTCE telemetry containers.
+        It is assumed that the paths in the YAML go after the root XTCE.
+        For example; In the path "/cfs/cpd/core/cfe/cfe_es" "/cfs" would be the root of XTCE and
+        "/cpd/core/cfe/cfe_es" would be a path in the YAML.
         """
         yaml_dict = self.__read_yaml(self.yaml_path)
         namespace: str
         for namespace in self.__namespace_dict:
-            path_dict = self.__get_dict_at_path(namespace.split(XTCEManager.NAMESPACE_SEPARATOR), yaml_dict)
-            # if 'telemetry' in path_dict:
-
-            # tlm = self.__get_tlm_from_namespace(namespace, yaml)
-
+            paths = namespace.split(XTCEManager.NAMESPACE_SEPARATOR)[2:]
+            path_dict = self.__get_dict_at_path(paths, yaml_dict)
+            if path_dict is not None and 'telemetry' in path_dict:
+                self.__namespace_dict[namespace]['telemetry'] = path_dict['telemetry']
 
     def set_qualified_names(self, root: xtce.SpaceSystemType, parent: str):
         q_name = ""
@@ -831,7 +847,6 @@ class XTCEParser:
     def __get_param_name(self, qualified_name: str):
         # FIXME: At the moment nested structs are not supported
         return qualified_name.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
-
 
     def get_value_from_bits(self, value_bits: bitarray, params_map: dict, param_name: str):
         i_type = get_param_intrinsic_type(params_map, param_name)
