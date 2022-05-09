@@ -30,11 +30,12 @@ ESC_END = 0xdc
 ESC_ESC = 0xdd
 
 
-def extract_bits_from_base_container(container: dict, comparison: xtce.ComparisonType, container_size: int) -> bitarray:
+#FIXME:This function should be moved to a pre-processor.
+def extract_bits_from_base_container(container: dict, comparison: xtce.ComparisonType, container_size: int, msg_id) -> bitarray:
     extracted_bits = bitarray(endian='big')
     container_key = list(container[XTCEParser.BASE_CONTAINER_KEY].keys())[0]
     comp_value_ref: str = comparison.get_parameterRef()
-    msg_id = int(comparison.get_value())
+    # msg_id = int(comparison.get_value())
 
     # Zero-fill the bitarray up to container size
     for i in range(container_size):
@@ -62,7 +63,7 @@ def extract_bits_from_base_container(container: dict, comparison: xtce.Compariso
     CFE_TLM_MID_BASE = 0x0800
     # msg_id = CFE_MSG_CPU_BASE + CFE_TLM_MID_BASE + msg_id
     msg_id = bytearray(struct.pack('>H', msg_id))
-    # msg_id[0] = msg_id[0] & 0x0A
+    msg_id[0] = msg_id[0] & 0x0A
     # TODO: Big/Little endian is inside XTCE
     bits = bitarray(endian='big')
     bits.frombytes(bytes(msg_id))
@@ -858,7 +859,13 @@ class XTCEParser:
             # (1.7230105268977664e+16,)
             # >> > struct.unpack('>f', b)  # big-endian
             # (-109.22724914550781,)
-            value = struct.unpack('f', value_bits.tobytes())[0]  # little-endian
+            if i_type.sizeInBits == 32:
+                value = struct.unpack('f', value_bits.tobytes())[0]  # little-endian
+            elif i_type.sizeInBits == 64:
+                value = struct.unpack('d', value_bits.tobytes())[0]  # little-endian
+            else:
+                # FIXME:Shold not happen.
+                pass
 
         elif type(i_type) == xtce.BooleanParameterType:
             value = bool(ba2int(value_bits))  # little-endian
@@ -954,11 +961,35 @@ class XTCEParser:
         criteria = container_map[self.BASE_CONTAINER_KEY][self.BASE_CONTAINER_CRITERIA_KEY]
         comparison_list: xtce.ComparisonListType
         comparison_list = criteria.get_ComparisonList()
+
+        tlm_item = path
+        if '.' in path:
+            tlm_item = tlm_path.split('.')[0]
+
+        tlm_path_namesapce = xtce_generator.XTCEManager.NAMESPACE_SEPARATOR \
+                   + xtce_generator.XTCEManager.NAMESPACE_SEPARATOR.join(
+            tlm_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[1:-1])
+        mids = self.get_msg_ids_at(tlm_path_namesapce)
+
+        if mids is None:
+            err_msg = f"Invalid telemetry operational name received:{tlm_item} "
+            # self.vehicle.error(err_msg)
+            # raise InvalidOperationException(err_msg)
+
+        msg_name = tlm_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
+
+        if msg_name not in mids:
+            err_msg = f"{msg_name} message does not exist."
+            # self.vehicle.error(err_msg)
+            # raise InvalidOperationException(err_msg)
+
+        mid = mids[msg_name]
+
         if len(comparison_list.get_Comparison()) > 0:
             # FIXME:At the moment it is assumed that there is only 1 comparison
             for comparison in comparison_list.get_Comparison():
                 base_container_bits = extract_bits_from_base_container(container_map, comparison,
-                                                                       base_container_size + container_size)
+                                                                       base_container_size + container_size, mid['msgID'])
                 break
 
         payload_bits = base_container_bits.copy()
@@ -969,17 +1000,17 @@ class XTCEParser:
 
         for arg in args:
             arg_bits = bitarray(endian='little')
-            arg_value = args[arg]
+            arg_value = arg['value']
             param_offset = get_offset_aggregate(container_map[XTCEParser.PARAMS_KEY],
-                                                param_name + "." + arg)
+                                                param_name + "." +  arg['name'])
             print(f"param offset:offset:{param_offset}")
 
             param_value_size = get_param_bit_size(
                 container_map[XTCEParser.PARAMS_KEY],
-                param_name + "." + arg)
+                param_name + "." + arg['name'])
 
             # FIXME: Need to handle the case when the param is an array.
-            i_type = get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg)
+            i_type = get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
             # FIXME:Check byte order
             if type(i_type) == xtce.IntegerParameterType:
                 # FIXME:This won't work with partials
@@ -1017,15 +1048,21 @@ class XTCEParser:
         #         pass
         #         # value = value_bits.tobytes().decode('utf-8')  # little-endian
         #
-        #     elif type(i_type) == xtce.EnumeratedParameterType:
-        #         pass
-        #         # FIXME:Implement properly
-        #         # value = ba2int(value_bits)  # little-endian
-        #         # for enum in i_type.get_EnumerationList().get_Enumeration():
-        #         #     enum: xtce.ValueEnumerationType()
-        #         #
-        #         #     if enum.get_value() == value:
-        #         #         value = enum.get_label()
+            elif type(i_type) == xtce.EnumeratedParameterType:
+                # FIXME:Implement properly
+                size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
+                bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
+                arg_bits.frombytes(bytes_data)
+                value = ba2int(arg_bits)  # little-endian
+                for enum in i_type.get_EnumerationList().get_Enumeration():
+                    enum: xtce.ValueEnumerationType()
+
+                    if enum.get_value() == arg_value:
+                        value = enum.get_label()
+
+                        for bit in arg_bits:
+                            payload_bits[current_bit_cursor] = bit
+                            current_bit_cursor += 1
         #
         #     elif type(i_type) == List[xtce.BaseDataType]:
         #         value = []
