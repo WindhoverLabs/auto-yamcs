@@ -63,7 +63,7 @@ def extract_bits_from_base_container(container: dict, comparison: xtce.Compariso
     CFE_TLM_MID_BASE = 0x0800
     # msg_id = CFE_MSG_CPU_BASE + CFE_TLM_MID_BASE + msg_id
     msg_id = bytearray(struct.pack('>H', msg_id))
-    msg_id[0] = msg_id[0] & 0x0A
+    # msg_id[0] = msg_id[0] & 0x0A
     # TODO: Big/Little endian is inside XTCE
     bits = bitarray(endian='big')
     bits.frombytes(bytes(msg_id))
@@ -485,8 +485,6 @@ class XTCEParser:
                         # FIXME: Check for intrinsic types and make this function recursive
                         aggregate: xtce.AggregateParameterType
                         for aggregate in tlm.get_ParameterTypeSet().get_AggregateParameterType():
-                            if self.sanitize_type_ref(param_type_ref) == "CFE_ES_OneAppTlm_t":
-                                print("break")
                             if aggregate.get_name() == self.sanitize_type_ref(param_type_ref):
                                 member: xtce.MemberType
                                 out_dict["fields"] = dict()
@@ -538,8 +536,6 @@ class XTCEParser:
                                     # FIXME: Check for intrinsic types and make this function recursive
                                     aggregate: xtce.AggregateParameterType
                                     for aggregate in tlm.get_ParameterTypeSet().get_AggregateParameterType():
-                                        if self.sanitize_type_ref(param_type_ref) == "CFE_ES_OneAppTlm_t":
-                                            print("break")
                                         if aggregate.get_name() == self.sanitize_type_ref(param_type_ref):
                                             member: xtce.MemberType
                                             out_dict["fields"] = dict()
@@ -700,8 +696,6 @@ class XTCEParser:
         # In python 3.7+, ordered dicts are law:https://mail.python.org/pipermail/python-dev/2017-December/151283.html
         for entry in container.get_EntryList().get_ParameterRefEntry():
             ref = entry.get_parameterRef()
-            if ref == 'PX4_POSITION_SETPOINT_TRIPLET_MID':
-                print('PX4_POSITION_SETPOINT_TRIPLET_MID')
             # TODO:Query the ParameterSet
             param_dict[ref] = self.__get_param_type_map(ref, spacesystem)
             param_dict[ref][XTCEParser.PARAM_NAME_KEY] = ref
@@ -1003,7 +997,6 @@ class XTCEParser:
             arg_value = arg['value']
             param_offset = get_offset_aggregate(container_map[XTCEParser.PARAMS_KEY],
                                                 param_name + "." +  arg['name'])
-            print(f"param offset:offset:{param_offset}")
 
             param_value_size = get_param_bit_size(
                 container_map[XTCEParser.PARAMS_KEY],
@@ -1022,12 +1015,7 @@ class XTCEParser:
                     payload_bits[current_bit_cursor] = bit
                     current_bit_cursor += 1
 
-                # bits[param_offset: param_value_size] = arg_value
-                # print(f"param_value_size:size:{param_value_size}")
-                # value = ba2int(value_bits)
             elif type(i_type) == xtce.FloatParameterType:
-                # arg_bits.frombytes(bytes_data)
-                # bits.insert()
                 # >> > struct.unpack('f', b)  # native byte order (little-endian on my machine)
                 # (1.7230105268977664e+16,)
                 # >> > struct.unpack('>f', b)  # big-endian
@@ -1072,7 +1060,6 @@ class XTCEParser:
         #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
         output_bytes = self.slip_encode(payload_bits.tobytes(), 12)
 
-        print(f"length of message:{output_bytes}")
         return output_bytes
 
     def slip_encode(self, packet: bytes, header_size: int):
@@ -1080,7 +1067,6 @@ class XTCEParser:
         cursor = 0
         for character in packet:
             c_hex = hex(character)
-            print(c_hex)
             if cursor < header_size:
                 value = struct.unpack('>B', character.to_bytes(1, "big"))[0]  # big-endian
             else:
