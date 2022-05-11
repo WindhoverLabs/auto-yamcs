@@ -561,7 +561,7 @@ class XTCEParser:
                                             return
 
     # TODO: Get xtce.ParameterType(Aggregate in this case) from spacesystem
-    def __get_arg_type(self, param_type_ref: str, spacesystem: xtce.SpaceSystemType,
+    def __get_arg_type(self, arg_type_ref: str, spacesystem: xtce.SpaceSystemType,
                        host_param: str = None, out_dict: dict = {}):
         """
         For now it is assumed that param_type_ref points to a AggregateParameterType
@@ -569,7 +569,7 @@ class XTCEParser:
         cmd = spacesystem.get_CommandMetaData()
         if cmd is not None:
             if cmd.get_ArgumentTypeSet() is not None:
-                arg_type = self.__get_intrinsic_arg_type(cmd, param_type_ref)
+                arg_type = self.__get_intrinsic_arg_type(cmd, arg_type_ref)
                 if arg_type is not None:
                     out_dict[XTCEParser.INTRINSIC_KEY] = arg_type
                 else:
@@ -620,13 +620,13 @@ class XTCEParser:
                     cmd = s.get_CommandMetaData()
                     if cmd is not None:
                         if cmd.get_ArgumentTypeSet() is not None:
-                            arg_type = self.__get_intrinsic_arg_type(cmd, param_type_ref)
+                            arg_type = self.__get_intrinsic_arg_type(cmd, arg_type_ref)
                             if arg_type is not None:
                                 out_dict[self.INTRINSIC_KEY] = arg_type
                             else:
                                 if len(cmd.get_ArgumentTypeSet().get_ArrayArgumentType()) > 0:
                                     for array_type in cmd.get_ArgumentTypeSet().get_ArrayArgumentType():
-                                        if array_type.get_name() == self.sanitize_type_ref(param_type_ref):
+                                        if array_type.get_name() == self.sanitize_type_ref(arg_type_ref):
                                             dim: xtce.DimensionType
                                             out_dict[XTCEParser.ARRAY_TYPE_KEY] = []
                                             # TODO:Add support for multi-dimensional array
@@ -705,30 +705,39 @@ class XTCEParser:
 
     def __get_arg_type_map(self, arg_ref: str, command: xtce.CommandContainerType, spacesystem: xtce.SpaceSystemType):
         argument_type_dict = dict()
-        # cmd = spacesystem.get_CommandMetaData()
         if command is not None:
             if command.get_EntryList() is not None:
                 arg: xtce.ArgumentArgumentRefEntryType
-                for arg in command.get_EntryList():
-                    # get_ArgumentRefEntry().get_argumentRef()
-                    if arg_ref == arg.ArgumentArgumentRefEntryType:
-                        argument_type_dict[arg.get_name()] = dict()
-                        argument_type_dict[arg.get_name()][XTCEParser.ARG_NAME_KEY] = arg.get_name()
-                        self.__get_arg_type(arg.get_argumentTypeRef(), spacesystem, arg.get_name(),
-                                            argument_type_dict[arg.get_name()])
+                for arg in command.get_EntryList().get_ArgumentRefEntry():
+                    argument_type_dict[arg.get_name()] = dict()
+                    argument_type_dict[arg.get_name()][XTCEParser.ARG_NAME_KEY] = arg.get_name()
+                    self.__get_arg_type(arg.get_argumentTypeRef(), spacesystem, arg.get_name(),
+                                        argument_type_dict[arg.get_name()])
 
         return argument_type_dict
 
     def __get_arg_map(self, command: xtce.CommandContainerType, spacesystem: xtce.SpaceSystemType):
-        entry: xtce.ArgumentArgumentRefEntryType
         arg_dict = {}
         # TODO:Use ordered dict for params
         # In python 3.7+, ordered dicts are law:https://mail.python.org/pipermail/python-dev/2017-December/151283.html
+
+        entry: xtce.ArgumentFixedValueEntryType
+        for entry in command.get_EntryList().get_FixedValueEntry():
+            #For FixedValue obj, we don't have to resolve the type as the object itself has everything we need
+            ref = entry.get_name()
+            arg_dict[ref] = dict()
+            # TODO:Query the ParameterSet
+            arg_dict[ref][XTCEParser.INTRINSIC_KEY] = entry
+            arg_dict[ref][XTCEParser.ARG_NAME_KEY] = ref
+
+        entry: xtce.ArgumentArgumentRefEntryType
         for entry in command.get_EntryList().get_ArgumentRefEntry():
             ref = entry.get_argumentRef()
+            arg_dict[ref] = dict()
             # TODO:Query the ParameterSet
             arg_dict[ref] = self.__get_arg_type_map(ref, command, spacesystem)
             arg_dict[ref][XTCEParser.ARG_NAME_KEY] = ref
+
 
         return arg_dict
 
@@ -744,7 +753,7 @@ class XTCEParser:
         0x7f60d08eebe0>}}, 'name': 'CI_HK_TLM_MID'}}
         """
         self.__map_tlm_containers()
-        # self.__map_commands()
+        self.__map_commands()
 
     def __map_tlm_containers(self):
         qualified_name: str
