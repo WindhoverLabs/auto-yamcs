@@ -106,13 +106,14 @@ class IntrinsicDataType(Enum):
 class XTCEParser:
     # FIXME: Maybe make these keys enums to avoid collisions
     PARAMS_KEY = 'params'
+    ARGS_KEY = 'args'
     SPACE_SYSTEM_KEY = 'space_system'
     CONTAINERS_KEY = 'containers'
     COMMANDS_KEY = 'commands'
     BASE_CONTAINER_KEY = 'base_container'
     BASE_COMMAND_KEY = 'base_command'
     BASE_CONTAINER_CRITERIA_KEY = 'criteria'
-    BASE_COMNMAND_ARG_ASSIGNMENT_KEY = 'criteria'
+    BASE_COMNMAND_ARG_ASSIGNMENT_KEY = 'assignment'
     XTCE_OBJ_KEY = 'xtce_obj'
     INTRINSIC_KEY = 'intrinsic'
     ARRAY_TYPE_KEY = 'array_type'
@@ -281,7 +282,7 @@ class XTCEParser:
                     commands_dict[meta_command.get_name()][self.XTCE_OBJ_KEY] = meta_command
                     # container
                     commands_dict[meta_command.get_name()][self.COMMAND_CONTAINER] = meta_command.get_CommandContainer()
-                    commands_dict[meta_command.get_name()][XTCEParser.PARAMS_KEY] = self.__get_arg_map(
+                    commands_dict[meta_command.get_name()][XTCEParser.ARGS_KEY] = self.__get_arg_map(
                         meta_command,
                         spacesystem)
                     if meta_command.get_BaseMetaCommand() is None:
@@ -562,41 +563,51 @@ class XTCEParser:
                                                                       out_dict["fields"][member.get_name()])
                                             return
 
-    # TODO: Get xtce.ParameterType(Aggregate in this case) from spacesystem
+
+    def __get_highest_level_parent(self, s: xtce.SpaceSystemType):
+        while s.parent is not None:
+            self.__get_highest_level_parent(s.parent)
+        return s
+
     def __get_arg_type(self, arg_type_ref: str, spacesystem: xtce.SpaceSystemType,
                        host_param: str = None, out_dict: dict = {}):
         """
-        For now it is assumed that param_type_ref points to a AggregateParameterType
         """
+        if spacesystem is None:
+            return
         # FIXME:Please cleanup this function. Please.
         cmd = spacesystem.get_CommandMetaData()
+
+        if arg_type_ref == 'msgID':
+            print("break")
+
         if cmd is not None:
             if cmd.get_ArgumentTypeSet() is not None:
                 arg_type = self.__get_intrinsic_arg_type(cmd, arg_type_ref)
                 if arg_type is not None:
                     out_dict[XTCEParser.INTRINSIC_KEY] = arg_type
-                else:
-                    if len(cmd.get_ArgumentTypeSet().get_ArrayArgumentType()) > 0:
-                        array_type: xtce.ArrayArgumentType
-                        for array_type in cmd.get_ArgumentTypeSet().get_ArrayArgumentType():
-                            if array_type.get_name() == self.sanitize_type_ref(arg_type_ref):
-                                dim: xtce.DimensionType
-                                out_dict[XTCEParser.ARRAY_TYPE_KEY] = []
-                                # TODO:Add support for multi-dimensional array
-                                for dim in array_type.get_DimensionList().get_Dimension():
-                                    for i in range(dim.get_StartingIndex().get_FixedValue(),
-                                                   dim.get_EndingIndex().get_FixedValue() + 1):
-                                        ref_spacesystem = self.__get_spacesystem_from_ref(array_type.get_arrayTypeRef(),
-                                                                                          spacesystem)
+                    return
+                if len(cmd.get_ArgumentTypeSet().get_ArrayArgumentType()) > 0:
+                    array_type: xtce.ArrayArgumentType
+                    for array_type in cmd.get_ArgumentTypeSet().get_ArrayArgumentType():
+                        if array_type.get_name() == self.sanitize_type_ref(arg_type_ref):
+                            dim: xtce.DimensionType
+                            out_dict[XTCEParser.ARRAY_TYPE_KEY] = []
+                            # TODO:Add support for multi-dimensional array
+                            for dim in array_type.get_DimensionList().get_Dimension():
+                                for i in range(dim.get_StartingIndex().get_FixedValue(),
+                                               dim.get_EndingIndex().get_FixedValue() + 1):
+                                    ref_spacesystem = self.__get_spacesystem_from_ref(array_type.get_arrayTypeRef(),
+                                                                                      spacesystem)
 
-                                        item_param_type = self.__get_intrinsic_parm_type(
-                                            ref_spacesystem.get_CommandMetaData(), array_type.get_arrayTypeRef())
-                                        if item_param_type is not None:
-                                            out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
-                                        else:
-                                            # FIXME:Array of structs
-                                            out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
-                                return
+                                    item_param_type = self.__get_intrinsic_parm_type(
+                                        ref_spacesystem.get_CommandMetaData(), array_type.get_arrayTypeRef())
+                                    if item_param_type is not None:
+                                        out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
+                                    else:
+                                        # FIXME:Array of structs
+                                        out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
+                            return
                     if len(cmd.get_ArgumentTypeSet().get_AggregateArgumentType()) > 0:
                         # FIXME: Check for intrinsic types and make this function recursive
                         aggregate: xtce.AggregateArgumentType
@@ -618,7 +629,7 @@ class XTCEParser:
                                                           out_dict["fields"][member.get_name()])
                                 return
 
-            else:
+
                 for s in spacesystem.get_SpaceSystem():
                     cmd = s.get_CommandMetaData()
                     if cmd is not None:
@@ -676,6 +687,8 @@ class XTCEParser:
                                                                       aggregate.get_name(),
                                                                       out_dict["fields"][member.get_name()])
                                             return
+        self.__get_arg_type(arg_type_ref, spacesystem.get_parent(), host_param, out_dict)
+
 
     def __get_param_type_map(self, param_ref: str, spacesystem: xtce.SpaceSystemType):
         parameter_type_dict = dict()
@@ -715,6 +728,8 @@ class XTCEParser:
                 arg: xtce.ArgumentType
                 for arg in command.get_ArgumentList().get_Argument():
                     if arg_ref.argumentRef == arg.get_name():
+                        if arg.get_name() == 'msgID':
+                            print("break")
                         # FIXME:Passing this dict is redundant as it is overriding the same key that points to an
                         #  empty dict
                         argument_type_dict[arg.get_name()] = dict()
