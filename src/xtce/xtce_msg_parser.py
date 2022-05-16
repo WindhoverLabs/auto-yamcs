@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Union, List
 
 from bitarray import bitarray
-from bitarray.util import pprint, ba2int, ba2hex
+from bitarray.util import pprint, ba2int, ba2hex, int2ba
 
 try:
     from xtce import xtce, xtce_generator
@@ -31,8 +31,71 @@ ESC_ESC = 0xdd
 
 
 # FIXME:This function should be moved to a pre-processor.
-def extract_bits_from_base_container(container: dict, comparison: xtce.ComparisonType, container_size: int,
-                                     msg_id) -> bitarray:
+def extract_bits_from_base_tlm_container(container: dict, comparison: xtce.ComparisonType, container_size: int,
+                                         msg_id) -> bitarray:
+    extracted_bits = bitarray(endian='big')
+    container_key = list(container[XTCEParser.BASE_CONTAINER_KEY].keys())[0]
+    comp_value_ref: str = comparison.get_parameterRef()
+    # msg_id = int(comparison.get_value())
+
+    # Zero-fill the bitarray up to container size
+    for i in range(container_size):
+        extracted_bits.insert(i, 0)
+
+    if xtce_generator.XTCEManager.NAMESPACE_SEPARATOR in comp_value_ref:
+        comp_value_ref = comp_value_ref.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
+
+    offset = get_offset_container(container[XTCEParser.BASE_CONTAINER_KEY][container_key][XTCEParser.PARAMS_KEY],
+                                  comp_value_ref)
+
+    value_size = get_param_bit_size(container[XTCEParser.BASE_CONTAINER_KEY][container_key][XTCEParser.PARAMS_KEY],
+                                    comp_value_ref)
+
+    # FIXME:hard-coded for now
+    length_offset = get_offset_container(container[XTCEParser.BASE_CONTAINER_KEY][container_key][XTCEParser.PARAMS_KEY],
+                                         "ccsds-length")
+    length_size = get_param_bit_size(container[XTCEParser.BASE_CONTAINER_KEY][container_key][XTCEParser.PARAMS_KEY],
+                                     "ccsds-length")
+
+    length_offset += 8
+
+    # A strategy might be just reading these mids from the YAML
+    CFE_MSG_CPU_BASE = 0x0200
+    CFE_TLM_MID_BASE = 0x0800
+    # msg_id = CFE_MSG_CPU_BASE + CFE_TLM_MID_BASE + msg_id
+    msg_id = bytearray(struct.pack('>H', msg_id))
+    # msg_id[0] = msg_id[0] & 0x0A
+    # TODO: Big/Little endian is inside XTCE
+    bits = bitarray(endian='big')
+    bits.frombytes(bytes(msg_id))
+
+    # FIXME:For some reason, if we start writing in the middle of the byte it zeroes out the header.
+    # i = offset
+    i = 0
+    for bit in bits:
+        extracted_bits[i] = bit
+        i += 1
+
+    # # TODO: Big/Little endian is inside XTCE
+    size_in_bytes = math.ceil(length_size / 8)
+    length_bits = bitarray(endian='big')
+    # FIXME:CFS-specific logic should go into a post/pre-processor of some kind
+    packet_length = int((container_size - 56) / (8))
+
+    packet_length = struct.pack('>H', packet_length)
+    length_bits.frombytes(packet_length)
+
+    i = length_offset
+    for bit in length_bits[:length_size]:
+        extracted_bits[i] = bit
+        i += 1
+
+    return extracted_bits
+
+
+# FIXME:This function should be moved to a pre-processor.
+def extract_bits_from_base_cmd_container(container: dict, comparison: xtce.ComparisonType,
+                                         container_size: int) -> bitarray:
     extracted_bits = bitarray(endian='big')
     container_key = list(container[XTCEParser.BASE_CONTAINER_KEY].keys())[0]
     comp_value_ref: str = comparison.get_parameterRef()
@@ -620,9 +683,9 @@ class XTCEParser:
                                     out_dict["fields"][member.get_name()][XTCEParser.ARG_NAME_KEY] = member.get_name()
                                     ref_spacesystem = self.__get_spacesystem_from_ref(member.get_typeRef(), spacesystem)
                                     self.__get_arg_type(member.get_typeRef(),
-                                                          ref_spacesystem,
-                                                          aggregate.get_name(),
-                                                          out_dict["fields"][member.get_name()])
+                                                        ref_spacesystem,
+                                                        aggregate.get_name(),
+                                                        out_dict["fields"][member.get_name()])
                                 return
 
                 for s in spacesystem.get_SpaceSystem():
@@ -678,12 +741,13 @@ class XTCEParser:
                                                 ref_spacesystem = self.__get_spacesystem_from_ref(
                                                     member.get_typeRef(), spacesystem)
                                                 self.__get_arg_type(member.get_typeRef(),
-                                                                      ref_spacesystem,
-                                                                      aggregate.get_name(),
-                                                                      out_dict["fields"][member.get_name()])
+                                                                    ref_spacesystem,
+                                                                    aggregate.get_name(),
+                                                                    out_dict["fields"][member.get_name()])
                                             return
         # self.__get_arg_type(arg_type_ref, spacesystem.get_parent(), host_param, out_dict)
-        self.__get_arg_type(arg_type_ref, self.__get_spacesystem_from_ref(arg_type_ref, spacesystem), host_param, out_dict)
+        self.__get_arg_type(arg_type_ref, self.__get_spacesystem_from_ref(arg_type_ref, spacesystem), host_param,
+                            out_dict)
 
     def __get_param_type_map(self, param_ref: str, spacesystem: xtce.SpaceSystemType):
         parameter_type_dict = dict()
@@ -755,15 +819,17 @@ class XTCEParser:
                 # For FixedValue obj, we don't have to resolve the type as the object itself has everything we need
                 ref = entry.get_name()
                 arg_dict[ref] = dict()
-                # TODO:Query the ParameterSet
-                arg_dict[ref][XTCEParser.INTRINSIC_KEY] = entry
-                arg_dict[ref][XTCEParser.ARG_NAME_KEY] = ref
+                # FIXME: This is horrid I know, but will do it for now to
+                # make the FixedValue args consistent in their dict structure with ArgumentRef args.
+                arg_dict[ref][ref] = dict()
+                arg_dict[ref][ref][XTCEParser.INTRINSIC_KEY] = entry
+                arg_dict[ref][ref][XTCEParser.ARG_NAME_KEY] = ref
             elif type(entry) == xtce.ArgumentArgumentRefEntryType:
                 ref = entry.get_argumentRef()
                 arg_dict[entry.get_argumentRef()] = dict()
                 # TODO:Query the ParameterSet
                 # FIXME:Passing this dict seems redundant as it is overriding the same key that points to an
-                #  empty dict
+                # empty dict
                 self.__get_arg_type_map(entry, command, spacesystem, arg_dict[entry.get_argumentRef()])
                 arg_dict[ref][XTCEParser.ARG_NAME_KEY] = entry.get_argumentRef()
 
@@ -1037,9 +1103,9 @@ class XTCEParser:
         if len(comparison_list.get_Comparison()) > 0:
             # FIXME:At the moment it is assumed that there is only 1 comparison
             for comparison in comparison_list.get_Comparison():
-                base_container_bits = extract_bits_from_base_container(container_map, comparison,
-                                                                       base_container_size + container_size,
-                                                                       mid['msgID'])
+                base_container_bits = extract_bits_from_base_tlm_container(container_map, comparison,
+                                                                           base_container_size + container_size,
+                                                                           mid['msgID'])
                 break
 
         payload_bits = base_container_bits.copy()
@@ -1118,6 +1184,35 @@ class XTCEParser:
 
         return output_bytes
 
+    def __set_arg_assignment(self, argument_assignment_list: xtce.ArgumentAssignmentListType,
+                             arg_obj: xtce.NameDescriptionType,
+                             arg: str) -> Union[bitarray, None]:
+        """
+        Set the argument to the value passed, if the argument is found returns a bitarray object with
+        the value of the argument set.
+        Otherwise, return None.
+        """
+        arg_bits_out = None
+        arg_set = False
+        for assignment in argument_assignment_list.get_ArgumentAssignment():
+            assignment: xtce.ArgumentAssignmentType
+            if assignment.get_argumentName() == arg:
+                arg_set = True
+                # FIXME:Check byte order in XTCE
+                if type(arg_obj) == xtce.IntegerArgumentType:
+                    arg_obj: xtce.IntegerArgumentType
+                    arg_bits_out = int2ba(int(assignment.get_argumentValue()),
+                                          length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian='big')
+                    break
+        if arg_set is False:
+            # If the arg has no assignment, then it is zero-filled
+            # FIXME:Check byte order in XTCE
+            if type(arg_obj) == xtce.IntegerArgumentType:
+                arg_obj: xtce.IntegerArgumentType
+                arg_bits_out = int2ba(int(0),
+                                      length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian='big')
+        return arg_bits_out
+
     def craft_command(self, path: str, args: dict) -> bytes:
         """
         Returns a new packet based on path and args.
@@ -1134,52 +1229,70 @@ class XTCEParser:
         # container_bits.frombytes(packet)
         base_command_key = list(command_map[self.BASE_COMMAND_KEY].keys())[0]
 
-        base_container_size = get_bit_size_from_tlm_container(
+        base_container_size = get_bit_size_from_cmd_container(
             command_map[self.BASE_COMMAND_KEY][base_command_key][XTCEParser.ARGS_KEY])
-        container_size = get_bit_size_from_tlm_container(command_map[XTCEParser.ARGS_KEY])
+        container_size = get_bit_size_from_cmd_container(command_map[XTCEParser.ARGS_KEY])
 
-        command_map = self.query_container_from_qualified_name(path)
-        criteria: xtce.RestrictionCriteriaType
-        criteria = command_map[self.BASE_CONTAINER_KEY][self.BASE_CONTAINER_CRITERIA_KEY]
-        comparison_list: xtce.ComparisonListType
-        comparison_list = criteria.get_ComparisonList()
+        assignments: xtce.ArgumentAssignmentListType
+        argument_assignment_list = command_map[self.BASE_COMMAND_KEY][self.BASE_COMNMAND_ARG_ASSIGNMENT_KEY]
+        argument_assignment_list: xtce.ArgumentAssignmentListType
+        # comparison_list = assignments.get
 
-        tlm_item = path
-        if '.' in path:
-            tlm_item = path.split('.')[0]
+        cmd_item = path
+        # FIXME:At the moment we don't check for the "." in the name, but we should since it is not
+        # compliant to spec.
+        # https://github.com/WindhoverLabs/xtce_generator/issues/62
+        # if '.' in path:
+        #     cmd_item = path.split('.')[0]
 
-        tlm_path_namesapce = xtce_generator.XTCEManager.NAMESPACE_SEPARATOR \
-                             + xtce_generator.XTCEManager.NAMESPACE_SEPARATOR.join(
-            tlm_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[1:-1])
-        mids = self.get_msg_ids_at(tlm_path_namesapce)
+        # tlm_path_namesapce = xtce_generator.XTCEManager.NAMESPACE_SEPARATOR \
+        #                      + xtce_generator.XTCEManager.NAMESPACE_SEPARATOR.join(
+        #     cmd_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[1:-1])
+        # mids = self.get_msg_ids_at(tlm_path_namesapce)
+        #
+        # if mids is None:
+        #     err_msg = f"Invalid telemetry operational name received:{cmd_item} "
+        #     # self.vehicle.error(err_msg)
+        #     # raise InvalidOperationException(err_msg)
+        #
+        # msg_name = cmd_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
+        #
+        # if msg_name not in mids:
+        #     err_msg = f"{msg_name} message does not exist."
+        #     # self.vehicle.error(err_msg)
+        #     # raise InvalidOperationException(err_msg)
+        #
+        # mid = mids[msg_name]
 
-        if mids is None:
-            err_msg = f"Invalid telemetry operational name received:{tlm_item} "
-            # self.vehicle.error(err_msg)
-            # raise InvalidOperationException(err_msg)
+        current_bit_cursor = 0
 
-        msg_name = tlm_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
+        for arg in command_map[self.BASE_COMMAND_KEY][base_command_key][XTCEParser.ARGS_KEY]:
+            # Assumes the args are in order for now
+            arg_dict = command_map[self.BASE_COMMAND_KEY][base_command_key][XTCEParser.ARGS_KEY][arg][arg]
+            arg_bits = bitarray()
+            if XTCEParser.INTRINSIC_KEY in arg_dict:
+                arg_obj = arg_dict[XTCEParser.INTRINSIC_KEY]
+                if type(arg_obj) == xtce.ArgumentFixedValueEntryType:
+                    arg_obj: xtce.ArgumentFixedValueEntryType
+                    arg_bits = int2ba(int(arg_obj.binaryValue), length=int(arg_obj.sizeInBits), endian='big')
+                else:
+                    # FIXME:Hard-coded for now. This is because the cmd-code "skips" a bit.
+                    #  Use offsets instead from the container(base container).
+                    if arg == "ccsds-length":
+                        arg_bits = int2ba(int(0), length=1, endian='big')
+                        base_command_bits += arg_bits
 
-        if msg_name not in mids:
-            err_msg = f"{msg_name} message does not exist."
-            # self.vehicle.error(err_msg)
-            # raise InvalidOperationException(err_msg)
+                    arg_bits = self.__set_arg_assignment(argument_assignment_list, arg_obj, arg)
+            else:
+                #  Should not happen as it is assumed that everything is intrinsic
+                pass
+            base_command_bits += arg_bits
 
-        mid = mids[msg_name]
-
-        if len(comparison_list.get_Comparison()) > 0:
-            # FIXME:At the moment it is assumed that there is only 1 comparison
-            for comparison in comparison_list.get_Comparison():
-                base_command_bits = extract_bits_from_base_container(command_map, comparison,
-                                                                     base_container_size + container_size,
-                                                                     mid['msgID'])
-                break
 
         payload_bits = base_command_bits.copy()
 
         param_name = self.__get_param_name(path)
 
-        current_bit_cursor = base_container_size
 
         for arg in args:
             arg_bits = bitarray(endian='little')
@@ -1287,24 +1400,28 @@ class Evaluator(ABC):
 
 def get_bit_size(intrinsic_type: Union[list, xtce.BaseDataType]):
     bit_size = 0
-    if isinstance(intrinsic_type, xtce.IntegerParameterType):
+    if isinstance(intrinsic_type, xtce.IntegerParameterType) or isinstance(intrinsic_type, xtce.IntegerArgumentType):
         bit_size = intrinsic_type.get_IntegerDataEncoding().get_sizeInBits()
     elif isinstance(intrinsic_type, list):
         for item in intrinsic_type:
             bit_size += get_bit_size(item)
 
-    elif isinstance(intrinsic_type, xtce.FloatParameterType):
+    elif isinstance(intrinsic_type, xtce.FloatParameterType) or isinstance(intrinsic_type, xtce.FloatArgumentType):
         bit_size += intrinsic_type.get_sizeInBits()
 
-    elif isinstance(intrinsic_type, xtce.BooleanParameterType):
+    elif isinstance(intrinsic_type, xtce.BooleanParameterType) or isinstance(intrinsic_type, xtce.BooleanArgumentType):
         # FIXME: It is perfectly legal to have something else other than Integer encoding for boolean types
         bit_size += intrinsic_type.get_IntegerDataEncoding().get_sizeInBits()
 
-    elif isinstance(intrinsic_type, xtce.StringParameterType):
+    elif isinstance(intrinsic_type, xtce.StringParameterType) or isinstance(intrinsic_type, xtce.StringArgumentType):
         bit_size += intrinsic_type.get_StringDataEncoding().get_SizeInBits().get_Fixed().get_FixedValue()
 
-    elif isinstance(intrinsic_type, xtce.EnumeratedParameterType):
+    elif isinstance(intrinsic_type, xtce.EnumeratedParameterType) or isinstance(intrinsic_type,
+                                                                                xtce.EnumeratedArgumentType):
         bit_size += intrinsic_type.get_IntegerDataEncoding().get_sizeInBits()
+
+    elif isinstance(intrinsic_type, xtce.ArgumentFixedValueEntryType):
+        bit_size += intrinsic_type.get_sizeInBits()
 
     return bit_size
 
@@ -1421,6 +1538,27 @@ def get_bit_size_from_tlm_container(params) -> int:
             for p in params:
                 if type(params[p]) is dict:
                     offset += get_bit_size_from_tlm_container(params[p])
+    return offset
+
+
+def get_bit_size_from_cmd_container(args) -> int:
+    """"
+    It is assumed that the args are sequential.
+    """
+    offset = 0
+
+    if XTCEParser.INTRINSIC_KEY in args:
+        offset = get_bit_size(args[XTCEParser.INTRINSIC_KEY])
+
+    # FIXME:Might be a good idea to wrap array types as "intrinsic" types as well.
+    elif XTCEParser.ARRAY_TYPE_KEY in args:
+        for p in args[XTCEParser.ARRAY_TYPE_KEY]:
+            offset += get_bit_size(p)
+    else:
+        if type(args) is dict:
+            for p in args:
+                if type(args[p]) is dict:
+                    offset += get_bit_size_from_cmd_container(args[p])
     return offset
 
 
