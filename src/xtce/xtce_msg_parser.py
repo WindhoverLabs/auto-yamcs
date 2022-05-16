@@ -249,7 +249,7 @@ class XTCEParser:
                     else:
                         base_container: xtce.SequenceContainerType = self.__get_container_from_ref(
                             container.get_BaseContainer().containerRef, spacesystem)
-                        container_spacesystem = self.__get_spacesystem_from_ref(
+                        base_container_spacesystem = self.__get_spacesystem_from_ref(
                             container.get_BaseContainer().containerRef,
                             spacesystem)
 
@@ -259,7 +259,7 @@ class XTCEParser:
                         #     self.BASE_CONTAINER_CRITERIA] = container.get_BaseContainer().get_RestrictionCriteria()
                         # containers_dict[container.get_name()][self.BASE_CONTAINER][self.XTCE_OBJ] = base_container
                         containers_dict[container.get_name()][self.BASE_CONTAINER_KEY] = self.__get_seq_containers_map(
-                            container_spacesystem)
+                            base_container_spacesystem)
 
                         # Store Criteria Obj in dict
                         containers_dict[container.get_name()][self.BASE_CONTAINER_KEY][
@@ -288,9 +288,9 @@ class XTCEParser:
                     if meta_command.get_BaseMetaCommand() is None:
                         commands_dict[meta_command.get_name()][self.BASE_COMMAND_KEY] = None
                     else:
-                        base_container: xtce.MetaCommandType = self.__get_command_from_ref(
+                        base_meta_command: xtce.MetaCommandType = self.__get_command_from_ref(
                             meta_command.get_BaseMetaCommand().get_metaCommandRef(), spacesystem)
-                        container_spacesystem = self.__get_spacesystem_from_ref(
+                        base_meta_command_spacesystem = self.__get_spacesystem_from_ref(
                             meta_command.get_BaseMetaCommand().get_metaCommandRef(),
                             spacesystem)
 
@@ -301,13 +301,13 @@ class XTCEParser:
                         # commands_dict[container.get_name()][self.BASE_CONTAINER][self.XTCE_OBJ] = base_container
                         commands_dict[meta_command.get_name()][
                             self.BASE_COMMAND_KEY] = self.__get_meta_commands_map(
-                            container_spacesystem)
+                            base_meta_command_spacesystem)
 
                         # Store Criteria Obj in dict
                         commands_dict[meta_command.get_name()][self.BASE_COMMAND_KEY][
                             self.BASE_COMNMAND_ARG_ASSIGNMENT_KEY] = meta_command.get_BaseMetaCommand().get_ArgumentAssignmentList()
                         commands_dict[meta_command.get_name()][self.BASE_COMMAND_KEY][
-                            self.XTCE_OBJ_KEY] = base_container
+                            self.XTCE_OBJ_KEY] = base_meta_command
 
         return commands_dict
 
@@ -563,7 +563,6 @@ class XTCEParser:
                                                                       out_dict["fields"][member.get_name()])
                                             return
 
-
     def __get_highest_level_parent(self, s: xtce.SpaceSystemType):
         while s.parent is not None:
             self.__get_highest_level_parent(s.parent)
@@ -577,9 +576,6 @@ class XTCEParser:
             return
         # FIXME:Please cleanup this function. Please.
         cmd = spacesystem.get_CommandMetaData()
-
-        if arg_type_ref == 'msgID':
-            print("break")
 
         if cmd is not None:
             if cmd.get_ArgumentTypeSet() is not None:
@@ -600,7 +596,7 @@ class XTCEParser:
                                     ref_spacesystem = self.__get_spacesystem_from_ref(array_type.get_arrayTypeRef(),
                                                                                       spacesystem)
 
-                                    item_param_type = self.__get_intrinsic_parm_type(
+                                    item_param_type = self.__get_intrinsic_arg_type(
                                         ref_spacesystem.get_CommandMetaData(), array_type.get_arrayTypeRef())
                                     if item_param_type is not None:
                                         out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
@@ -623,12 +619,11 @@ class XTCEParser:
                                     out_dict["fields"][member.get_name()] = dict()
                                     out_dict["fields"][member.get_name()][XTCEParser.ARG_NAME_KEY] = member.get_name()
                                     ref_spacesystem = self.__get_spacesystem_from_ref(member.get_typeRef(), spacesystem)
-                                    self.__get_param_type(member.get_typeRef(),
+                                    self.__get_arg_type(member.get_typeRef(),
                                                           ref_spacesystem,
                                                           aggregate.get_name(),
                                                           out_dict["fields"][member.get_name()])
                                 return
-
 
                 for s in spacesystem.get_SpaceSystem():
                     cmd = s.get_CommandMetaData()
@@ -664,7 +659,7 @@ class XTCEParser:
                                     aggregate: xtce.AggregateArgumentType
                                     for aggregate in cmd.get_ArgumentTypeSet().get_AggregateArgumentType():
 
-                                        if aggregate.get_name() == self.sanitize_type_ref(param_type_ref):
+                                        if aggregate.get_name() == self.sanitize_type_ref(arg_type_ref):
                                             member: xtce.MemberType
                                             out_dict["fields"] = dict()
                                             out_dict[IntrinsicDataType.AGGREGATE] = IntrinsicDataType.AGGREGATE
@@ -682,13 +677,13 @@ class XTCEParser:
 
                                                 ref_spacesystem = self.__get_spacesystem_from_ref(
                                                     member.get_typeRef(), spacesystem)
-                                                self.__get_param_type(member.get_typeRef(),
+                                                self.__get_arg_type(member.get_typeRef(),
                                                                       ref_spacesystem,
                                                                       aggregate.get_name(),
                                                                       out_dict["fields"][member.get_name()])
                                             return
-        self.__get_arg_type(arg_type_ref, spacesystem.get_parent(), host_param, out_dict)
-
+        # self.__get_arg_type(arg_type_ref, spacesystem.get_parent(), host_param, out_dict)
+        self.__get_arg_type(arg_type_ref, self.__get_spacesystem_from_ref(arg_type_ref, spacesystem), host_param, out_dict)
 
     def __get_param_type_map(self, param_ref: str, spacesystem: xtce.SpaceSystemType):
         parameter_type_dict = dict()
@@ -701,7 +696,7 @@ class XTCEParser:
                         parameter_type_dict[param.get_name()] = dict()
                         parameter_type_dict[param.get_name()][XTCEParser.PARAM_NAME_KEY] = param.get_name()
                         self.__get_param_type(param.get_parameterTypeRef(), spacesystem, param.get_name(),
-                                            parameter_type_dict[param.get_name()])
+                                              parameter_type_dict[param.get_name()])
 
         return parameter_type_dict
 
@@ -742,24 +737,35 @@ class XTCEParser:
         # TODO:Use ordered dict for params
         # In python 3.7+, ordered dicts are law:https://mail.python.org/pipermail/python-dev/2017-December/151283.html
 
-        entry: xtce.ArgumentFixedValueEntryType
-        for entry in command.get_CommandContainer().get_EntryList().get_FixedValueEntry():
-            # For FixedValue obj, we don't have to resolve the type as the object itself has everything we need
-            ref = entry.get_name()
-            arg_dict[ref] = dict()
-            # TODO:Query the ParameterSet
-            arg_dict[ref][XTCEParser.INTRINSIC_KEY] = entry
-            arg_dict[ref][XTCEParser.ARG_NAME_KEY] = ref
+        # GenerateDS has two separate lists for FixedValue and ArgumentRef Entries, so here
+        # we merge them by reading the xml tree directly
+        entry_list: [xtce.ArgumentSequenceEntryType] = []
+        entry_list_nodes = list(command.get_CommandContainer().get_EntryList().gds_elementtree_node_)
+        for entry_node in entry_list_nodes:
+            for fixed_node_entry in list(command.get_CommandContainer().get_EntryList().get_FixedValueEntry()):
+                if entry_node == fixed_node_entry.gds_elementtree_node_:
+                    entry_list.append(fixed_node_entry)
+            for arg_node_entry in list(command.get_CommandContainer().get_EntryList().get_ArgumentRefEntry()):
+                if entry_node == arg_node_entry.gds_elementtree_node_:
+                    entry_list.append(arg_node_entry)
 
-        entry: xtce.ArgumentArgumentRefEntryType
-        for entry in command.get_CommandContainer().get_EntryList().get_ArgumentRefEntry():
-            ref = entry.get_argumentRef()
-            arg_dict[entry.get_argumentRef()] = dict()
-            # TODO:Query the ParameterSet
-            # FIXME:Passing this dict seems redundant as it is overriding the same key that points to an
-            #  empty dict
-            self.__get_arg_type_map(entry, command, spacesystem, arg_dict[entry.get_argumentRef()])
-            arg_dict[ref][XTCEParser.ARG_NAME_KEY] = entry.get_argumentRef()
+        print(entry_list)
+        for entry in entry_list:
+            if type(entry) == xtce.ArgumentFixedValueEntryType:
+                # For FixedValue obj, we don't have to resolve the type as the object itself has everything we need
+                ref = entry.get_name()
+                arg_dict[ref] = dict()
+                # TODO:Query the ParameterSet
+                arg_dict[ref][XTCEParser.INTRINSIC_KEY] = entry
+                arg_dict[ref][XTCEParser.ARG_NAME_KEY] = ref
+            elif type(entry) == xtce.ArgumentArgumentRefEntryType:
+                ref = entry.get_argumentRef()
+                arg_dict[entry.get_argumentRef()] = dict()
+                # TODO:Query the ParameterSet
+                # FIXME:Passing this dict seems redundant as it is overriding the same key that points to an
+                #  empty dict
+                self.__get_arg_type_map(entry, command, spacesystem, arg_dict[entry.get_argumentRef()])
+                arg_dict[ref][XTCEParser.ARG_NAME_KEY] = entry.get_argumentRef()
 
         return arg_dict
 
@@ -858,6 +864,24 @@ class XTCEParser:
 
         return result_container
 
+    def query_command_from_qualified_name(self, qualified_name: str) -> dict:
+        """
+        Return a ContainerType from a query string such as "/cfs/cpd/apps/px4lib/PX4_VEHICLE_GLOBAL_POSITION_MID.Lat".
+        If the container is not found, None is returned.
+        """
+        result_command: xtce.MetaCommandType = None
+        system: dict = self.__query_spacesystem_from_qualified_name(qualified_name)
+        # FIXME: Add error-checking here
+        tokens = qualified_name.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)
+        if XTCEParser.STRUCT_SEPARATOR in qualified_name:
+            raise Exception(f"No '{XTCEParser.STRUCT_SEPARATOR}' allowed in command names.")
+
+        else:
+            command_name = tokens[-1]
+        result_command = system[self.COMMANDS_KEY][command_name]
+
+        return result_command
+
     def query_param_from_paramref(self, param_ref: str) -> Union[xtce.ParameterType]:
         # TODO:Handle the case where are no slashes in param_ref
         result: xtce.ParameterType = None
@@ -941,9 +965,9 @@ class XTCEParser:
             container_bits.frombytes(packet)
             base_container_key = list(container_map[self.BASE_CONTAINER_KEY].keys())[0]
 
-            base_container_size = get_bit_size_from_container(
+            base_container_size = get_bit_size_from_tlm_container(
                 container_map[self.BASE_CONTAINER_KEY][base_container_key][XTCEParser.PARAMS_KEY])
-            container_size = get_bit_size_from_container(container_map[XTCEParser.PARAMS_KEY])
+            container_size = get_bit_size_from_tlm_container(container_map[XTCEParser.PARAMS_KEY])
             param_name = self.__get_param_name(path)
             param_offset = get_offset_aggregate(container_map[XTCEParser.PARAMS_KEY],
                                                 param_name)
@@ -977,9 +1001,9 @@ class XTCEParser:
         # container_bits.frombytes(packet)
         base_container_key = list(container_map[self.BASE_CONTAINER_KEY].keys())[0]
 
-        base_container_size = get_bit_size_from_container(
+        base_container_size = get_bit_size_from_tlm_container(
             container_map[self.BASE_CONTAINER_KEY][base_container_key][XTCEParser.PARAMS_KEY])
-        container_size = get_bit_size_from_container(container_map[XTCEParser.PARAMS_KEY])
+        container_size = get_bit_size_from_tlm_container(container_map[XTCEParser.PARAMS_KEY])
 
         container_map = self.query_container_from_qualified_name(path)
         criteria: xtce.RestrictionCriteriaType
@@ -989,7 +1013,7 @@ class XTCEParser:
 
         tlm_item = path
         if '.' in path:
-            tlm_item = tlm_path.split('.')[0]
+            tlm_item = path.split('.')[0]
 
         tlm_path_namesapce = xtce_generator.XTCEManager.NAMESPACE_SEPARATOR \
                              + xtce_generator.XTCEManager.NAMESPACE_SEPARATOR.join(
@@ -1036,6 +1060,139 @@ class XTCEParser:
 
             # FIXME: Need to handle the case when the param is an array.
             i_type = get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
+            # FIXME:Check byte order
+            if type(i_type) == xtce.IntegerParameterType:
+                # FIXME:This won't work with partials
+                size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
+                bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
+
+                arg_bits.frombytes(bytes_data)
+                for bit in arg_bits:
+                    payload_bits[current_bit_cursor] = bit
+                    current_bit_cursor += 1
+
+            elif type(i_type) == xtce.FloatParameterType:
+                # >> > struct.unpack('f', b)  # native byte order (little-endian on my machine)
+                # (1.7230105268977664e+16,)
+                # >> > struct.unpack('>f', b)  # big-endian
+                # (-109.22724914550781,)
+                arg_bits.frombytes(bytes(bytearray(struct.pack('f', arg_value))))
+
+                for bit in arg_bits:
+                    payload_bits[current_bit_cursor] = bit
+                    current_bit_cursor += 1
+
+                value = struct.pack('f', arg_value)[0]  # little-endian
+            #
+            #     elif type(i_type) == xtce.BooleanParameterType:
+            #         pass
+            #         # value = bool(ba2int(value_bits))  # little-endian
+            #
+            #     elif type(i_type) == xtce.StringParameterType:
+            #         pass
+            #         # value = value_bits.tobytes().decode('utf-8')  # little-endian
+            #
+            elif type(i_type) == xtce.EnumeratedParameterType:
+                # FIXME:Implement properly
+                size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
+                bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
+                arg_bits.frombytes(bytes_data)
+                value = ba2int(arg_bits)  # little-endian
+                for enum in i_type.get_EnumerationList().get_Enumeration():
+                    enum: xtce.ValueEnumerationType()
+
+                    if enum.get_value() == arg_value:
+                        value = enum.get_label()
+
+                        for bit in arg_bits:
+                            payload_bits[current_bit_cursor] = bit
+                            current_bit_cursor += 1
+        #
+        #     elif type(i_type) == List[xtce.BaseDataType]:
+        #         value = []
+        #         for item in i_type:
+        #             pass
+        #     else:
+        #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
+        output_bytes = self.slip_encode(payload_bits.tobytes(), 12)
+
+        return output_bytes
+
+    def craft_command(self, path: str, args: dict) -> bytes:
+        """
+        Returns a new packet based on path and args.
+        """
+        value = None
+        # TODO: Query endian from XTCE
+        # payload_bits = bitarray(endian='little')
+        base_command_bits = bitarray(endian='big')
+        # FIXME:There is a bit of an implicit assumption here in that this container maps to a param. Add some error
+        # checking here
+        command_map = self.query_command_from_qualified_name(path)
+        # TODO: Extract endian from the params
+        # container_bits = bitarray(endian='little')
+        # container_bits.frombytes(packet)
+        base_command_key = list(command_map[self.BASE_COMMAND_KEY].keys())[0]
+
+        base_container_size = get_bit_size_from_tlm_container(
+            command_map[self.BASE_COMMAND_KEY][base_command_key][XTCEParser.ARGS_KEY])
+        container_size = get_bit_size_from_tlm_container(command_map[XTCEParser.ARGS_KEY])
+
+        command_map = self.query_container_from_qualified_name(path)
+        criteria: xtce.RestrictionCriteriaType
+        criteria = command_map[self.BASE_CONTAINER_KEY][self.BASE_CONTAINER_CRITERIA_KEY]
+        comparison_list: xtce.ComparisonListType
+        comparison_list = criteria.get_ComparisonList()
+
+        tlm_item = path
+        if '.' in path:
+            tlm_item = path.split('.')[0]
+
+        tlm_path_namesapce = xtce_generator.XTCEManager.NAMESPACE_SEPARATOR \
+                             + xtce_generator.XTCEManager.NAMESPACE_SEPARATOR.join(
+            tlm_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[1:-1])
+        mids = self.get_msg_ids_at(tlm_path_namesapce)
+
+        if mids is None:
+            err_msg = f"Invalid telemetry operational name received:{tlm_item} "
+            # self.vehicle.error(err_msg)
+            # raise InvalidOperationException(err_msg)
+
+        msg_name = tlm_item.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
+
+        if msg_name not in mids:
+            err_msg = f"{msg_name} message does not exist."
+            # self.vehicle.error(err_msg)
+            # raise InvalidOperationException(err_msg)
+
+        mid = mids[msg_name]
+
+        if len(comparison_list.get_Comparison()) > 0:
+            # FIXME:At the moment it is assumed that there is only 1 comparison
+            for comparison in comparison_list.get_Comparison():
+                base_command_bits = extract_bits_from_base_container(command_map, comparison,
+                                                                     base_container_size + container_size,
+                                                                     mid['msgID'])
+                break
+
+        payload_bits = base_command_bits.copy()
+
+        param_name = self.__get_param_name(path)
+
+        current_bit_cursor = base_container_size
+
+        for arg in args:
+            arg_bits = bitarray(endian='little')
+            arg_value = arg['value']
+            param_offset = get_offset_aggregate(command_map[XTCEParser.PARAMS_KEY],
+                                                param_name + "." + arg['name'])
+
+            param_value_size = get_param_bit_size(
+                command_map[XTCEParser.PARAMS_KEY],
+                param_name + "." + arg['name'])
+
+            # FIXME: Need to handle the case when the param is an array.
+            i_type = get_param_intrinsic_type(command_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
             # FIXME:Check byte order
             if type(i_type) == xtce.IntegerParameterType:
                 # FIXME:This won't work with partials
@@ -1246,7 +1403,7 @@ def set_offset(params, start_offset: int = 0) -> int:
     return offset
 
 
-def get_bit_size_from_container(params) -> int:
+def get_bit_size_from_tlm_container(params) -> int:
     """"
     It is assumed that the params are sequential.
     """
@@ -1263,7 +1420,7 @@ def get_bit_size_from_container(params) -> int:
         if type(params) is dict:
             for p in params:
                 if type(params[p]) is dict:
-                    offset += get_bit_size_from_container(params[p])
+                    offset += get_bit_size_from_tlm_container(params[p])
     return offset
 
 
