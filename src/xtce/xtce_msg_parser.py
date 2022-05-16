@@ -1360,7 +1360,8 @@ class XTCEParser:
         #             pass
         #     else:
         #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
-        output_bytes = self.slip_encode(payload_bits.tobytes(), 12)
+        # FIXME:This SLIP code should be moved to post/pre-processor
+        output_bytes = self.slip_encode(payload_bits.tobytes(), 8)
 
         return output_bytes
 
