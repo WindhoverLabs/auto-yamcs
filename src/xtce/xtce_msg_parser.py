@@ -813,7 +813,7 @@ class XTCEParser:
                 if entry_node == arg_node_entry.gds_elementtree_node_:
                     entry_list.append(arg_node_entry)
 
-        print(entry_list)
+        # print(entry_list)
         for entry in entry_list:
             if type(entry) == xtce.ArgumentFixedValueEntryType:
                 # For FixedValue obj, we don't have to resolve the type as the object itself has everything we need
@@ -1186,7 +1186,8 @@ class XTCEParser:
 
     def __set_arg_assignment(self, argument_assignment_list: xtce.ArgumentAssignmentListType,
                              arg_obj: xtce.NameDescriptionType,
-                             arg: str) -> Union[bitarray, None]:
+                             arg: str,
+                             in_endian: str = 'big') -> Union[bitarray, None]:
         """
         Set the argument to the value passed, if the argument is found returns a bitarray object with
         the value of the argument set.
@@ -1202,7 +1203,7 @@ class XTCEParser:
                 if type(arg_obj) == xtce.IntegerArgumentType:
                     arg_obj: xtce.IntegerArgumentType
                     arg_bits_out = int2ba(int(assignment.get_argumentValue()),
-                                          length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian='big')
+                                          length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian=in_endian)
                     break
         if arg_set is False:
             # If the arg has no assignment, then it is zero-filled
@@ -1210,7 +1211,7 @@ class XTCEParser:
             if type(arg_obj) == xtce.IntegerArgumentType:
                 arg_obj: xtce.IntegerArgumentType
                 arg_bits_out = int2ba(int(0),
-                                      length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian='big')
+                                      length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian=in_endian)
         return arg_bits_out
 
     def craft_command(self, path: str, args: dict) -> bytes:
@@ -1278,11 +1279,13 @@ class XTCEParser:
                 else:
                     # FIXME:Hard-coded for now. This is because the cmd-code "skips" a bit.
                     #  Use offsets instead from the container(base container).
-                    if arg == "ccsds-length":
-                        arg_bits = int2ba(int(0), length=1, endian='big')
-                        base_command_bits += arg_bits
+                    endian = 'big'
+                    if arg == "cfs-cmd-code":
+                        skipped_bit = int2ba(int(0), length=1, endian='big')
+                        base_command_bits += skipped_bit
+                        endian = 'big'
 
-                    arg_bits = self.__set_arg_assignment(argument_assignment_list, arg_obj, arg)
+                    arg_bits = self.__set_arg_assignment(argument_assignment_list, arg_obj, arg, endian)
             else:
                 #  Should not happen as it is assumed that everything is intrinsic
                 pass
@@ -1362,7 +1365,11 @@ class XTCEParser:
         #     else:
         #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
         # FIXME:This SLIP code should be moved to post/pre-processor
-        output_bytes = self.slip_encode(payload_bits.tobytes(), 8)
+        cmd_bytes = bytearray(payload_bits.tobytes())
+        tmp = cmd_bytes[6]
+        cmd_bytes[7] = tmp
+        cmd_bytes[6] = 0
+        output_bytes = self.slip_encode(bytes(cmd_bytes), 8)
 
         return output_bytes
 
@@ -1371,12 +1378,12 @@ class XTCEParser:
         cursor = 0
         for character in packet:
             c_hex = hex(character)
-            if cursor < header_size:
+            if len(payload) < header_size:
                 value = struct.unpack('>B', character.to_bytes(1, "big"))[0]  # big-endian
             else:
                 value = struct.unpack('B', character.to_bytes(1, "little"))[0]  # little-endian
             if value == END:
-                value = END
+                value = ESC
                 payload.append(value)
                 value = ESC_END
                 payload.append(value)
@@ -1388,7 +1395,6 @@ class XTCEParser:
                 payload.append(character)
             else:
                 payload.append(character)
-            cursor += 1
 
         payload.append(END)
         return bytes(payload)
