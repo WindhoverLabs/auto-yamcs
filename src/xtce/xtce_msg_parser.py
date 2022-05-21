@@ -1161,7 +1161,10 @@ class XTCEParser:
             elif type(i_type) == xtce.EnumeratedParameterType:
                 # FIXME:Implement properly
                 size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
-                bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
+                signed = False
+                if i_type.get_IntegerDataEncoding().encoding == 'twosComplement':
+                    signed = True
+                bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little', signed=signed)
                 arg_bits.frombytes(bytes_data)
                 value = ba2int(arg_bits)  # little-endian
                 for enum in i_type.get_EnumerationList().get_Enumeration():
@@ -1169,7 +1172,6 @@ class XTCEParser:
 
                     if enum.get_value() == arg_value:
                         value = enum.get_label()
-
                         for bit in arg_bits:
                             payload_bits[current_bit_cursor] = bit
                             current_bit_cursor += 1
