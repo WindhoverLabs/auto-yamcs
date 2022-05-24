@@ -1114,17 +1114,13 @@ class XTCEParser:
 
         current_bit_cursor = base_container_size
 
+        payload_bytes = bytearray(payload_bits.tobytes())
+
+        current_byte_cursor = int(base_container_size/8)
+
         for arg in args:
-            arg_bits = bitarray(endian='little')
             arg_value = arg['value']
-            param_offset = get_offset_aggregate(container_map[XTCEParser.PARAMS_KEY],
-                                                param_name + "." + arg['name'])
 
-            param_value_size = get_param_bit_size(
-                container_map[XTCEParser.PARAMS_KEY],
-                param_name + "." + arg['name'])
-
-            # FIXME: Need to handle the case when the param is an array.
             i_type = get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
             # FIXME:Check byte order
             if type(i_type) == xtce.IntegerParameterType:
@@ -1132,59 +1128,105 @@ class XTCEParser:
                 size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
                 bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
 
-                arg_bits.frombytes(bytes_data)
-                for bit in arg_bits:
-                    payload_bits[current_bit_cursor] = bit
-                    current_bit_cursor += 1
+                # arg_bits.frombytes(bytes_data)
+                for byte in bytes_data:
+                    payload_bytes[current_byte_cursor] = byte
+                    current_byte_cursor = 1 + current_byte_cursor
 
             elif type(i_type) == xtce.FloatParameterType:
-                # >> > struct.unpack('f', b)  # native byte order (little-endian on my machine)
+                # >> > st
+                # sruct.unpack('f', b)  # native byte order (little-endian on my machine)
                 # (1.7230105268977664e+16,)
                 # >> > struct.unpack('>f', b)  # big-endian
                 # (-109.22724914550781,)
-                arg_bits.frombytes(bytes(bytearray(struct.pack('f', arg_value))))
+                bytes_data = struct.pack('<f', arg_value)
+                # arg_bits.frombytes(packed_val)
 
-                for bit in arg_bits:
-                    payload_bits[current_bit_cursor] = bit
-                    current_bit_cursor += 1
+                for byte in bytes_data:
+                    payload_bytes[current_byte_cursor] = byte
+                    current_byte_cursor = current_byte_cursor + 1
 
-                value = struct.pack('f', arg_value)[0]  # little-endian
-            #
-            #     elif type(i_type) == xtce.BooleanParameterType:
-            #         pass
-            #         # value = bool(ba2int(value_bits))  # little-endian
-            #
-            #     elif type(i_type) == xtce.StringParameterType:
-            #         pass
-            #         # value = value_bits.tobytes().decode('utf-8')  # little-endian
-            #
+                # value = struct.pack('f', arg_value)[0]  # little-endian
+
             elif type(i_type) == xtce.EnumeratedParameterType:
-                # FIXME:Implement properly
-                size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
-                signed = False
-                if i_type.get_IntegerDataEncoding().encoding == 'twosComplement':
-                    signed = True
-                bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little', signed=signed)
-                arg_bits.frombytes(bytes_data)
-                value = ba2int(arg_bits)  # little-endian
                 for enum in i_type.get_EnumerationList().get_Enumeration():
                     enum: xtce.ValueEnumerationType()
 
                     if enum.get_value() == arg_value:
-                        value = enum.get_label()
-                        for bit in arg_bits:
-                            payload_bits[current_bit_cursor] = bit
-                            current_bit_cursor += 1
-        #
-        #     elif type(i_type) == List[xtce.BaseDataType]:
-        #         value = []
-        #         for item in i_type:
-        #             pass
+                        # value = enum.get_label()
+                        if arg['name'] == "OffboardSwitch":
+                            print("break")
+                        size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
+                        signed = False
+                        if i_type.get_IntegerDataEncoding().encoding == "twosComplement":
+                            signed = True
+
+                        bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little', signed=signed)
+
+                        # arg_bits.frombytes(bytes_data)
+                        for byte in bytes_data:
+                            payload_bytes[current_byte_cursor] = byte
+                            current_byte_cursor = 1 + current_byte_cursor
         #     else:
         #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
-        output_bytes = self.slip_encode(payload_bits.tobytes(), 12)
 
-        return output_bytes
+
+
+
+
+
+
+
+        # for arg in args:
+        #     arg_bits = bitarray(endian='little')
+        #     arg_value = arg['value']
+        #
+        #     i_type = get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
+        #     # FIXME:Check byte order
+        #     if type(i_type) == xtce.IntegerParameterType:
+        #         # FIXME:This won't work with partials
+        #         size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
+        #         bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
+        #
+        #         arg_bits.frombytes(bytes_data)
+        #         for bit in arg_bits:
+        #             payload_bits[current_bit_cursor] = bit
+        #             current_bit_cursor += 1
+        #
+        #     elif type(i_type) == xtce.FloatParameterType:
+        #         # >> > st
+        #         # sruct.unpack('f', b)  # native byte order (little-endian on my machine)
+        #         # (1.7230105268977664e+16,)
+        #         # >> > struct.unpack('>f', b)  # big-endian
+        #         # (-109.22724914550781,)
+        #         packed_val = struct.pack('<f', arg_value)
+        #         arg_bits.frombytes(packed_val)
+        #
+        #         for bit in arg_bits:
+        #             payload_bits[current_bit_cursor] = bit
+        #             current_bit_cursor = current_bit_cursor + 1
+        #
+        #         # value = struct.pack('f', arg_value)[0]  # little-endian
+        #
+        #     elif type(i_type) == xtce.EnumeratedParameterType:
+        #         for enum in i_type.get_EnumerationList().get_Enumeration():
+        #             enum: xtce.ValueEnumerationType()
+        #
+        #             if enum.get_value() == arg_value:
+        #                 arg_bits = int2ba(arg_value, length=32, endian='little')
+        #                 # value = enum.get_label()
+        #                 if arg['name'] == "OffboardSwitch":
+        #                     print("break")
+        #                 for bit in arg_bits:
+        #                     payload_bits[current_bit_cursor] = bit
+        #                     current_bit_cursor = current_bit_cursor + 1
+        #     else:
+        #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
+
+        enum_bits = payload_bits[480:512]
+        # return payload_bits.tobytes()
+
+        return  self.slip_encode(bytes(payload_bytes), 12)
 
     def __set_arg_assignment(self, argument_assignment_list: xtce.ArgumentAssignmentListType,
                              arg_obj: xtce.NameDescriptionType,
