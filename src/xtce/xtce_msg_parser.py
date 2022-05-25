@@ -22,7 +22,6 @@ from enum import Enum
 import logging
 import yaml
 
-logging.basicConfig(level=logging.INFO)
 
 END = 0xc0
 ESC = 0xdb
@@ -154,7 +153,10 @@ class XTCEParser:
     HOST_PARAM = 'host'
     COMMAND_CONTAINER = "command_container"
 
-    def __init__(self, xml_files: [str], root_space_system: str, yaml_path: str):
+    def __init__(self, xml_files: [str], root_space_system: str, yaml_path: str, log_level: int = logging.WARNING):
+        logging.basicConfig()
+        self.logger = logging.getLogger("XTCEParser")
+        self.logger.setLevel(level=log_level)
         # # Code should be inherited from XTCEManager. See https://github.com/WindhoverLabs/xtce_generator/issues/5
         self.high_level_roots = []
         self.root: xtce.SpaceSystemType
@@ -162,7 +164,7 @@ class XTCEParser:
         self.high_level_roots.append(self.root)
         self.yaml_path = yaml_path
         for file in xml_files:
-            logging.info(f"Parsing:{file}")
+            self.logger.info(f"Parsing:{file}")
             xtce_obj = xtce.parse(file, silence=True)
             self.root.add_SpaceSystem(xtce_obj)
             self.high_level_roots.append(xtce_obj)
@@ -181,11 +183,10 @@ class XTCEParser:
         if 'telemetry' in self.__namespace_dict[path]:
             return self.__namespace_dict[path]['telemetry']
         else:
-            logging.warning(f"No telemetry found for {path}")
+            self.logger.warning(f"No telemetry found for {path}")
             return None
 
-    @staticmethod
-    def __get_dict_at_path(paths: [str], root_dict: dict):
+    def __get_dict_at_path(self, paths: [str], root_dict: dict):
         dict_partition = root_dict['modules']
         for path in paths:
             if path in dict_partition.keys():
@@ -196,7 +197,7 @@ class XTCEParser:
             #         TODO:Check that this is the last node of the path.
             else:
                 dict_partition = None
-                logging.warning(f"Failed to resolve path {'/'.join(paths)} at {path} node")
+                self.logger.warning(f"Failed to resolve path {'/'.join(paths)} at {path} node")
                 break
 
         return dict_partition
@@ -786,7 +787,7 @@ class XTCEParser:
         qualified_name: str
         spacesystem: xtce.SpaceSystemType
         for qualified_name in self.__namespace_dict.keys():
-            logging.info(f"Parsing containers for'{qualified_name}'")
+            self.logger.info(f"Parsing containers for'{qualified_name}'")
             if self.__namespace_dict[qualified_name][self.SPACE_SYSTEM_KEY] is not None:
                 self.__namespace_dict[qualified_name][XTCEParser.CONTAINERS_KEY] = self.__get_seq_containers_map(
                     self.__namespace_dict[qualified_name][self.SPACE_SYSTEM_KEY])
@@ -796,7 +797,7 @@ class XTCEParser:
         qualified_name: str
         spacesystem: xtce.SpaceSystemType
         for qualified_name in self.__namespace_dict.keys():
-            logging.info(f"Parsing containers for'{qualified_name}'")
+            self.logger.info(f"Parsing containers for'{qualified_name}'")
             if self.__namespace_dict[qualified_name][self.SPACE_SYSTEM_KEY] is not None:
                 self.__namespace_dict[qualified_name][XTCEParser.COMMANDS_KEY] = self.__get_meta_commands_map(
                     self.__namespace_dict[qualified_name][self.SPACE_SYSTEM_KEY])
@@ -898,7 +899,7 @@ class XTCEParser:
         return qualified_name.split(xtce_generator.XTCEManager.NAMESPACE_SEPARATOR)[-1]
 
     def get_value_from_bits(self, value_bits: bitarray, params_map: dict, param_name: str):
-        i_type = get_param_intrinsic_type(params_map, param_name)
+        i_type = self.get_param_intrinsic_type(params_map, param_name)
         value = None
         if type(i_type) == xtce.IntegerParameterType:
             value = ba2int(value_bits)
@@ -967,7 +968,7 @@ class XTCEParser:
             base_container_size = get_bit_size_from_tlm_container(
                 container_map[self.BASE_CONTAINER_KEY][base_container_key][XTCEParser.PARAMS_KEY])
             param_name = self.__get_param_name(path)
-            param_offset = get_offset_aggregate(container_map[XTCEParser.PARAMS_KEY],
+            param_offset = self.get_offset_aggregate(container_map[XTCEParser.PARAMS_KEY],
                                                 param_name)
 
             param_value_size = get_param_bit_size(
@@ -1040,7 +1041,7 @@ class XTCEParser:
             # FIXME: For bit-addressing, use bitarray and look at issue:https://github.com/WindhoverLabs/xtce_generator/issues/64
             arg_value = arg['value']
 
-            i_type = get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
+            i_type = self.get_param_intrinsic_type(container_map[XTCEParser.PARAMS_KEY], param_name + "." + arg['name'])
             # FIXME:Check byte order
             if type(i_type) == xtce.IntegerParameterType:
                 # FIXME:This won't work with partials
@@ -1079,7 +1080,7 @@ class XTCEParser:
                             payload_bytes[current_byte_cursor] = byte
                             current_byte_cursor = 1 + current_byte_cursor
             else:
-                logging.warning(f"No type was found for {param_name + '.' + arg['name']}")
+                self.logger.warning(f"No type was found for {param_name + '.' + arg['name']}")
         #         FIXME:Raise exception since we could not find a type and could not craft the message
 
         return self.slip_encode(bytes(payload_bytes), 12)
@@ -1269,6 +1270,120 @@ class XTCEParser:
         payload.append(END)
         return bytes(payload)
 
+    def get_offset_aggregate(self, params, param_name) -> int:
+        """"
+        It is assumed that the params are sequential.
+        """
+        offset = 0
+        if XTCEParser.INTRINSIC_KEY in params:
+            if params[XTCEParser.PARAM_NAME_KEY] == param_name:
+                offset = params[XTCEParser.OFFSET_KEY] - get_bit_size(params[XTCEParser.INTRINSIC_KEY])
+
+        elif XTCEParser.ARRAY_TYPE_KEY in params and params[XTCEParser.PARAM_NAME_KEY] == param_name:
+            for p in params[XTCEParser.ARRAY_TYPE_KEY]:
+                # FIXME:This assumes all elements in list are intrinsic
+                offset += get_bit_size(p)
+
+        else:
+            if type(params) is dict:
+                if IntrinsicDataType.AGGREGATE in params:
+                    if XTCEParser.STRUCT_SEPARATOR in param_name:
+                        name_path = param_name.split(XTCEParser.STRUCT_SEPARATOR)
+                        aggregate_name = name_path[0]
+
+                        if aggregate_name == params[XTCEParser.HOST_PARAM]:
+                            new_name = XTCEParser.STRUCT_SEPARATOR.join(name_path[1:])
+                            for field in params["fields"]:
+                                offset = self.get_offset_aggregate(params["fields"][field], new_name)
+                                if offset > 0:
+                                    break
+                        else:
+                            self.logger.error(f"Could not find aggregate name {aggregate_name}")
+                    # else:
+                    #     if params[XTCEParser.PARAM_NAME_KEY] == param_name:
+                    #         name_path = param_name.split(XTCEParser.STRUCT_SEPARATOR)
+                    #         # This is a field. Subscribing to structs is not supported at the moment
+                    #         field_name = name_path[-1]
+                    #         for field in params["fields"]:
+                    #             if field == field_name:
+                    #                 break
+                    #             offset += get_offset(params["fields"][field], field_name)
+
+                else:
+                    for p in params:
+                        if type(params[p]) is dict:
+                            offset += self.get_offset_aggregate(params[p], param_name)
+                            if offset > 0:
+                                break
+        return offset
+
+    def get_param_intrinsic_type(self, params, param_name) -> Union[xtce.BaseDataType, List[xtce.BaseDataType]]:
+        """"
+        It is assumed that the params are sequential.
+        """
+        i_type = None
+        # FIXME:Add support for nested structs. Should be pretty easy now.
+        if XTCEParser.INTRINSIC_KEY in params and params[XTCEParser.PARAM_NAME_KEY] == param_name:
+            # TODO:Handle this better as there may be a param name called "name" in the XTCE
+            if params[XTCEParser.PARAM_NAME_KEY] == param_name:
+                i_type = params[XTCEParser.INTRINSIC_KEY]
+
+        # FIXME:Might be a good idea to wrap array types as "intrinsic" types as well.
+        elif XTCEParser.ARRAY_TYPE_KEY in params and params[XTCEParser.PARAM_NAME_KEY] == param_name:
+            i_type = []
+            for p in params[XTCEParser.ARRAY_TYPE_KEY]:
+                # Replace with array type
+                i_type.append(p)
+        else:
+            if type(params) is dict:
+                if IntrinsicDataType.AGGREGATE in params:
+                    if XTCEParser.STRUCT_SEPARATOR in param_name:
+                        name_path = param_name.split(XTCEParser.STRUCT_SEPARATOR)
+                        aggregate_name = name_path[0]
+
+                        # if aggregate_name == params[XTCEParser.HOST_PARAM]:
+                        new_name = XTCEParser.STRUCT_SEPARATOR.join(name_path[1:])
+                        if XTCEParser.STRUCT_SEPARATOR in new_name:
+                            for field in params["fields"]:
+                                new_type = self.get_param_intrinsic_type(params["fields"][field], new_name)
+                                if new_type is not None:
+                                    i_type = new_type
+                                    break
+
+                            # nested struct
+                        else:
+                            # This is a field. Subscribing to structs is not supported at the moment
+                            field_name = name_path[-1]
+                            for field in params["fields"]:
+                                new_type = self.get_param_intrinsic_type(params["fields"][field], field_name)
+                                if new_type is not None:
+                                    i_type = new_type
+                                    break
+                                if field == field_name:
+                                    # Should not happen
+                                    self.logger.error(f"No type for field '{field}' found")
+                                    break
+
+                        # else:
+                        #     pass
+                        #     Should not happen. This will mean either there is a bug in our code or the path is incorrect.
+                        #     Throw exception
+            for p in params:
+                # TODO:Handle this better as there may be a param name called "name" in the XTCE
+                if p == param_name:
+                    new_type = self.get_param_intrinsic_type(params[p], param_name)
+                    if new_type is not None:
+                        i_type = new_type
+                        break
+                else:
+                    if type(params[p]) is dict:
+                        new_type = self.get_param_intrinsic_type(params[p], param_name)
+                        if new_type is not None:
+                            i_type = new_type
+                            break
+
+        return i_type
+
 
 class Evaluator(ABC):
     # @abstractmethod
@@ -1304,52 +1419,6 @@ def get_bit_size(intrinsic_type: Union[list, xtce.BaseDataType]):
     return bit_size
 
 
-def get_offset_aggregate(params, param_name) -> int:
-    """"
-    It is assumed that the params are sequential.
-    """
-    offset = 0
-    if XTCEParser.INTRINSIC_KEY in params:
-        if params[XTCEParser.PARAM_NAME_KEY] == param_name:
-            offset = params[XTCEParser.OFFSET_KEY] - get_bit_size(params[XTCEParser.INTRINSIC_KEY])
-
-    elif XTCEParser.ARRAY_TYPE_KEY in params and params[XTCEParser.PARAM_NAME_KEY] == param_name:
-        for p in params[XTCEParser.ARRAY_TYPE_KEY]:
-            # FIXME:This assumes all elements in list are intrinsic
-            offset += get_bit_size(p)
-
-    else:
-        if type(params) is dict:
-            if IntrinsicDataType.AGGREGATE in params:
-                if XTCEParser.STRUCT_SEPARATOR in param_name:
-                    name_path = param_name.split(XTCEParser.STRUCT_SEPARATOR)
-                    aggregate_name = name_path[0]
-
-                    if aggregate_name == params[XTCEParser.HOST_PARAM]:
-                        new_name = XTCEParser.STRUCT_SEPARATOR.join(name_path[1:])
-                        for field in params["fields"]:
-                            offset = get_offset_aggregate(params["fields"][field], new_name)
-                            if offset > 0:
-                                break
-                    else:
-                        logging.error(f"Could not find aggregate name {aggregate_name}")
-                # else:
-                #     if params[XTCEParser.PARAM_NAME_KEY] == param_name:
-                #         name_path = param_name.split(XTCEParser.STRUCT_SEPARATOR)
-                #         # This is a field. Subscribing to structs is not supported at the moment
-                #         field_name = name_path[-1]
-                #         for field in params["fields"]:
-                #             if field == field_name:
-                #                 break
-                #             offset += get_offset(params["fields"][field], field_name)
-
-            else:
-                for p in params:
-                    if type(params[p]) is dict:
-                        offset += get_offset_aggregate(params[p], param_name)
-                        if offset > 0:
-                            break
-    return offset
 
 
 def get_offset_container(params, param_name) -> int:
@@ -1490,74 +1559,6 @@ def get_param_bit_size(params, param_name) -> int:
                     if p == param_name:
                         break
     return size
-
-
-def get_param_intrinsic_type(params, param_name) -> Union[xtce.BaseDataType, List[xtce.BaseDataType]]:
-    """"
-    It is assumed that the params are sequential.
-    """
-    i_type = None
-    # FIXME:Add support for nested structs. Should be pretty easy now.
-    if XTCEParser.INTRINSIC_KEY in params and params[XTCEParser.PARAM_NAME_KEY] == param_name:
-        # TODO:Handle this better as there may be a param name called "name" in the XTCE
-        if params[XTCEParser.PARAM_NAME_KEY] == param_name:
-            i_type = params[XTCEParser.INTRINSIC_KEY]
-
-    # FIXME:Might be a good idea to wrap array types as "intrinsic" types as well.
-    elif XTCEParser.ARRAY_TYPE_KEY in params and params[XTCEParser.PARAM_NAME_KEY] == param_name:
-        i_type = []
-        for p in params[XTCEParser.ARRAY_TYPE_KEY]:
-            # Replace with array type
-            i_type.append(p)
-    else:
-        if type(params) is dict:
-            if IntrinsicDataType.AGGREGATE in params:
-                if XTCEParser.STRUCT_SEPARATOR in param_name:
-                    name_path = param_name.split(XTCEParser.STRUCT_SEPARATOR)
-                    aggregate_name = name_path[0]
-
-                    # if aggregate_name == params[XTCEParser.HOST_PARAM]:
-                    new_name = XTCEParser.STRUCT_SEPARATOR.join(name_path[1:])
-                    if XTCEParser.STRUCT_SEPARATOR in new_name:
-                        for field in params["fields"]:
-                            new_type = get_param_intrinsic_type(params["fields"][field], new_name)
-                            if new_type is not None:
-                                i_type = new_type
-                                break
-
-                        # nested struct
-                    else:
-                        # This is a field. Subscribing to structs is not supported at the moment
-                        field_name = name_path[-1]
-                        for field in params["fields"]:
-                            new_type = get_param_intrinsic_type(params["fields"][field], field_name)
-                            if new_type is not None:
-                                i_type = new_type
-                                break
-                            if field == field_name:
-                                # Should not happen
-                                logging.error(f"No type for field '{field}' found")
-                                break
-
-                    # else:
-                    #     pass
-                    #     Should not happen. This will mean either there is a bug in our code or the path is incorrect.
-                    #     Throw exception
-        for p in params:
-            # TODO:Handle this better as there may be a param name called "name" in the XTCE
-            if p == param_name:
-                new_type = get_param_intrinsic_type(params[p], param_name)
-                if new_type is not None:
-                    i_type = new_type
-                    break
-            else:
-                if type(params[p]) is dict:
-                    new_type = get_param_intrinsic_type(params[p], param_name)
-                    if new_type is not None:
-                        i_type = new_type
-                        break
-
-    return i_type
 
 
 # TODO:Move this to a different module.
