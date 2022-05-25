@@ -57,8 +57,6 @@ def extract_bits_from_base_tlm_container(container: dict, comparison: xtce.Compa
     length_size = get_param_bit_size(container[XTCEParser.BASE_CONTAINER_KEY][container_key][XTCEParser.PARAMS_KEY],
                                      "ccsds-length")
 
-    length_offset += 8
-
     # A strategy might be just reading these mids from the YAML
     CFE_MSG_CPU_BASE = 0x0200
     CFE_TLM_MID_BASE = 0x0800
