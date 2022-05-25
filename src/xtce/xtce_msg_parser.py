@@ -36,7 +36,6 @@ def extract_bits_from_base_tlm_container(container: dict, comparison: xtce.Compa
     extracted_bits = bitarray(endian='big')
     container_key = list(container[XTCEParser.BASE_CONTAINER_KEY].keys())[0]
     comp_value_ref: str = comparison.get_parameterRef()
-    # msg_id = int(comparison.get_value())
 
     # Zero-fill the bitarray up to container size
     for i in range(container_size):
@@ -57,12 +56,8 @@ def extract_bits_from_base_tlm_container(container: dict, comparison: xtce.Compa
     length_size = get_param_bit_size(container[XTCEParser.BASE_CONTAINER_KEY][container_key][XTCEParser.PARAMS_KEY],
                                      "ccsds-length")
 
-    # A strategy might be just reading these mids from the YAML
-    CFE_MSG_CPU_BASE = 0x0200
-    CFE_TLM_MID_BASE = 0x0800
-    # msg_id = CFE_MSG_CPU_BASE + CFE_TLM_MID_BASE + msg_id
+
     msg_id = bytearray(struct.pack('>H', msg_id))
-    # msg_id[0] = msg_id[0] & 0x0A
     # TODO: Big/Little endian is inside XTCE
     bits = bitarray(endian='big')
     bits.frombytes(bytes(msg_id))
@@ -97,7 +92,6 @@ def extract_bits_from_base_cmd_container(container: dict, comparison: xtce.Compa
     extracted_bits = bitarray(endian='big')
     container_key = list(container[XTCEParser.BASE_CONTAINER_KEY].keys())[0]
     comp_value_ref: str = comparison.get_parameterRef()
-    # msg_id = int(comparison.get_value())
 
     # Zero-fill the bitarray up to container size
     for i in range(container_size):
@@ -238,10 +232,6 @@ class XTCEParser:
         yaml_data = yaml.load(open(yaml_file, 'r'),
                               Loader=yaml.FullLoader)
         return yaml_data
-
-    def __get_tlm_from_namespace(self, namespace: str, yaml: dict):
-        for module in yaml['modules']:
-            pass
 
     def __map_msg_ids(self):
         """
@@ -1654,10 +1644,6 @@ def get_param_bit_size(params, param_name) -> int:
                             if field == field_name:
                                 break
 
-                # else:
-                #     pass
-                #     Should not happen. This will mean either there is a bug in our code or the path is incorrect.
-                #     Throw exception
             else:
                 for p in params:
                     # TODO:Handle this better as there may be a param name called "name" in the XTCE
