@@ -71,7 +71,13 @@ def read_yaml(yaml_file: str) -> dict:
 
 
 def check_version():
-    if float(sys.version[0:3]) < float('3.6'):
+    version_numbers = sys.version.split(".")
+
+    Major = version_numbers[0]
+    Minor = version_numbers[1]
+    Patch = version_numbers[2]
+
+    if float(Major) < 3 or float(Minor) < 6:
         logging.error('Python version MUST be 3.6.X or newer. Python version found:{0}'.format(sys.version))
         exit(0)
 
