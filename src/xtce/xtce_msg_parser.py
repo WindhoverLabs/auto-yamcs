@@ -153,19 +153,20 @@ class XTCEParser:
     HOST_PARAM = 'host'
     COMMAND_CONTAINER = "command_container"
 
-    def __init__(self, xml_files: [str], root_space_system: str, yaml_path: str, log_level: int = logging.WARNING):
+    def __init__(self, xml_files: [str], root_space_system: str, yaml_path: str, log_level: int = logging.WARNING,
+                 print_xtce_warnings: bool = False):
         logging.basicConfig()
         self.logger = logging.getLogger("XTCEParser")
         self.logger.setLevel(level=log_level)
         # # Code should be inherited from XTCEManager. See https://github.com/WindhoverLabs/xtce_generator/issues/5
         self.high_level_roots = []
         self.root: xtce.SpaceSystemType
-        self.root = xtce.parse(root_space_system, silence=True)
+        self.root = xtce.parse(root_space_system, silence=True, print_warnings=print_xtce_warnings)
         self.high_level_roots.append(self.root)
         self.yaml_path = yaml_path
         for file in xml_files:
             self.logger.info(f"Parsing:{file}")
-            xtce_obj = xtce.parse(file, silence=True)
+            xtce_obj = xtce.parse(file, silence=True, print_warnings=print_xtce_warnings)
             self.root.add_SpaceSystem(xtce_obj)
             self.high_level_roots.append(xtce_obj)
 
