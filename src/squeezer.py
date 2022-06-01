@@ -46,7 +46,6 @@ def get_elf_files(yaml_dict: dict):
     for module_key in yaml_dict['modules']:
         if 'elf_files' in yaml_dict['modules'][module_key]:
             for elf in yaml_dict['modules'][module_key]['elf_files']:
-            for elf in yaml_dict['modules'][module_key]['elf_files']:
                 elf_files.append(elf)
         if 'modules' in yaml_dict['modules'][module_key]:
             child_elfs = get_elf_files(yaml_dict['modules'][module_key])
