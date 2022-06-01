@@ -19,6 +19,13 @@ def test_xtce_msg_parser(monkeypatch, get_data_path):
     ccscds = Path('./mdb/cfs-ccsds.xml').resolve()
 
     parser = XTCEParser([str(ppd), str(cpd), str(simlink)], str(ccscds), "registry.yaml")
+
+    assert parser._XTCEParser__namespace_dict is not None
+
+    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"] is not None
+
+    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY] is not None
+
     tlm_map = parser.get_msg_ids_at('/cfs/cpd/core/cfe/cfe_es')
 
     assert tlm_map is not None
@@ -27,6 +34,10 @@ def test_xtce_msg_parser(monkeypatch, get_data_path):
     command = parser.craft_command("/cfs/cpd/core/cfe/cfe_es/Noop", {})
 
     assert command is not None
+
+    tlm_command = parser.craft_tlm_command("/cfs/cpd/apps/qae/QAE_HK_TLM_MID", {})
+
+    assert tlm_command is not None
 
 
 if __name__ == '__main__':
