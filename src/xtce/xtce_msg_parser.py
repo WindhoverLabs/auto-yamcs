@@ -493,6 +493,35 @@ class XTCEParser:
 
         return out_array
 
+
+
+    def __get_array_type_arg(self, cmd: xtce.CommandMetaDataType,
+                             arg_type_ref: str,
+                             spacesystem: xtce.SpaceSystemType) -> list:
+        array_type: xtce.ArrayArgumentType
+        item_arg_type = None
+        out_array: list = []
+        for array_type in cmd.get_ParameterTypeSet().get_ArrayParameterType():
+            if array_type.get_name() == self.sanitize_type_ref(arg_type_ref):
+                dim: xtce.DimensionType
+                # TODO:Add support for multi-dimensional array
+                for dim in cmd.get_ArgumentTypeSet().get_ArrayArgumentType():
+                    for i in range(dim.get_StartingIndex().get_FixedValue(),
+                                   dim.get_EndingIndex().get_FixedValue() + 1):
+                        ref_spacesystem = self.__get_spacesystem_from_ref(array_type.get_arrayTypeRef(),
+                                                                          spacesystem)
+
+                        item_arg_type = self.__get_intrinsic_arg_type(
+                            ref_spacesystem.get_CommandMetaData(), array_type.get_arrayTypeRef())
+                        if item_arg_type is not None:
+                            out_array.append(item_arg_type)
+                        else:
+                            # FIXME:Array of structs
+                            out_array.append(item_arg_type)
+                    break
+
+        return out_array
+
     def __get_param_type(self, param_type_ref: str, spacesystem: xtce.SpaceSystemType,
                          host_param: str = None, out_dict: dict = {}):
         """
@@ -589,26 +618,9 @@ class XTCEParser:
                     out_dict[XTCEParser.INTRINSIC_KEY] = arg_type
                     return
                 if len(cmd.get_ArgumentTypeSet().get_ArrayArgumentType()) > 0:
-                    array_type: xtce.ArrayArgumentType
-                    for array_type in cmd.get_ArgumentTypeSet().get_ArrayArgumentType():
-                        if array_type.get_name() == self.sanitize_type_ref(arg_type_ref):
-                            dim: xtce.DimensionType
-                            out_dict[XTCEParser.ARRAY_TYPE_KEY] = []
-                            # TODO:Add support for multi-dimensional array
-                            for dim in array_type.get_DimensionList().get_Dimension():
-                                for i in range(dim.get_StartingIndex().get_FixedValue(),
-                                               dim.get_EndingIndex().get_FixedValue() + 1):
-                                    ref_spacesystem = self.__get_spacesystem_from_ref(array_type.get_arrayTypeRef(),
-                                                                                      spacesystem)
-
-                                    item_param_type = self.__get_intrinsic_arg_type(
-                                        ref_spacesystem.get_CommandMetaData(), array_type.get_arrayTypeRef())
-                                    if item_param_type is not None:
-                                        out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
-                                    else:
-                                        # FIXME:Array of structs
-                                        out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
-                            return
+                    out_dict[XTCEParser.ARRAY_TYPE_KEY] = self.__get_array_type_arg(cmd, arg_type_ref, spacesystem)
+                    if len(out_dict[XTCEParser.ARRAY_TYPE_KEY]) > 0:
+                        return
                     if len(cmd.get_ArgumentTypeSet().get_AggregateArgumentType()) > 0:
                         # FIXME: Check for intrinsic types and make this function recursive
                         aggregate: xtce.AggregateArgumentType
@@ -638,26 +650,10 @@ class XTCEParser:
                                 out_dict[self.INTRINSIC_KEY] = arg_type
                             else:
                                 if len(cmd.get_ArgumentTypeSet().get_ArrayArgumentType()) > 0:
-                                    for array_type in cmd.get_ArgumentTypeSet().get_ArrayArgumentType():
-                                        if array_type.get_name() == self.sanitize_type_ref(arg_type_ref):
-                                            dim: xtce.DimensionType
-                                            out_dict[XTCEParser.ARRAY_TYPE_KEY] = []
-                                            # TODO:Add support for multi-dimensional array
-                                            for dim in array_type.get_DimensionList().get_Dimension():
-                                                for i in range(dim.get_StartingIndex().get_FixedValue(),
-                                                               dim.get_EndingIndex().get_FixedValue() + 1):
-                                                    ref_spacesystem = self.__get_spacesystem_from_ref(
-                                                        array_type.get_arrayTypeRef(),
-                                                        spacesystem)
-                                                    item_param_type = self.__get_intrinsic_parm_type(
-                                                        ref_spacesystem.get_TelemetryMetaData(),
-                                                        array_type.get_arrayTypeRef())
-                                                    if item_param_type is not None:
-                                                        out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
-                                                    else:
-                                                        # FIXME:Array of structs
-                                                        out_dict[XTCEParser.ARRAY_TYPE_KEY].append(item_param_type)
-                                            return
+                                    out_dict[XTCEParser.ARRAY_TYPE_KEY] = self.__get_array_type_arg(cmd, arg_type_ref,
+                                                                                                    spacesystem)
+                                    if len(out_dict[XTCEParser.ARRAY_TYPE_KEY]) > 0:
+                                        return
                                 if len(cmd.get_ArgumentTypeSet().get_AggregateArgumentType()) > 0:
                                     # FIXME: Check for intrinsic types and make this function recursive
                                     aggregate: xtce.AggregateArgumentType
