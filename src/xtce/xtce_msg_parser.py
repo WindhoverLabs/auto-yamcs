@@ -1040,7 +1040,6 @@ class XTCEParser:
                 size_in_bytes = int(i_type.get_IntegerDataEncoding().get_sizeInBits() / 8)
                 bytes_data = int(arg_value).to_bytes(size_in_bytes, 'little')
 
-                # arg_bits.frombytes(bytes_data)
                 for byte in bytes_data:
                     payload_bytes[current_byte_cursor] = byte
                     current_byte_cursor = 1 + current_byte_cursor
