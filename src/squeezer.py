@@ -78,7 +78,7 @@ def check_version():
     Minor = version_numbers[1]
     Patch = version_numbers[2]
 
-    if float(Major) < 3 or Minor < 6:
+    if float(Major) < 3 or float(Minor) < 6:
         logging.error('Python version MUST be 3.6.X or newer. Python version found:{0}'.format(sys.version))
         exit(0)
 
@@ -203,7 +203,7 @@ def singleton_mode_handler(args: argparse.Namespace):
     set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
-    
+
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
     cpu_id = get_cpu_id(yaml_dict)
