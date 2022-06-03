@@ -6,8 +6,10 @@ import sys
 import os
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-from xtce_generator.src.xtce.xtce_msg_parser import XTCEParser
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../')))
+sys.path.append(os.path.realpath(os.path.join(os.path.realpath(__file__), '../../xtce-generator/src')))
 
+from xtce_generator.src.xtce.xtce_msg_parser import XTCEParser
 
 
 def test_xtce_msg_parser(monkeypatch, get_data_path):
@@ -26,12 +28,18 @@ def test_xtce_msg_parser(monkeypatch, get_data_path):
 
     assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY] is not None
 
-    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"] is not None
+    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY][
+               "QAE_HK_TLM_MID"] is not None
 
-    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][XTCEParser.PARAMS_KEY] is not None
-    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][XTCEParser.PARAMS_KEY]["QAE_HK_TLM_MID"][XTCEParser.PARAM_NAME_KEY] == "QAE_HK_TLM_MID"
-    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][XTCEParser.PARAMS_KEY]["QAE_HK_TLM_MID"]["QAE_HK_TLM_MID"]["fields"]["VehicleAttitudeMsg"]["fields"]["Q"] is not None
-    q_field = parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][XTCEParser.PARAMS_KEY]["QAE_HK_TLM_MID"]["QAE_HK_TLM_MID"]["fields"]["VehicleAttitudeMsg"]["fields"]["Q"]
+    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][
+               XTCEParser.PARAMS_KEY] is not None
+    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][
+               XTCEParser.PARAMS_KEY]["QAE_HK_TLM_MID"][XTCEParser.PARAM_NAME_KEY] == "QAE_HK_TLM_MID"
+    assert parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][
+               XTCEParser.PARAMS_KEY]["QAE_HK_TLM_MID"]["QAE_HK_TLM_MID"]["fields"]["VehicleAttitudeMsg"]["fields"][
+               "Q"] is not None
+    q_field = parser._XTCEParser__namespace_dict["/cfs/cpd/apps/qae"][XTCEParser.CONTAINERS_KEY]["QAE_HK_TLM_MID"][
+        XTCEParser.PARAMS_KEY]["QAE_HK_TLM_MID"]["QAE_HK_TLM_MID"]["fields"]["VehicleAttitudeMsg"]["fields"]["Q"]
     # FIXME:Fix importing here
     # assert isinstance(q_field[XTCEParser.ARRAY_TYPE_KEY][0], xtce.FloatParameterType)
 
