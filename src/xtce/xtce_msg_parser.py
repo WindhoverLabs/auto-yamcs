@@ -9,13 +9,16 @@ from typing import Union, List
 from bitarray import bitarray
 from bitarray.util import pprint, ba2int, ba2hex, int2ba
 
+
 try:
     from xtce import xtce, xtce_generator
     from xtce.xtce_generator import XTCEManager
+    from xtce.xtce_post_processor import MsgPostProcessor
 except ModuleNotFoundError:
     import xtce.xtce as xtce
     import xtce.xtce_generator as xtce_generator
     import xtce.xtce_generator.XTCEManager as XTCEManager
+    import msg_post_processor.MsgPostProcessor as MsgPostProcessor
 
 from enum import Enum
 
@@ -494,7 +497,6 @@ class XTCEParser:
         return out_array
 
 
-
     def __get_array_type_arg(self, cmd: xtce.CommandMetaDataType,
                              arg_type_ref: str,
                              spacesystem: xtce.SpaceSystemType) -> list:
@@ -930,7 +932,7 @@ class XTCEParser:
         #         value.append(item)
         return value
 
-    def validate_packet(self, packet: bytes, path: str):
+    def validate_packet(self, packet: bytes, path: str, ):
         """
         Returns the value inside of the packet that path points to, but only if packet is valid.
         The packet is validated based on XTCE rules such as criteria for containers.
@@ -975,7 +977,7 @@ class XTCEParser:
 
         return value
 
-    def craft_tlm_command(self, path: str, args: dict) -> bytes:
+    def craft_tlm_command(self, path: str, args: dict, post_processor: MsgPostProcessor = None) -> bytes:
         """
         Returns a new packet based on path and args. This packet(though queried from XTCE telemetry),
         may be used as a command that can be sent to the vehicle.
@@ -1074,7 +1076,11 @@ class XTCEParser:
                 self.logger.warning(f"No type was found for {param_name + '.' + arg['name']}")
         #         FIXME:Raise exception since we could not find a type and could not craft the message
 
-        return self.slip_encode(bytes(payload_bytes), 12)
+        msg_packet = bytes(payload_bytes)
+        if post_processor is not None:
+            msg_packet = post_processor.process(bytes(payload_bytes))
+
+        return msg_packet
 
     def __set_arg_assignment(self, argument_assignment_list: xtce.ArgumentAssignmentListType,
                              arg_obj: xtce.NameDescriptionType,
@@ -1107,7 +1113,7 @@ class XTCEParser:
                                       length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian=in_endian)
         return arg_bits_out
 
-    def craft_command(self, path: str, args: dict) -> bytes:
+    def craft_command(self, path: str, args: dict, post_processor: MsgPostProcessor) -> bytes:
         """
         Returns a new packet based on path and args.
         """
@@ -1229,11 +1235,19 @@ class XTCEParser:
         #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
 
         # FIXME:This SLIP code should be moved to post/pre-processor
+        # tmp = cmd_bytes[6]
+        # cmd_bytes[7] = tmp
+        # cmd_bytes[6] = 0
+        # output_bytes = self.slip_encode(bytes(cmd_bytes), 8)
+
         cmd_bytes = bytearray(payload_bits.tobytes())
-        tmp = cmd_bytes[6]
-        cmd_bytes[7] = tmp
-        cmd_bytes[6] = 0
-        output_bytes = self.slip_encode(bytes(cmd_bytes), 8)
+
+        msg_packet = bytes(cmd_bytes)
+        if post_processor is not None:
+            msg_packet = post_processor.process(bytes(payload_bytes))
+
+        return msg_packet
+
 
         return output_bytes
 
