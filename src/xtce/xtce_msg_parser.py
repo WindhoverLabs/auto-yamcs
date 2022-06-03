@@ -11,14 +11,18 @@ from bitarray.util import pprint, ba2int, ba2hex, int2ba
 
 
 try:
+    # This import is for unit testing
+    from xtce_generator.src.xtce.msg_post_processor import MsgPostProcessor
+except ModuleNotFoundError:
+    from xtce.msg_post_processor import MsgPostProcessor
+
+try:
     from xtce import xtce, xtce_generator
     from xtce.xtce_generator import XTCEManager
-    from xtce.xtce_post_processor import MsgPostProcessor
 except ModuleNotFoundError:
-    import xtce.xtce as xtce
-    import xtce.xtce_generator as xtce_generator
+    from  xtce import xtce
+    from  xtce import xtce_generator
     import xtce.xtce_generator.XTCEManager as XTCEManager
-    import msg_post_processor.MsgPostProcessor as MsgPostProcessor
 
 from enum import Enum
 
@@ -1113,7 +1117,7 @@ class XTCEParser:
                                       length=int(arg_obj.get_IntegerDataEncoding().get_sizeInBits()), endian=in_endian)
         return arg_bits_out
 
-    def craft_command(self, path: str, args: dict, post_processor: MsgPostProcessor) -> bytes:
+    def craft_command(self, path: str, args: dict, post_processor: MsgPostProcessor = None) -> bytes:
         """
         Returns a new packet based on path and args.
         """
@@ -1244,12 +1248,9 @@ class XTCEParser:
 
         msg_packet = bytes(cmd_bytes)
         if post_processor is not None:
-            msg_packet = post_processor.process(bytes(payload_bytes))
+            msg_packet = post_processor.process(bytes(cmd_bytes))
 
         return msg_packet
-
-
-        return output_bytes
 
     def slip_encode(self, packet: bytes, header_size: int):
         payload = bytearray()
