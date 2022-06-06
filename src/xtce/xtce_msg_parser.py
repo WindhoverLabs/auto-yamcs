@@ -30,12 +30,6 @@ import logging
 import yaml
 
 
-END = 0xc0
-ESC = 0xdb
-ESC_END = 0xdc
-ESC_ESC = 0xdd
-
-
 # FIXME:This function should be moved to a pre-processor.
 def extract_bits_from_base_tlm_container(container: dict, comparison: xtce.ComparisonType, container_size: int,
                                          msg_id) -> bitarray:
@@ -1238,12 +1232,6 @@ class XTCEParser:
         #     else:
         #         logging.warning(f"The packet for {path} is valid, but no type for it was found.")
 
-        # FIXME:This SLIP code should be moved to post/pre-processor
-        # tmp = cmd_bytes[6]
-        # cmd_bytes[7] = tmp
-        # cmd_bytes[6] = 0
-        # output_bytes = self.slip_encode(bytes(cmd_bytes), 8)
-
         cmd_bytes = bytearray(payload_bits.tobytes())
 
         msg_packet = bytes(cmd_bytes)
@@ -1251,30 +1239,6 @@ class XTCEParser:
             msg_packet = post_processor.process(bytes(cmd_bytes))
 
         return msg_packet
-
-    def slip_encode(self, packet: bytes, header_size: int):
-        payload = bytearray()
-        for character in packet:
-            if len(payload) < header_size:
-                value = struct.unpack('>B', character.to_bytes(1, "big"))[0]  # big-endian
-            else:
-                value = struct.unpack('B', character.to_bytes(1, "little"))[0]  # little-endian
-            if value == END:
-                value = ESC
-                payload.append(value)
-                value = ESC_END
-                payload.append(value)
-            elif value == ESC:
-                value = ESC
-                payload.append(value)
-                value = ESC_ESC
-                payload.append(value)
-                payload.append(character)
-            else:
-                payload.append(character)
-
-        payload.append(END)
-        return bytes(payload)
 
     def get_offset_aggregate(self, params, param_name) -> int:
         """"
