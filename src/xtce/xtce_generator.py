@@ -870,6 +870,8 @@ class XTCEManager:
         elif type_name == 'uint8' \
                 or type_name == 'uint16' \
                 or type_name == 'uint32' \
+                or type_name == 'unsigned int' \
+                or type_name == 'unsigned' \
                 or type_name == 'uint64':
             out_base_type = (True, 'uint')
         # FIXME: char types need to be handled properly
