@@ -43,6 +43,7 @@ of XTCE, which is mostly complaint with the standard.
 from pathlib import Path
 import random
 from typing import Union
+
 try:
     from xtce_generator.src.xtce import xtce
 except ModuleNotFoundError:
@@ -129,11 +130,10 @@ class XTCEManager:
         self.root.set_TelemetryMetaData(self.telemetry_metadata)
         self.root.set_CommandMetaData(self.command_metadata)
 
-        if not(XTCEManager.NAMESPACE_SEPARATOR in root_space_system):
+        if not (XTCEManager.NAMESPACE_SEPARATOR in root_space_system):
             self.__namespace_dict = dict({XTCEManager.NAMESPACE_SEPARATOR + root_space_system: self.root})
         else:
             self.__namespace_dict = dict({root_space_system: self.root})
-
 
         # FIXME: Would like to avoid initializing database connection in constructor.
         db_handle = sqlite3.connect(sqlite_path)
@@ -609,7 +609,13 @@ class XTCEManager:
         base_set.add_FloatArgumentType(self.__get_float_argtype(32, True))
         base_set.add_FloatArgumentType(self.__get_float_argtype(32, False))
         base_set.add_IntegerArgumentType(xtce.IntegerParameterType(name='UNKNOWN', signed=False, sizeInBits='32'))
-        base_set.add_BooleanArgumentType(xtce.BooleanParameterType(name='boolean8_LE'))
+
+        base_set.add_BooleanArgumentType(
+            xtce.BooleanArgumentType(name='boolean8_LE', IntegerDataEncoding=xtce.IntegerDataEncodingType()))
+        base_set.add_BooleanArgumentType(
+            xtce.BooleanArgumentType(name='boolean8_BE', IntegerDataEncoding=xtce.IntegerDataEncodingType(sizeInBits=8,
+                                                                                                          bitOrder=xtce.BitOrderType.MOST_SIGNIFICANT_BIT_FIRST,
+                                                                                                          encoding=xtce.IntegerEncodingType.TWOS_COMPLEMENT)))
 
         str_type = xtce.StringArgumentType(name="string", StringDataEncoding=xtce.StringDataEncodingType(
             SizeInBits=xtce.SizeInBitsType()))
@@ -831,7 +837,7 @@ class XTCEManager:
         # Clean up type_ref name to avoid circular references in BaseType namespace.
         if type_ref.find('/') != 1:
             type_ref_name = type_ref.replace(XTCEManager.NAMESPACE_SEPARATOR, "_")
-        #     Strip the root from name
+            #     Strip the root from name
             if type_ref.find(XTCEManager.BASE_TYPE_NAMESPACE) == 0:
                 type_ref = type_ref[type_ref.find(XTCEManager.BASE_TYPE_NAMESPACE + XTCEManager.NAMESPACE_SEPARATOR):]
             else:
@@ -1279,7 +1285,8 @@ class XTCEManager:
                         if base_type_val[0] is True:
                             type_ref_name = type_ref_name
                         else:
-                            type_ref_name = module_name.rstrip(XTCEManager.NAMESPACE_SEPARATOR) + XTCEManager.NAMESPACE_SEPARATOR + type_ref_name
+                            type_ref_name = module_name.rstrip(
+                                XTCEManager.NAMESPACE_SEPARATOR) + XTCEManager.NAMESPACE_SEPARATOR + type_ref_name
 
                         new_array = self.__get_array_param_type(field_id, type_ref_name)
 
@@ -1830,7 +1837,8 @@ class XTCEManager:
         Very useful for constructing qualified namespaces such as "obc/simlink/apps/simlink"
         """
         out_parent_modules.append(child_module_name)
-        parent_key = self.db_cursor.execute('select parent_module from modules where name=?', (child_module_name, )).fetchone()[0]
+        parent_key = \
+        self.db_cursor.execute('select parent_module from modules where name=?', (child_module_name,)).fetchone()[0]
         if parent_key is not None:
             new_parent = self.db_cursor.execute('select name from modules where id=?', (parent_key,)).fetchone()
             self.__inspect_parent_modules(new_parent[0], out_parent_modules)
@@ -1899,7 +1907,7 @@ class XTCEManager:
         current_space_system = self.root
         for space_system_name in qualified_name.split(XTCEManager.NAMESPACE_SEPARATOR):
             current_name += XTCEManager.NAMESPACE_SEPARATOR + space_system_name
-            if not(current_name in self.__namespace_dict):
+            if not (current_name in self.__namespace_dict):
                 new_namespace = xtce.SpaceSystemType(name=space_system_name)
                 current_space_system.add_SpaceSystem(new_namespace)
                 new_namespace.set_TelemetryMetaData(xtce.TelemetryMetaDataType())
@@ -1918,13 +1926,14 @@ class XTCEManager:
         :param key: The name of the namespace.
         :return:
         """
-        if not(XTCEManager.NAMESPACE_SEPARATOR in key):
+        if not (XTCEManager.NAMESPACE_SEPARATOR in key):
             if key not in self.__namespace_dict:
                 key = XTCEManager.NAMESPACE_SEPARATOR + self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR + key
                 # self.__namespace_dict[key] = xtce.SpaceSystemType(name=key)
                 # self.__get_namespace(key).set_CommandMetaData(xtce.CommandMetaDataType())
                 # self.__get_namespace(key).set_TelemetryMetaData(xtce.TelemetryMetaDataType())
-                self.add_namespace(XTCEManager.NAMESPACE_SEPARATOR + self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR + key)
+                self.add_namespace(
+                    XTCEManager.NAMESPACE_SEPARATOR + self.root.get_name() + XTCEManager.NAMESPACE_SEPARATOR + key)
         else:
             self.__query_spacesystem_from_qualified_name(key)
 
