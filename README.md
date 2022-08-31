@@ -422,6 +422,7 @@ We consider _bit_ ordering for all of our types for the rare case where there is
     char buffer[64];
   };
    ```
+- `unsigned` is assumed to be the same as `unsigned int ` as per [c++ standards ](https://en.cppreference.com/w/cpp/language/types).
 
 ## YAMCS-XTCE Quirks
 Our xtce flavor adheres to yamcs. In the future, we'll try our best to design our toolchain in such a way we can
