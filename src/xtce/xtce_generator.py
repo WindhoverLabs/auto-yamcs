@@ -130,7 +130,7 @@ class XTCEManager:
         self.root.set_TelemetryMetaData(self.telemetry_metadata)
         self.root.set_CommandMetaData(self.command_metadata)
 
-        if not (XTCEManager.NAMESPACE_SEPARATOR in root_space_system):
+        if not(XTCEManager.NAMESPACE_SEPARATOR in root_space_system):
             self.__namespace_dict = dict({XTCEManager.NAMESPACE_SEPARATOR + root_space_system: self.root})
         else:
             self.__namespace_dict = dict({root_space_system: self.root})
@@ -1625,7 +1625,6 @@ class XTCEManager:
                 if aggregate_type and len(aggregate_type.get_MemberList().get_Member()) > 0:
                     if self.__aggregate_paramtype_exists(symbol[2], module_name) is False:
                         base_paramtype_set.add_AggregateParameterType(aggregate_type)
-
                     telemetry_param = xtce.ParameterType(name=tlm_name,
                                                          parameterTypeRef=aggregate_type.get_name())
 
