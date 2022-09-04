@@ -1,3 +1,34 @@
+"""
+Copyright (c) 2022 Windhover Labs, L.L.C. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in
+ the documentation and/or other materials provided with the
+ distribution.
+3. Neither the name Windhover Labs nor the names of its
+ contributors may be used to endorse or promote products derived
+ from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+"""
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -1464,7 +1495,7 @@ class CommandMetaDataType(GeneratedsSuper):
     def set_ArgumentTypeSet(self, ArgumentTypeSet):
         self.ArgumentTypeSet = ArgumentTypeSet
 
-    def get_MetaCommandSet(self):
+    def get_MetaCommandSet(self) -> 'MetaCommandSetType':
         return self.MetaCommandSet
 
     def set_MetaCommandSet(self, MetaCommandSet):
@@ -1687,7 +1718,7 @@ class TelemetryMetaDataType(GeneratedsSuper):
     def set_ParameterSet(self, ParameterSet):
         self.ParameterSet = ParameterSet
 
-    def get_ContainerSet(self):
+    def get_ContainerSet(self) -> 'ContainerSetType':
         return self.ContainerSet
 
     def set_ContainerSet(self, ContainerSet):
@@ -2470,7 +2501,7 @@ class ContainerSetType(GeneratedsSuper):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_SequenceContainer(self):
+    def get_SequenceContainer(self)  -> ['SequenceContainer']:
         return self.SequenceContainer
 
     def set_SequenceContainer(self, SequenceContainer):
@@ -2631,7 +2662,7 @@ class EntryListType(GeneratedsSuper):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_ParameterRefEntry(self):
+    def get_ParameterRefEntry(self) -> '[ParameterRefEntryType]':
         return self.ParameterRefEntry
 
     def set_ParameterRefEntry(self, ParameterRefEntry):
@@ -8223,7 +8254,7 @@ class CommandContainerEntryListType(GeneratedsSuper):
     def replace_ArrayParameterRefEntry_at(self, index, value):
         self.ArrayParameterRefEntry[index] = value
 
-    def get_ArgumentRefEntry(self):
+    def get_ArgumentRefEntry(self) -> 'ArgumentArgumentRefEntryType':
         return self.ArgumentRefEntry
 
     def set_ArgumentRefEntry(self, ArgumentRefEntry):
@@ -23181,6 +23212,7 @@ class NameDescriptionType(DescriptionType):
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
+        self.qualified_name = None
         super(NameDescriptionType, self).__init__(shortDescription, LongDescription, AliasSet, AncillaryDataSet,
                                                   extensiontype_, **kwargs_)
         self.name = _cast(None, name)
@@ -23199,6 +23231,12 @@ class NameDescriptionType(DescriptionType):
             return NameDescriptionType(*args_, **kwargs_)
 
     factory = staticmethod(factory)
+
+    def set_qualified_name(self, q_name):
+        self.qualified_name = q_name
+
+    def get_qualified_name(self):
+        return self.qualified_name
 
     def get_ns_prefix_(self):
         return self.ns_prefix_
@@ -32273,7 +32311,7 @@ class BaseDataType(NameDescriptionType):
     def set_FloatDataEncoding(self, FloatDataEncoding):
         self.FloatDataEncoding = FloatDataEncoding
 
-    def get_IntegerDataEncoding(self):
+    def get_IntegerDataEncoding(self) -> 'IntegerDataEncodingType':
         return self.IntegerDataEncoding
 
     def set_IntegerDataEncoding(self, IntegerDataEncoding):
@@ -34584,7 +34622,7 @@ class MetaCommandType(NameDescriptionType):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_BaseMetaCommand(self):
+    def get_BaseMetaCommand(self) -> 'BaseMetaCommandType':
         return self.BaseMetaCommand
 
     def set_BaseMetaCommand(self, BaseMetaCommand):
@@ -40920,6 +40958,7 @@ class SpaceSystemType(NameDescriptionType):
     def __init__(self, shortDescription=None, LongDescription=None, AliasSet=None, AncillaryDataSet=None, name=None,
                  operationalStatus=None, base=None, Header=None, TelemetryMetaData=None, CommandMetaData=None,
                  ServiceSet=None, SpaceSystem=None, gds_collector_=None, **kwargs_):
+        self.parent = None
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -40996,6 +41035,7 @@ class SpaceSystemType(NameDescriptionType):
 
     def add_SpaceSystem(self, value):
         self.SpaceSystem.append(value)
+        value.set_parent(self)
 
     def insert_SpaceSystem_at(self, index, value):
         self.SpaceSystem.insert(index, value)
@@ -41147,6 +41187,12 @@ class SpaceSystemType(NameDescriptionType):
             self.SpaceSystem.append(obj_)
             obj_.original_tagname_ = 'SpaceSystem'
         super(SpaceSystemType, self).buildChildren(child_, node, nodeName_, True)
+
+    def set_parent(self, p: 'SpaceSystemType'):
+        self.parent = p
+    
+    def get_parent(self):
+        return self.parent
 
 
 # end class SpaceSystemType
@@ -46061,7 +46107,7 @@ class CommandContainerType(ContainerType):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_EntryList(self):
+    def get_EntryList(self) -> 'CommandContainerEntryListType':
         return self.EntryList
 
     def set_EntryList(self, EntryList):
