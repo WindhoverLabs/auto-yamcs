@@ -202,7 +202,7 @@ def singleton_mode_handler(args: argparse.Namespace):
     set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
-    
+
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
     cpu_id = get_cpu_id(yaml_dict)

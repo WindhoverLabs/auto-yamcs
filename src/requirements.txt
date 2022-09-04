@@ -9,3 +9,5 @@ Jinja2==2.11.2
 coverage<5.0
 pytest-cov
 coveralls>=2.1.0
+xtce-generator
+bitarray

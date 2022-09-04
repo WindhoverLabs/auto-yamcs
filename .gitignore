@@ -141,4 +141,4 @@ cython_debug/
 
 #Other files
 *.sqlite
-*.xml
+#*.xml
