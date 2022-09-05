@@ -11,11 +11,11 @@ import sqlite_utils
 import mod_sql
 
 # There does not seem to be a cleaner way of doing this in python when working with git submodules
-sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../xtce_generator/src')))
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../')))
 sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../tlm_cmd_merger/src')))
 # NOTE:If using Pycharm, add the  "../xtce_generator/src" path to your interpreter,
 # otherwise pycharm will think xtce_generator is a directory/package
-import xtce_generator
+from xtce_generator.src.xtce import xtce_generator
 import tlm_cmd_merger
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
@@ -50,8 +50,9 @@ def get_elf_files(yaml_dict: dict):
         if 'modules' in yaml_dict['modules'][module_key]:
             child_elfs = get_elf_files(yaml_dict['modules'][module_key])
             if len(child_elfs)>0:
-                elf_files.append(get_elf_files(yaml_dict['modules'][module_key]))
+                elf_files = elf_files + get_elf_files(yaml_dict['modules'][module_key])
 
+    print(elf_files)
     return elf_files
 
 def get_cpu_id(yaml_dict: dict):
@@ -70,7 +71,13 @@ def read_yaml(yaml_file: str) -> dict:
 
 
 def check_version():
-    if float(sys.version[0:3]) < float('3.6'):
+    version_numbers = sys.version.split(".")
+
+    Major = version_numbers[0]
+    Minor = version_numbers[1]
+    Patch = version_numbers[2]
+
+    if float(Major) < 3 or float(Minor) < 6:
         logging.error('Python version MUST be 3.6.X or newer. Python version found:{0}'.format(sys.version))
         exit(0)
 
@@ -181,7 +188,7 @@ def inline_mode_handler(args: argparse.Namespace):
         run_msg_def_overrides(args.override_yaml, args.output_file)
 
     xtce_config_data = read_yaml(args.xtce_config_yaml)
-    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path)
+    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, xtce_config_data['root_spacesystem'])
 
 
 def singleton_mode_handler(args: argparse.Namespace):
@@ -195,6 +202,7 @@ def singleton_mode_handler(args: argparse.Namespace):
     set_log_level(args.verbosity)
 
     elfs = get_elf_files(yaml_dict)
+
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
     cpu_id = get_cpu_id(yaml_dict)

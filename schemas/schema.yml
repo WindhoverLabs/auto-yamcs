@@ -1,4 +1,5 @@
 # This schema represents our sqlite database. The sql schema can be found here: https://github.com/WindhoverLabs/tlm_cmd_merger/tree/develop#schemas
+# It is modeled after DWARF4 and XTCE.
 
 commands:
   type: list
@@ -38,6 +39,22 @@ configurations:
         min: 0
       module:
         type: string
+
+dimension_lists:
+  type: list
+  schema:
+    type: dict
+    schema:
+      id:
+        type: integer
+      field_id:
+        type: integer
+      dim_order:
+        type: integer # Some data formats(such as SQL) do not enforce order. The dim_order field can be used to determine
+                      # order of each dimension of the array.
+      upper_bound: # Inclusive and zero-indexed. Arrays such as "int[2]" would have an upper bound of 1.
+        type: integer
+        min: 0
 
 elfs:
   type: list
@@ -100,8 +117,6 @@ fields:
         min: 0
       type:
         type: string
-      multiplicity:
-        type: integer
       little_endian:
         type: integer # This is a boolean; 1 means true; 0 means false.
       bit_size:
