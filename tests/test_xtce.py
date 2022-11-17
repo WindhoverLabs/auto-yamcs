@@ -87,6 +87,65 @@ def test_xtce_no_cpu_id(monkeypatch, get_tests_path):
         # os.remove('cfs.xml')
 
 
+def test_xtce_default_rate_in_stream(monkeypatch, get_tests_path):
+    args = ['',
+            'inline',
+            '--inline_yaml_path',
+            '../tests/data/test_combined.yml',
+            '--output_file',
+            'newdb.sqlite',
+            '--xtce_config_yaml',
+            '../tests/data/xtce_config.yaml',
+            '--xtce_output_path',
+            'cfs.xml',
+            '--verbosity',
+            '0']
+
+    with patch.object(sys, 'argv', args):
+        monkeypatch.chdir(os.path.join(get_tests_path, '../src'))
+
+        args = squeezer.parse_cli()
+
+        yaml_dict = squeezer.read_yaml(args.inline_yaml_path)
+        squeezer.set_log_level(args.verbosity)
+
+        elfs = squeezer.get_elf_files(yaml_dict)
+
+        squeezer.squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
+        squeezer.merge_command_telemetry(args.inline_yaml_path, args.output_file)
+
+        if args.remap_yaml:
+            yaml_remaps_dict = squeezer.read_yaml(args.remap_yaml)
+            yaml_remaps = squeezer.__inline_get_remaps(yaml_remaps_dict)
+            if len(yaml_remaps['type_remaps']) > 0:
+                squeezer.remap_symbols.remap_symbols(args.output_file, yaml_remaps['type_remaps'])
+            else:
+                squeezer.logging.warning('No type_remaps configuration found. No remapping was done done.')
+
+        if args.sql_yaml:
+            squeezer.run_mod_sql(args.output_file, args.sql_yaml)
+
+        if args.override_yaml:
+            squeezer.run_msg_def_overrides(args.override_yaml, args.output_file)
+
+        xtce_obj = xtce_generator.XTCEManager("cfs", 'cfs.xml', 'newdb.sqlite', '../tests/data/xtce_config.yaml', None)
+        xtce_obj.add_base_types()
+
+        assert xtce_obj.root is not None
+        assert xtce_obj.root.get_SpaceSystem is not None
+        assert xtce_obj['BaseType'] is not None
+        assert xtce_obj.BASE_TYPE_NAMESPACE == 'BaseType'
+        assert xtce_obj['BaseType'].get_name() == 'BaseType'
+        assert xtce_obj['BaseType'].get_TelemetryMetaData() is not None
+
+        assert xtce_obj['BaseType'].get_TelemetryMetaData().get_ParameterTypeSet() is not None
+        assert xtce_obj['BaseType'].get_CommandMetaData().get_ArgumentTypeSet() is not None
+
+        assert xtce_obj['apps'] is not None
+
+
+
+
 def test_xtce_msg_parser(monkeypatch, get_data_path):
     monkeypatch.chdir(get_data_path)
     # FIXME:Implement tests for new parser
