@@ -14,13 +14,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='xtce_generator',
-    version='1.1.2',
+    version='1.1.3',
     url='https://github.com/WindhoverLabs/xtce_generator',
     license='3BSD-3-Clause',
     author='Lorenzo Gomez',
     author_email='lgomez@windhoverlabs.com',
     description='A tool to generate xtce files from a sqlite database. ',
-    long_decription=readme,
+    long_description=readme,
     long_description_content_type='text/markdown',
     install_requires=requires,
     packages=setuptools.find_namespace_packages(where="src"),
