@@ -1611,8 +1611,13 @@ class XTCEManager:
             tlm_macro = tlm[3]
             tlm_symbol_id = tlm[4]
             tlm_module = tlm[5]
+            min_rate = tlm[6]
 
-            seq_container = xtce.SequenceContainerType(name=str(tlm_name))
+            default_rate = None
+            if min_rate is not None:
+                default_rate = xtce.RateInStreamType(minimumValue=min_rate)
+
+            seq_container = xtce.SequenceContainerType(name=str(tlm_name), DefaultRateInStream=default_rate)
             container_entry_list = xtce.EntryListType()
             seq_container.set_EntryList(container_entry_list)
 

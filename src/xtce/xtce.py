@@ -2501,7 +2501,7 @@ class ContainerSetType(GeneratedsSuper):
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
 
-    def get_SequenceContainer(self)  -> ['SequenceContainer']:
+    def get_SequenceContainer(self)  -> ['SequenceContainerType']:
         return self.SequenceContainer
 
     def set_SequenceContainer(self, SequenceContainer):
