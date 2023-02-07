@@ -1,3 +1,7 @@
+MarkupSafe==2.0.1
+numpy==1.23.4
+setuptools==50.3.2
+coverage[toml]==5.2.1
 PyYAML==5.3.1
 six==1.15.0
 wheel==0.35.1
