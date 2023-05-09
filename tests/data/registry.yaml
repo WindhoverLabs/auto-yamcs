@@ -8400,6 +8400,18 @@ modules:
             definition: /home/lgomez/projects/integration/squeaky-weasel/software/airliner/apps/hes/wh_design.yaml
             elf_files:
               - /home/lgomez/projects/integration/squeaky-weasel/software/airliner/build/fixedwing/gemini2/cpd/sitl/target/target/exe/airliner
+            custom_algorithms:
+              VehiclePosition:
+                name: VehiclePosition
+                language: JavaScript # At the moment only JavaScript is supported and tested
+                inputs:
+                  - parameterRef: HES_HK_TLM_MID.Lon
+                    inputName: Lon # Name used inside of algorithm script
+                  - parameterRef: HES_HK_TLM_MID.Lat
+                    inputName: Lat # Name used inside of algorithm script
+                  - parameterRef: HES_HK_TLM_MID.altitude[0]
+                    inputName: altitude # Name used inside of algorithm script
+
       core:
         elf_files:
         - /home/lgomez/squeaky-weasel/software/airliner/public/build/obc/cpd/sitl/target/target/exe/airliner
