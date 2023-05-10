@@ -46,3 +46,37 @@ modules:
           FILE1_SB_TIMEOUT:
             name: AK8963_SB_TIMEOUT
             value: CFE_SB_PEND_FOREVER
+
+        algorithms:
+          VehiclePosition:
+            name: VehiclePosition
+            type: custom # Only custom algorithms are supported at the moment. MathAlgorithms are on the roadmap, but low priority at the moment.
+            script:
+              path: ../algorithm_scripts/NewPosition.js
+              language: JavaScript # At the moment only JavaScript is supported and tested
+            triggers:
+               - parameter_ref: FILE1_HK_TLM_MID # This ref MUST point to a whole message such as FILE1_HK_TLM_MID and not FILE1_HK_TLM_MID.floating_stuff
+            inputs:
+              - parameter_ref: FILE1_HK_TLM_MID.floating_stuff
+                input_name: Lon # Name used inside of algorithm script
+              - parameter_ref: FILE1_HK_TLM_MID.more_stuff
+                input_name: Lat # Name used inside of algorithm script
+              - parameter_ref: FILE1_HK_TLM_MID.matrix1D[0]
+                input_name: Altitude # Name used inside of algorithm script
+            outputs:
+              - parameter:
+                    name: Position_alt
+                    description: Current Position Of The Vehicle
+                    type: float32_LE
+              - parameter:
+                  name: Position
+                  description: Current Position Of The Vehicle
+                  type:
+                    aggregate: # At the moment only flat aggregates are supported; there is no support for nested ones.
+                      members:
+                        - name: Lat
+                          type: float32_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                        - name: Lon
+                          type: float32_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                        - name: Alt
+                          type: float32_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types

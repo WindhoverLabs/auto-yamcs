@@ -8403,14 +8403,31 @@ modules:
             custom_algorithms:
               VehiclePosition:
                 name: VehiclePosition
-                language: JavaScript # At the moment only JavaScript is supported and tested
+                script:
+                    path: ../algorithm_scripts/NewPosition.js
+                    language: JavaScript # At the moment only JavaScript is supported and tested
+                triggers:
+                  parameters: [HES_HK_TLM_MID]
                 inputs:
                   - parameterRef: HES_HK_TLM_MID.Lon
                     inputName: Lon # Name used inside of algorithm script
                   - parameterRef: HES_HK_TLM_MID.Lat
                     inputName: Lat # Name used inside of algorithm script
                   - parameterRef: HES_HK_TLM_MID.altitude[0]
-                    inputName: altitude # Name used inside of algorithm script
+                    inputName: Altitude # Name used inside of algorithm script
+                outputs:
+                  - Parameter:
+                      Name: Position
+                      Description: Current Position Of The Vehicle
+                      Type:
+                        Aggregate: # At the moment only flat aggregates are supported; there is no support for nested ones.
+                          members:
+                            - name: Lat
+                              type: float64_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                            - name: Lon
+                              type: float64_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                            - name: Alt
+                              type: float64_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
 
       core:
         elf_files:
