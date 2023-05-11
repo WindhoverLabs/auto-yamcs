@@ -65,18 +65,17 @@ modules:
                 input_name: Altitude # Name used inside of algorithm script
             outputs:
               - parameter:
-                    name: Position_alt
-                    description: Current Position Of The Vehicle
-                    type: float32_LE
-              - parameter:
-                  name: Position
+                  name: Position_alt
                   description: Current Position Of The Vehicle
-                  type:
-                    aggregate: # At the moment only flat aggregates are supported; there is no support for nested ones.
-                      members:
-                        - name: Lat
-                          type: float32_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
-                        - name: Lon
-                          type: float32_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
-                        - name: Alt
-                          type: float32_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                  type: float
+              - parameter:
+                  name: Position # Name used inside of algorithm script
+                  description: Current Position Of The Vehicle
+                  type: aggregate # At the moment only flat aggregates are supported; there is no support for nested ones. Output type would be called ak8963_Position_t
+                  members:
+                    - name: Lat
+                      type: float # Supported types: [int64, int32, int16, int8, int, uint8, uint16, uint32, unsigned int, unsigned, uint, char, boolean, float, double, string]
+                    - name: Lon
+                      type: float # Supported types: [int64, int32, int16, int8, int, uint8, uint16, uint32, unsigned int, unsigned, uint, char, boolean, float, double, string]
+                    - name: Alt
+                      type: float # Supported types: [int64, int32, int16, int8, int, uint8, uint16, uint32, unsigned int, unsigned, uint, char, boolean, float, double, string]
