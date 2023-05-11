@@ -49,4 +49,4 @@ def test_squeezer_inline_mode(monkeypatch, get_tests_path):
     # TODO: The correctness of the database should be tested.
 
     # os.remove('newdb.sqlite')
-    os.remove('cfs.xml')
+    # os.remove('cfs.xml')

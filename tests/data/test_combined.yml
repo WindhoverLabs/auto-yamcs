@@ -52,7 +52,7 @@ modules:
             name: VehiclePosition
             type: custom # Only custom algorithms are supported at the moment. MathAlgorithms are on the roadmap, but low priority at the moment.
             script:
-              path: ../algorithm_scripts/NewPosition.js
+              path: ../tests/data/algorithm_scripts/JavaScript/NewPosition.js
               language: JavaScript # At the moment only JavaScript is supported and tested
             triggers:
                - parameter_ref: FILE1_HK_TLM_MID # This ref MUST point to a whole message such as FILE1_HK_TLM_MID and not FILE1_HK_TLM_MID.floating_stuff
