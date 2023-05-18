@@ -79,3 +79,28 @@ modules:
                       type: float # Supported types: [int64, int32, int16, int8, int, uint8, uint16, uint32, unsigned int, unsigned, uint, char, boolean, float, double, string]
                     - name: Alt
                       type: float # Supported types: [int64, int32, int16, int8, int, uint8, uint16, uint32, unsigned int, unsigned, uint, char, boolean, float, double, string]
+
+          VehiclePosition_Flat:
+            name: VehiclePosition_Flat
+            type: custom # Only custom algorithms are supported at the moment. MathAlgorithms are on the roadmap, but low priority at the moment.
+            script:
+              path: ../tests/data/algorithm_scripts/JavaScript/NewPosition.js
+              language: JavaScript # At the moment only JavaScript is supported and tested
+            triggers:
+              - parameter_ref: FILE1_HK_TLM_MID # This ref MUST point to a whole message such as FILE1_HK_TLM_MID and not FILE1_HK_TLM_MID.floating_stuff
+            inputs:
+              - parameter_ref: FILE1_HK_TLM_MID.floating_stuff
+                input_name: Lon # Name used inside of algorithm script
+              - parameter_ref: FILE1_HK_TLM_MID.more_stuff
+                input_name: Lat # Name used inside of algorithm script
+              - parameter_ref: FILE1_HK_TLM_MID.matrix1D[0]
+                input_name: Altitude # Name used inside of algorithm script
+            outputs:
+              - parameter:
+                  name: Position_alt
+                  description: Current Position Of The Vehicle
+                  type: float
+              - parameter:
+                  name: Position_flat # Name used inside of algorithm script
+                  description: Current Position Of The Vehicle
+                  type: float # Supported types: [int64, int32, int16, int8, int, uint8, uint16, uint32, unsigned int, unsigned, uint, char, boolean, float, double, string]

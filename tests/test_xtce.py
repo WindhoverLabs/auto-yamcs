@@ -263,8 +263,12 @@ def test_xtce_algorithm(monkeypatch, get_tests_path):
         xtce_obj.add_algorithms()
 
         assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet() is not None
+        assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()) == 2
+
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_name() == 'VehiclePosition'
 
         assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0] is not None
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_name() == 'VehiclePosition'
 
 def test_xtce_msg_parser(monkeypatch, get_data_path):
     monkeypatch.chdir(get_data_path)
