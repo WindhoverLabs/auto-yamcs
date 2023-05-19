@@ -266,9 +266,32 @@ def test_xtce_algorithm(monkeypatch, get_tests_path):
         assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()) == 2
 
         assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_name() == 'VehiclePosition'
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_TriggerSet() is not None
+        assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_TriggerSet().get_OnParameterUpdateTrigger()) == 1
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_TriggerSet().get_OnParameterUpdateTrigger()[0].get_parameterRef() == 'FILE1_HK_TLM_MID'
 
-        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0] is not None
-        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_name() == 'VehiclePosition'
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_InputSet() is not None
+        assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_InputSet().get_InputParameterInstanceRef()) == 3
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_InputSet().get_InputParameterInstanceRef()[0].get_parameterRef() == 'FILE1_HK_TLM_MID.floating_stuff'
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_InputSet().get_InputParameterInstanceRef()[1].get_parameterRef() == 'FILE1_HK_TLM_MID.more_stuff'
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_InputSet().get_InputParameterInstanceRef()[2].get_parameterRef() == 'FILE1_HK_TLM_MID.matrix1D[0]'
+
+
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_OutputSet() is not None
+        assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_OutputSet().get_OutputParameterRef()) == 2
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_OutputSet().get_OutputParameterRef()[0].get_parameterRef() == 'Position_alt'
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[0].get_OutputSet().get_OutputParameterRef()[1].get_parameterRef() == 'Position'
+
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1] is not None
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_name() == 'VehiclePosition_Flat'
+        assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_TriggerSet() is not None
+
+        # TODO:Complete unit tests
+        #
+        # assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_TriggerSet() is not None
+        # assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_TriggerSet().get_OnParameterUpdateTrigger()) == 1
+        # assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_TriggerSet().get_OnParameterUpdateTrigger()[0].get_parameterRef() == 'FILE1_HK_TLM_MID'
+
 
 def test_xtce_msg_parser(monkeypatch, get_data_path):
     monkeypatch.chdir(get_data_path)
