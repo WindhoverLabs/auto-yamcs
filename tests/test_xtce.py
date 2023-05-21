@@ -286,6 +286,11 @@ def test_xtce_algorithm(monkeypatch, get_tests_path):
         assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_name() == 'VehiclePosition_Flat'
         assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_TriggerSet() is not None
 
+        assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_ParameterSet().get_Parameter()) == 6
+
+        # assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_ParameterTypeSet().get_AggregateParameterType()) == 2
+        # assert len(xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_ParameterTypeSet().get_AggregateParameterType()) == 1
+
         # TODO:Complete unit tests
         #
         # assert xtce_obj['/cfs/apps/ak8963'].get_TelemetryMetaData().get_AlgorithmSet().get_CustomAlgorithm()[1].get_TriggerSet() is not None

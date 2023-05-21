@@ -97,7 +97,7 @@ modules:
                 input_name: Altitude # Name used inside of algorithm script
             outputs:
               - parameter:
-                  name: Position_alt
+                  name: Position_alt_flat
                   description: Current Position Of The Vehicle
                   type: float
               - parameter:
