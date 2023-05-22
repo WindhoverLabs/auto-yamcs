@@ -8289,6 +8289,146 @@ modules:
               ZUSUP_HK_TLM_MID:
                 msgID: 2870
                 struct: ZUSUP_HkTlm_t
+          hes:
+            short_name: hes
+            long_name: Hawk Eye Server App
+            app_name: HES
+            module_type: CFE_APP
+            commander:
+              displays: cdr
+            delivery:
+              manifest:
+                build_tables:
+                  source_artifacts:
+                    - cdr
+                    - fsw/src/hes_tbldefs.h
+                    - LICENSE
+                    - wh_design.yaml
+            events:
+              HES_INF_EID:
+                id: 1
+              HES_INIT_INF_EID:
+                id: 2
+              HES_CONFIG_TABLE_INF_EID:
+                id: 3
+              HES_CMD_INF_EID:
+                id: 4
+              HES_ERR_EID:
+                id: 5
+              HES_INIT_ERR_EID:
+                id: 6
+              HES_CONFIG_TABLE_ERR_EID:
+                id: 7
+              HES_CMD_ERR_EID:
+                id: 8
+              HES_PIPE_ERR_EID:
+                id: 9
+              HES_MSGID_ERR_EID:
+                id: 10
+              HES_MSGLEN_ERR_EID:
+                id: 11
+            telemetry:
+              HES_HK_TLM_MID:
+                msgID: 2913
+                min_rate: 10
+                struct: HES_HkTlm_t
+            commands:
+              HES_CMD_MID:
+                msgID: 7005
+                commands:
+                  Noop:
+                    cc: 0
+                    struct: HES_NoArgCmd_t
+                  Reset:
+                    cc: 1
+                    struct: HES_NoArgCmd_t
+              HES_SEND_HK_MID:
+                msgID: 7006
+                commands:
+                  SendHK:
+                    cc: 0
+                    struct: HES_NoArgCmd_t
+              HES_WAKEUP_MID:
+                msgID: 7007
+                commands:
+                  WakeUp:
+                    cc: 0
+                    struct: HES_NoArgCmd_t
+            perfids:
+              HES_MAIN_TASK_PERF_ID:
+                id: 124
+            config:
+              HES_SB_TIMEOUT:
+                name: HES_SB_TIMEOUT
+                value: CFE_SB_PEND_FOREVER
+              HES_MISSION_REV:
+                name: HES_MISSION_REV
+                value: 0
+              HES_SCH_PIPE_DEPTH:
+                name: HES_SCH_PIPE_DEPTH
+                value: 2
+              HES_SCH_PIPE_NAME:
+                name: HES_SCH_PIPE_NAME
+                value: HES_SCH_PIPE
+              HES_SCH_PIPE_PEND_TIME:
+                name: HES_SCH_PIPE_PEND_TIME
+                value: 2000
+              HES_SCH_PIPE_WAKEUP_RESERVED:
+                name: HES_SCH_PIPE_WAKEUP_RESERVED
+                value: 1
+              HES_SCH_PIPE_SEND_HK_RESERVED:
+                name: HES_SCH_PIPE_SEND_HK_RESERVED
+                value: 1
+              HES_CMD_PIPE_DEPTH:
+                name: HES_CMD_PIPE_DEPTH
+                value: 4
+              HES_CMD_PIPE_NAME:
+                name: HES_CMD_PIPE_NAME
+                value: HES_CMD_PIPE
+              HES_DATA_PIPE_DEPTH:
+                name: HES_DATA_PIPE_DEPTH
+                value: 4
+              HES_DATA_PIPE_NAME:
+                name: HES_DATA_PIPE_NAME
+                value: HES_DATA_PIPE
+              HES_CONFIG_TABLE_FILENAME:
+                name: HES_CONFIG_TABLE_FILENAME
+                value: /cf/apps/hes_config.tbl
+              HES_STARTUP_TIMEOUT_MSEC:
+                name: HES_STARTUP_TIMEOUT_MSEC
+                value: 1000
+            definition: /home/lgomez/projects/integration/squeaky-weasel/software/airliner/apps/hes/wh_design.yaml
+            elf_files:
+              - /home/lgomez/projects/integration/squeaky-weasel/software/airliner/build/fixedwing/gemini2/cpd/sitl/target/target/exe/airliner
+            custom_algorithms:
+              VehiclePosition:
+                name: VehiclePosition
+                script:
+                    path: ../algorithm_scripts/NewPosition.js
+                    language: JavaScript # At the moment only JavaScript is supported and tested
+                triggers:
+                  parameters: [HES_HK_TLM_MID]
+                inputs:
+                  - parameterRef: HES_HK_TLM_MID.Lon
+                    inputName: Lon # Name used inside of algorithm script
+                  - parameterRef: HES_HK_TLM_MID.Lat
+                    inputName: Lat # Name used inside of algorithm script
+                  - parameterRef: HES_HK_TLM_MID.altitude[0]
+                    inputName: Altitude # Name used inside of algorithm script
+                outputs:
+                  - Parameter:
+                      Name: Position
+                      Description: Current Position Of The Vehicle
+                      Type:
+                        Aggregate: # At the moment only flat aggregates are supported; there is no support for nested ones.
+                          members:
+                            - name: Lat
+                              type: float64_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                            - name: Lon
+                              type: float64_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+                            - name: Alt
+                              type: float64_LE # Supported types: https://github.com/WindhoverLabs/xtce_generator#base-typesintrinsic-types
+
       core:
         elf_files:
         - /home/lgomez/squeaky-weasel/software/airliner/public/build/obc/cpd/sitl/target/target/exe/airliner
@@ -22441,6 +22581,7 @@ modules:
             definition: /home/lgomez/squeaky-weasel/software/airliner/public/core/osal/posix-fast/wh_design.yaml
           psp:
             definition: /home/lgomez/squeaky-weasel/software/airliner/public/core/psp/pc-linux-wh/wh_design.yaml
+
     xtce_config:
       global:
         CommandMetaData:
