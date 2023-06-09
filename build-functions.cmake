@@ -45,3 +45,29 @@ function(commander_add_module)
     #add_dependencies(${MODULE_NAME}_yaml ground-tools)
     add_dependencies(ground-tools ${MODULE_NAME}_yaml)
 endfunction()
+
+
+function(commander_add_prebuilt_module)    
+    # Define the function arguments.
+    set(MODULE_NAME ${ARGV0})
+    cmake_parse_arguments(PARSED_ARGS "" "FILE_NAME;YAML_PATH;OUTPUT_FILE" "" ${ARGN})
+
+    #get_target_property(YAML_FILE ${PARSED_ARGS_TARGET_WORKSPACE} YAML_FILE)
+    
+    # Add the executable to the combined design+configuration yaml file
+    #execute_process(
+    #    #COMMAND echo yaml-set --change=${PARSED_ARGS_YAML_PATH}.elf_files[0] --value=$<TARGET_FILE:${PARSED_ARGS_TARGET_NAME}> ${PARSED_ARGS_OUTPUT_FILE}
+    #    COMMAND yaml-set --change=${PARSED_ARGS_YAML_PATH}.elf_files[0] --value=$<TARGET_FILE:${PARSED_ARGS_TARGET_NAME}> ${PARSED_ARGS_OUTPUT_FILE}
+    #)
+    
+    add_custom_target(${MODULE_NAME}_yaml
+        COMMAND pwd
+        COMMAND yaml-set --change=${PARSED_ARGS_YAML_PATH}.elf_files[0] --value=${FILE_NAME} ${PARSED_ARGS_OUTPUT_FILE}
+    )
+
+    #message("*****************")
+    #message(${PARSED_ARGS_TARGET_NAME})
+    #message(${MODULE_NAME}_yaml)
+    #add_dependencies(${MODULE_NAME}_yaml ground-tools)
+    add_dependencies(ground-tools ${MODULE_NAME}_yaml)
+endfunction()
