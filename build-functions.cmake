@@ -50,7 +50,7 @@ endfunction()
 function(commander_add_prebuilt_module)    
     # Define the function arguments.
     set(MODULE_NAME ${ARGV0})
-    cmake_parse_arguments(PARSED_ARGS "" "FILE_NAME;YAML_PATH;OUTPUT_FILE" "" ${ARGN})
+    cmake_parse_arguments(PARSED_ARGS "" "FILE_NAME;YAML_PATH;OUTPUT_FILE;ELF_FILE" "" ${ARGN})
 
     #get_target_property(YAML_FILE ${PARSED_ARGS_TARGET_WORKSPACE} YAML_FILE)
     
@@ -62,7 +62,7 @@ function(commander_add_prebuilt_module)
     
     add_custom_target(${MODULE_NAME}_yaml
         COMMAND pwd
-        COMMAND yaml-set --change=${PARSED_ARGS_YAML_PATH}.elf_files[0] --value=${FILE_NAME} ${PARSED_ARGS_OUTPUT_FILE}
+        COMMAND yaml-set --change=${PARSED_ARGS_YAML_PATH}.elf_files[0] --value=${PARSED_ARGS_ELF_FILE} ${PARSED_ARGS_OUTPUT_FILE}
     )
 
     #message("*****************")
