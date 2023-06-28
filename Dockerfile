@@ -10,9 +10,11 @@ RUN apt-get install -y cmake
 RUN apt-get install -y libdwarf-dev
 RUN apt-get install -y libelf-dev
 RUN apt-get install -y libsqlite3-dev
+RUN apt-get install -y libssl-dev
 
 RUN apt-get install -y python3-pip
 RUN mkdir /home/docker
 COPY . /home/docker/auto-yamcs
 RUN cd  /home/docker/auto-yamcs && pip3 install -r src/requirements.txt
+RUN cd  /home/docker/auto-yamcs/juicer && make clean
 RUN cd  /home/docker/auto-yamcs && pytest --count=10
