@@ -42,6 +42,27 @@ def symbol_exists(symbol_name: str, db_handle: sqlite_utils.Database):
 
     return does_symbol_exists
 
+def field_exists(symbol_name: str, field_name: str, db_handle: sqlite_utils.Database):
+    """
+    Checks if the symbol record with name symbol_name exists in the database.
+    :param symbol_name:
+    :param db_handle:
+    :return: True if symbol exists, False otherwise.
+    """
+    does_field_exists = False
+    symbol_record = list(db_handle['symbols'].rows_where('name=?', [symbol_name]))
+    if len(symbol_record) == 0:
+        does_field_exists = False
+        return does_field_exists
+
+    field_record = list(db_handle['fields'].rows_where('symbol=? and name=?', [symbol_record[0]['id'], field_name]))
+
+    if len(field_record) == 0:
+        does_field_exists = False
+
+    return does_field_exists
+
+
 
 def add_type_to_database(type_name: str, elf_name: str, byte_size: int,
                          db_handle: sqlite_utils.Database) -> Union[dict, None]:
@@ -171,6 +192,10 @@ def get_field_type_record(symbol_name: str, field_name: str, db_handle: sqlite_u
         logging.error(f'The symbol name with name {symbol_name} does not exist.')
         return symbol_record
 
+    if field_exists(symbol_name, field_name, db_handle) is False:
+        logging.error(f'The field name with name {field_name} and parent {symbol_name} does not exist.')
+        return symbol_record
+
     field_symbol = list(db_handle['symbols'].rows_where('name=?', [symbol_name]))[0]['id']
     field_record = list(db_handle['fields'].rows_where('symbol=? and name=?', [field_symbol, field_name]))[0]
 
@@ -207,6 +232,10 @@ def process_enum_override(enum_override: dict, symbol_elf: str, db_handle: sqlit
     else:
         logging.warning(f'The symbol "{enum_override["parent"]}" does not exist in the database.'
                         f'Field override will not be processed.')
+        # TODO: Not sure if this is the right approach
+        # raise Exception(f'The symbol "{enum_override["parent"]}" does not exist in the database.\n'
+        #                 f'Field override will not be processed.')
+
 
 
 def process_symbol_override(symbol_override: dict, symbol_elf: str, db_handle: sqlite_utils.Database):
