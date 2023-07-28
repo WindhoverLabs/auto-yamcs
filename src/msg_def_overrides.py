@@ -192,9 +192,10 @@ def get_field_type_record(symbol_name: str, field_name: str, db_handle: sqlite_u
         logging.error(f'The symbol name with name {symbol_name} does not exist.')
         return symbol_record
 
-    if field_exists(symbol_name, field_name, db_handle) is False:
-        logging.error(f'The field name with name {field_name} and parent {symbol_name} does not exist.')
-        return symbol_record
+    # TODO: There is a string edge case on this.
+    # if field_exists(symbol_name, field_name, db_handle) is False:
+    #     logging.error(f'The field name with name {field_name} and parent {symbol_name} does not exist.')
+    #     return symbol_record
 
     field_symbol = list(db_handle['symbols'].rows_where('name=?', [symbol_name]))[0]['id']
     field_record = list(db_handle['fields'].rows_where('symbol=? and name=?', [field_symbol, field_name]))[0]
