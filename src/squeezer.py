@@ -171,7 +171,6 @@ def inline_mode_handler(args: argparse.Namespace):
     elfs = get_elf_files(yaml_dict)
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
-    merge_command_telemetry(args.inline_yaml_path, args.output_file)
 
     if args.remap_yaml:
         yaml_remaps_dict = read_yaml(args.remap_yaml)
@@ -188,6 +187,8 @@ def inline_mode_handler(args: argparse.Namespace):
         run_msg_def_overrides(args.override_yaml, args.output_file)
 
     xtce_config_data = read_yaml(args.xtce_config_yaml)
+
+    merge_command_telemetry(args.inline_yaml_path, args.output_file)
     run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, xtce_config_data['root_spacesystem'])
 
 
@@ -214,8 +215,8 @@ def singleton_mode_handler(args: argparse.Namespace):
     else:
         logging.warning('No type_remaps configuration found. No type_remapping was done done.')
 
-    merge_command_telemetry(args.singleton_yaml_path, args.output_file)
     run_msg_def_overrides(args.singleton_yaml_path, args.output_file)
+    merge_command_telemetry(args.singleton_yaml_path, args.output_file)
 
     if 'xtce_config' in yaml_dict:
         xtce_config_data = yaml_dict['xtce_config']
