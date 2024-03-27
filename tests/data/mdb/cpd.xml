@@ -1504,7 +1504,7 @@
                         </Dimension>
                     </DimensionList>
                 </ArrayParameterType>
-                <ArrayParameterType name="Array_26Dim__cpd_apps_px4lib_PX4_RcChannelFunction_t" arrayTypeRef="cpd/apps/px4lib/PX4_RcChannelFunction_t">
+                <ArrayParameterType name="Array_26Dim__cpd_apps_airlinerlib_AIRLINER_RcChannelFunction_t" arrayTypeRef="cpd/apps/airlinerlib/AIRLINER_RcChannelFunction_t">
                     <DimensionList>
                         <Dimension>
                             <StartingIndex>
@@ -8718,31 +8718,31 @@
         <xtce:SpaceSystem name="nav">
             <TelemetryMetaData>
                 <ParameterTypeSet>
-                    <EnumeratedParameterType name="PX4_NavigationState_t">
+                    <EnumeratedParameterType name="AIRLINER_NavigationState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="10" label="PX4_NAVIGATION_STATE_ACRO"/>
-                            <Enumeration value="1" label="PX4_NAVIGATION_STATE_ALTCTL"/>
-                            <Enumeration value="19" label="PX4_NAVIGATION_STATE_AUTO_FOLLOW_TARGET"/>
-                            <Enumeration value="18" label="PX4_NAVIGATION_STATE_AUTO_LAND"/>
-                            <Enumeration value="8" label="PX4_NAVIGATION_STATE_AUTO_LANDENGFAIL"/>
-                            <Enumeration value="9" label="PX4_NAVIGATION_STATE_AUTO_LANDGPSFAIL"/>
-                            <Enumeration value="4" label="PX4_NAVIGATION_STATE_AUTO_LOITER"/>
-                            <Enumeration value="3" label="PX4_NAVIGATION_STATE_AUTO_MISSION"/>
-                            <Enumeration value="20" label="PX4_NAVIGATION_STATE_AUTO_PRECLAND"/>
-                            <Enumeration value="6" label="PX4_NAVIGATION_STATE_AUTO_RCRECOVER"/>
-                            <Enumeration value="7" label="PX4_NAVIGATION_STATE_AUTO_RTGS"/>
-                            <Enumeration value="5" label="PX4_NAVIGATION_STATE_AUTO_RTL"/>
-                            <Enumeration value="17" label="PX4_NAVIGATION_STATE_AUTO_TAKEOFF"/>
-                            <Enumeration value="12" label="PX4_NAVIGATION_STATE_DESCEND"/>
-                            <Enumeration value="0" label="PX4_NAVIGATION_STATE_MANUAL"/>
-                            <Enumeration value="21" label="PX4_NAVIGATION_STATE_MAX"/>
-                            <Enumeration value="14" label="PX4_NAVIGATION_STATE_OFFBOARD"/>
-                            <Enumeration value="2" label="PX4_NAVIGATION_STATE_POSCTL"/>
-                            <Enumeration value="16" label="PX4_NAVIGATION_STATE_RATTITUDE"/>
-                            <Enumeration value="15" label="PX4_NAVIGATION_STATE_STAB"/>
-                            <Enumeration value="13" label="PX4_NAVIGATION_STATE_TERMINATION"/>
-                            <Enumeration value="11" label="PX4_NAVIGATION_STATE_UNUSED"/>
+                            <Enumeration value="10" label="AIRLINER_NAVIGATION_STATE_ACRO"/>
+                            <Enumeration value="1" label="AIRLINER_NAVIGATION_STATE_ALTCTL"/>
+                            <Enumeration value="19" label="AIRLINER_NAVIGATION_STATE_AUTO_FOLLOW_TARGET"/>
+                            <Enumeration value="18" label="AIRLINER_NAVIGATION_STATE_AUTO_LAND"/>
+                            <Enumeration value="8" label="AIRLINER_NAVIGATION_STATE_AUTO_LANDENGFAIL"/>
+                            <Enumeration value="9" label="AIRLINER_NAVIGATION_STATE_AUTO_LANDGPSFAIL"/>
+                            <Enumeration value="4" label="AIRLINER_NAVIGATION_STATE_AUTO_LOITER"/>
+                            <Enumeration value="3" label="AIRLINER_NAVIGATION_STATE_AUTO_MISSION"/>
+                            <Enumeration value="20" label="AIRLINER_NAVIGATION_STATE_AUTO_PRECLAND"/>
+                            <Enumeration value="6" label="AIRLINER_NAVIGATION_STATE_AUTO_RCRECOVER"/>
+                            <Enumeration value="7" label="AIRLINER_NAVIGATION_STATE_AUTO_RTGS"/>
+                            <Enumeration value="5" label="AIRLINER_NAVIGATION_STATE_AUTO_RTL"/>
+                            <Enumeration value="17" label="AIRLINER_NAVIGATION_STATE_AUTO_TAKEOFF"/>
+                            <Enumeration value="12" label="AIRLINER_NAVIGATION_STATE_DESCEND"/>
+                            <Enumeration value="0" label="AIRLINER_NAVIGATION_STATE_MANUAL"/>
+                            <Enumeration value="21" label="AIRLINER_NAVIGATION_STATE_MAX"/>
+                            <Enumeration value="14" label="AIRLINER_NAVIGATION_STATE_OFFBOARD"/>
+                            <Enumeration value="2" label="AIRLINER_NAVIGATION_STATE_POSCTL"/>
+                            <Enumeration value="16" label="AIRLINER_NAVIGATION_STATE_RATTITUDE"/>
+                            <Enumeration value="15" label="AIRLINER_NAVIGATION_STATE_STAB"/>
+                            <Enumeration value="13" label="AIRLINER_NAVIGATION_STATE_TERMINATION"/>
+                            <Enumeration value="11" label="AIRLINER_NAVIGATION_STATE_UNUSED"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
                     <AggregateParameterType name="NAV_HkTlm_t">
@@ -8750,7 +8750,7 @@
                             <Member name="usCmdCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="usCmdErrCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding16_LE"/>
-                            <Member name="NavState" typeRef="PX4_NavigationState_t"/>
+                            <Member name="NavState" typeRef="AIRLINER_NavigationState_t"/>
                             <Member name="RtlState" typeRef="BaseType/uint32_LE"/>
                             <Member name="WaypointPositionReached" typeRef="BaseType/boolean8_LE"/>
                             <Member name="WaypointYawReached" typeRef="BaseType/boolean8_LE"/>
@@ -8841,408 +8841,408 @@
                 </MetaCommandSet>
             </CommandMetaData>
         </xtce:SpaceSystem>
-        <xtce:SpaceSystem name="px4lib">
+        <xtce:SpaceSystem name="airlinerlib">
             <TelemetryMetaData>
                 <ParameterTypeSet>
-                    <EnumeratedParameterType name="PX4_BatteryWarningSeverity_t">
+                    <EnumeratedParameterType name="AIRLINER_BatteryWarningSeverity_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_BATTERY_WARNING_CRITICAL"/>
-                            <Enumeration value="3" label="PX4_BATTERY_WARNING_EMERGENCY"/>
-                            <Enumeration value="1" label="PX4_BATTERY_WARNING_LOW"/>
-                            <Enumeration value="0" label="PX4_BATTERY_WARNING_NONE"/>
+                            <Enumeration value="2" label="AIRLINER_BATTERY_WARNING_CRITICAL"/>
+                            <Enumeration value="3" label="AIRLINER_BATTERY_WARNING_EMERGENCY"/>
+                            <Enumeration value="1" label="AIRLINER_BATTERY_WARNING_LOW"/>
+                            <Enumeration value="0" label="AIRLINER_BATTERY_WARNING_NONE"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_CommanderMainState_t">
+                    <EnumeratedParameterType name="AIRLINER_CommanderMainState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="6" label="PX4_COMMANDER_MAIN_STATE_ACRO"/>
-                            <Enumeration value="1" label="PX4_COMMANDER_MAIN_STATE_ALTCTL"/>
-                            <Enumeration value="12" label="PX4_COMMANDER_MAIN_STATE_AUTO_FOLLOW_TARGET"/>
-                            <Enumeration value="11" label="PX4_COMMANDER_MAIN_STATE_AUTO_LAND"/>
-                            <Enumeration value="19" label="PX4_COMMANDER_MAIN_STATE_AUTO_LANDENGFAIL"/>
-                            <Enumeration value="20" label="PX4_COMMANDER_MAIN_STATE_AUTO_LANDGPSFAIL"/>
-                            <Enumeration value="4" label="PX4_COMMANDER_MAIN_STATE_AUTO_LOITER"/>
-                            <Enumeration value="3" label="PX4_COMMANDER_MAIN_STATE_AUTO_MISSION"/>
-                            <Enumeration value="16" label="PX4_COMMANDER_MAIN_STATE_AUTO_OFFBOARD"/>
-                            <Enumeration value="13" label="PX4_COMMANDER_MAIN_STATE_AUTO_PRECLAND"/>
-                            <Enumeration value="18" label="PX4_COMMANDER_MAIN_STATE_AUTO_RATTITUDE"/>
-                            <Enumeration value="21" label="PX4_COMMANDER_MAIN_STATE_AUTO_RCRECOVER"/>
-                            <Enumeration value="17" label="PX4_COMMANDER_MAIN_STATE_AUTO_RTGS"/>
-                            <Enumeration value="5" label="PX4_COMMANDER_MAIN_STATE_AUTO_RTL"/>
-                            <Enumeration value="10" label="PX4_COMMANDER_MAIN_STATE_AUTO_TAKEOFF"/>
-                            <Enumeration value="14" label="PX4_COMMANDER_MAIN_STATE_DESCEND"/>
-                            <Enumeration value="0" label="PX4_COMMANDER_MAIN_STATE_MANUAL"/>
-                            <Enumeration value="22" label="PX4_COMMANDER_MAIN_STATE_MAX"/>
-                            <Enumeration value="7" label="PX4_COMMANDER_MAIN_STATE_OFFBOARD"/>
-                            <Enumeration value="2" label="PX4_COMMANDER_MAIN_STATE_POSCTL"/>
-                            <Enumeration value="9" label="PX4_COMMANDER_MAIN_STATE_RATTITUDE"/>
-                            <Enumeration value="8" label="PX4_COMMANDER_MAIN_STATE_STAB"/>
-                            <Enumeration value="15" label="PX4_COMMANDER_MAIN_STATE_TERMINATION"/>
+                            <Enumeration value="6" label="AIRLINER_COMMANDER_MAIN_STATE_ACRO"/>
+                            <Enumeration value="1" label="AIRLINER_COMMANDER_MAIN_STATE_ALTCTL"/>
+                            <Enumeration value="12" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_FOLLOW_TARGET"/>
+                            <Enumeration value="11" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_LAND"/>
+                            <Enumeration value="19" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_LANDENGFAIL"/>
+                            <Enumeration value="20" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_LANDGPSFAIL"/>
+                            <Enumeration value="4" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_LOITER"/>
+                            <Enumeration value="3" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_MISSION"/>
+                            <Enumeration value="16" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_OFFBOARD"/>
+                            <Enumeration value="13" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_PRECLAND"/>
+                            <Enumeration value="18" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_RATTITUDE"/>
+                            <Enumeration value="21" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_RCRECOVER"/>
+                            <Enumeration value="17" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_RTGS"/>
+                            <Enumeration value="5" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_RTL"/>
+                            <Enumeration value="10" label="AIRLINER_COMMANDER_MAIN_STATE_AUTO_TAKEOFF"/>
+                            <Enumeration value="14" label="AIRLINER_COMMANDER_MAIN_STATE_DESCEND"/>
+                            <Enumeration value="0" label="AIRLINER_COMMANDER_MAIN_STATE_MANUAL"/>
+                            <Enumeration value="22" label="AIRLINER_COMMANDER_MAIN_STATE_MAX"/>
+                            <Enumeration value="7" label="AIRLINER_COMMANDER_MAIN_STATE_OFFBOARD"/>
+                            <Enumeration value="2" label="AIRLINER_COMMANDER_MAIN_STATE_POSCTL"/>
+                            <Enumeration value="9" label="AIRLINER_COMMANDER_MAIN_STATE_RATTITUDE"/>
+                            <Enumeration value="8" label="AIRLINER_COMMANDER_MAIN_STATE_STAB"/>
+                            <Enumeration value="15" label="AIRLINER_COMMANDER_MAIN_STATE_TERMINATION"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_SensorOrientation_t">
+                    <EnumeratedParameterType name="AIRLINER_SensorOrientation_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="0" label="PX4_SENSOR_ORIENTATION_NONE"/>
-                            <Enumeration value="12" label="PX4_SENSOR_ORIENTATION_PITCH_180"/>
-                            <Enumeration value="27" label="PX4_SENSOR_ORIENTATION_PITCH_180_YAW_270"/>
-                            <Enumeration value="26" label="PX4_SENSOR_ORIENTATION_PITCH_180_YAW_90"/>
-                            <Enumeration value="25" label="PX4_SENSOR_ORIENTATION_PITCH_270"/>
-                            <Enumeration value="24" label="PX4_SENSOR_ORIENTATION_PITCH_90"/>
-                            <Enumeration value="8" label="PX4_SENSOR_ORIENTATION_ROLL_180"/>
-                            <Enumeration value="34" label="PX4_SENSOR_ORIENTATION_ROLL_180_PITCH_270"/>
-                            <Enumeration value="29" label="PX4_SENSOR_ORIENTATION_ROLL_180_PITCH_90"/>
-                            <Enumeration value="11" label="PX4_SENSOR_ORIENTATION_ROLL_180_YAW_135"/>
-                            <Enumeration value="13" label="PX4_SENSOR_ORIENTATION_ROLL_180_YAW_225"/>
-                            <Enumeration value="14" label="PX4_SENSOR_ORIENTATION_ROLL_180_YAW_270"/>
-                            <Enumeration value="15" label="PX4_SENSOR_ORIENTATION_ROLL_180_YAW_315"/>
-                            <Enumeration value="9" label="PX4_SENSOR_ORIENTATION_ROLL_180_YAW_45"/>
-                            <Enumeration value="10" label="PX4_SENSOR_ORIENTATION_ROLL_180_YAW_90"/>
-                            <Enumeration value="20" label="PX4_SENSOR_ORIENTATION_ROLL_270"/>
-                            <Enumeration value="32" label="PX4_SENSOR_ORIENTATION_ROLL_270_PITCH_180"/>
-                            <Enumeration value="35" label="PX4_SENSOR_ORIENTATION_ROLL_270_PITCH_270"/>
-                            <Enumeration value="30" label="PX4_SENSOR_ORIENTATION_ROLL_270_PITCH_90"/>
-                            <Enumeration value="23" label="PX4_SENSOR_ORIENTATION_ROLL_270_YAW_135"/>
-                            <Enumeration value="21" label="PX4_SENSOR_ORIENTATION_ROLL_270_YAW_45"/>
-                            <Enumeration value="22" label="PX4_SENSOR_ORIENTATION_ROLL_270_YAW_90"/>
-                            <Enumeration value="39" label="PX4_SENSOR_ORIENTATION_ROLL_315_PITCH_315_YAW_315"/>
-                            <Enumeration value="16" label="PX4_SENSOR_ORIENTATION_ROLL_90"/>
-                            <Enumeration value="31" label="PX4_SENSOR_ORIENTATION_ROLL_90_PITCH_180"/>
-                            <Enumeration value="36" label="PX4_SENSOR_ORIENTATION_ROLL_90_PITCH_180_YAW_90"/>
-                            <Enumeration value="33" label="PX4_SENSOR_ORIENTATION_ROLL_90_PITCH_270"/>
-                            <Enumeration value="28" label="PX4_SENSOR_ORIENTATION_ROLL_90_PITCH_90"/>
-                            <Enumeration value="19" label="PX4_SENSOR_ORIENTATION_ROLL_90_YAW_135"/>
-                            <Enumeration value="37" label="PX4_SENSOR_ORIENTATION_ROLL_90_YAW_270"/>
-                            <Enumeration value="17" label="PX4_SENSOR_ORIENTATION_ROLL_90_YAW_45"/>
-                            <Enumeration value="18" label="PX4_SENSOR_ORIENTATION_ROLL_90_YAW_90"/>
-                            <Enumeration value="3" label="PX4_SENSOR_ORIENTATION_YAW_135"/>
-                            <Enumeration value="4" label="PX4_SENSOR_ORIENTATION_YAW_180"/>
-                            <Enumeration value="5" label="PX4_SENSOR_ORIENTATION_YAW_225"/>
-                            <Enumeration value="6" label="PX4_SENSOR_ORIENTATION_YAW_270"/>
-                            <Enumeration value="7" label="PX4_SENSOR_ORIENTATION_YAW_315"/>
-                            <Enumeration value="1" label="PX4_SENSOR_ORIENTATION_YAW_45"/>
-                            <Enumeration value="2" label="PX4_SENSOR_ORIENTATION_YAW_90"/>
+                            <Enumeration value="0" label="AIRLINER_SENSOR_ORIENTATION_NONE"/>
+                            <Enumeration value="12" label="AIRLINER_SENSOR_ORIENTATION_PITCH_180"/>
+                            <Enumeration value="27" label="AIRLINER_SENSOR_ORIENTATION_PITCH_180_YAW_270"/>
+                            <Enumeration value="26" label="AIRLINER_SENSOR_ORIENTATION_PITCH_180_YAW_90"/>
+                            <Enumeration value="25" label="AIRLINER_SENSOR_ORIENTATION_PITCH_270"/>
+                            <Enumeration value="24" label="AIRLINER_SENSOR_ORIENTATION_PITCH_90"/>
+                            <Enumeration value="8" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180"/>
+                            <Enumeration value="34" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_PITCH_270"/>
+                            <Enumeration value="29" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_PITCH_90"/>
+                            <Enumeration value="11" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_YAW_135"/>
+                            <Enumeration value="13" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_YAW_225"/>
+                            <Enumeration value="14" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_YAW_270"/>
+                            <Enumeration value="15" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_YAW_315"/>
+                            <Enumeration value="9" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_YAW_45"/>
+                            <Enumeration value="10" label="AIRLINER_SENSOR_ORIENTATION_ROLL_180_YAW_90"/>
+                            <Enumeration value="20" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270"/>
+                            <Enumeration value="32" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270_PITCH_180"/>
+                            <Enumeration value="35" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270_PITCH_270"/>
+                            <Enumeration value="30" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270_PITCH_90"/>
+                            <Enumeration value="23" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270_YAW_135"/>
+                            <Enumeration value="21" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270_YAW_45"/>
+                            <Enumeration value="22" label="AIRLINER_SENSOR_ORIENTATION_ROLL_270_YAW_90"/>
+                            <Enumeration value="39" label="AIRLINER_SENSOR_ORIENTATION_ROLL_315_PITCH_315_YAW_315"/>
+                            <Enumeration value="16" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90"/>
+                            <Enumeration value="31" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_PITCH_180"/>
+                            <Enumeration value="36" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_PITCH_180_YAW_90"/>
+                            <Enumeration value="33" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_PITCH_270"/>
+                            <Enumeration value="28" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_PITCH_90"/>
+                            <Enumeration value="19" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_YAW_135"/>
+                            <Enumeration value="37" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_YAW_270"/>
+                            <Enumeration value="17" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_YAW_45"/>
+                            <Enumeration value="18" label="AIRLINER_SENSOR_ORIENTATION_ROLL_90_YAW_90"/>
+                            <Enumeration value="3" label="AIRLINER_SENSOR_ORIENTATION_YAW_135"/>
+                            <Enumeration value="4" label="AIRLINER_SENSOR_ORIENTATION_YAW_180"/>
+                            <Enumeration value="5" label="AIRLINER_SENSOR_ORIENTATION_YAW_225"/>
+                            <Enumeration value="6" label="AIRLINER_SENSOR_ORIENTATION_YAW_270"/>
+                            <Enumeration value="7" label="AIRLINER_SENSOR_ORIENTATION_YAW_315"/>
+                            <Enumeration value="1" label="AIRLINER_SENSOR_ORIENTATION_YAW_45"/>
+                            <Enumeration value="2" label="AIRLINER_SENSOR_ORIENTATION_YAW_90"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_DistanceSensorType_t">
+                    <EnumeratedParameterType name="AIRLINER_DistanceSensorType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_DISTANCE_SENSOR_INFRARED"/>
-                            <Enumeration value="0" label="PX4_DISTANCE_SENSOR_LASER"/>
-                            <Enumeration value="3" label="PX4_DISTANCE_SENSOR_RADAR"/>
-                            <Enumeration value="1" label="PX4_DISTANCE_SENSOR_ULTRASOUND"/>
+                            <Enumeration value="2" label="AIRLINER_DISTANCE_SENSOR_INFRARED"/>
+                            <Enumeration value="0" label="AIRLINER_DISTANCE_SENSOR_LASER"/>
+                            <Enumeration value="3" label="AIRLINER_DISTANCE_SENSOR_RADAR"/>
+                            <Enumeration value="1" label="AIRLINER_DISTANCE_SENSOR_ULTRASOUND"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_RcInputSource_t">
+                    <EnumeratedParameterType name="AIRLINER_RcInputSource_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="6" label="PX4_RC_INPUT_SOURCE_MAVLINK"/>
-                            <Enumeration value="12" label="PX4_RC_INPUT_SOURCE_PX4FMU_DSM"/>
-                            <Enumeration value="1" label="PX4_RC_INPUT_SOURCE_PX4FMU_PPM"/>
-                            <Enumeration value="9" label="PX4_RC_INPUT_SOURCE_PX4FMU_SBUS"/>
-                            <Enumeration value="8" label="PX4_RC_INPUT_SOURCE_PX4FMU_SPEKTRUM"/>
-                            <Enumeration value="10" label="PX4_RC_INPUT_SOURCE_PX4FMU_ST24"/>
-                            <Enumeration value="11" label="PX4_RC_INPUT_SOURCE_PX4FMU_SUMD"/>
-                            <Enumeration value="2" label="PX4_RC_INPUT_SOURCE_PX4IO_PPM"/>
-                            <Enumeration value="4" label="PX4_RC_INPUT_SOURCE_PX4IO_SBUS"/>
-                            <Enumeration value="3" label="PX4_RC_INPUT_SOURCE_PX4IO_SPEKTRUM"/>
-                            <Enumeration value="5" label="PX4_RC_INPUT_SOURCE_PX4IO_ST24"/>
-                            <Enumeration value="13" label="PX4_RC_INPUT_SOURCE_PX4IO_SUMD"/>
-                            <Enumeration value="7" label="PX4_RC_INPUT_SOURCE_QURT"/>
-                            <Enumeration value="0" label="PX4_RC_INPUT_SOURCE_UNKNOWN"/>
+                            <Enumeration value="6" label="AIRLINER_RC_INPUT_SOURCE_MAVLINK"/>
+                            <Enumeration value="12" label="AIRLINER_RC_INPUT_SOURCE_PX4FMU_DSM"/>
+                            <Enumeration value="1" label="AIRLINER_RC_INPUT_SOURCE_PX4FMU_PPM"/>
+                            <Enumeration value="9" label="AIRLINER_RC_INPUT_SOURCE_PX4FMU_SBUS"/>
+                            <Enumeration value="8" label="AIRLINER_RC_INPUT_SOURCE_PX4FMU_SPEKTRUM"/>
+                            <Enumeration value="10" label="AIRLINER_RC_INPUT_SOURCE_PX4FMU_ST24"/>
+                            <Enumeration value="11" label="AIRLINER_RC_INPUT_SOURCE_PX4FMU_SUMD"/>
+                            <Enumeration value="2" label="AIRLINER_RC_INPUT_SOURCE_PX4IO_PPM"/>
+                            <Enumeration value="4" label="AIRLINER_RC_INPUT_SOURCE_PX4IO_SBUS"/>
+                            <Enumeration value="3" label="AIRLINER_RC_INPUT_SOURCE_PX4IO_SPEKTRUM"/>
+                            <Enumeration value="5" label="AIRLINER_RC_INPUT_SOURCE_PX4IO_ST24"/>
+                            <Enumeration value="13" label="AIRLINER_RC_INPUT_SOURCE_PX4IO_SUMD"/>
+                            <Enumeration value="7" label="AIRLINER_RC_INPUT_SOURCE_QURT"/>
+                            <Enumeration value="0" label="AIRLINER_RC_INPUT_SOURCE_UNKNOWN"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_SwitchPos_t">
+                    <EnumeratedParameterType name="AIRLINER_SwitchPos_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_SWITCH_POS_MIDDLE"/>
-                            <Enumeration value="0" label="PX4_SWITCH_POS_NONE"/>
-                            <Enumeration value="3" label="PX4_SWITCH_POS_OFF"/>
-                            <Enumeration value="1" label="PX4_SWITCH_POS_ON"/>
+                            <Enumeration value="2" label="AIRLINER_SWITCH_POS_MIDDLE"/>
+                            <Enumeration value="0" label="AIRLINER_SWITCH_POS_NONE"/>
+                            <Enumeration value="3" label="AIRLINER_SWITCH_POS_OFF"/>
+                            <Enumeration value="1" label="AIRLINER_SWITCH_POS_ON"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_ModeSlot_t">
+                    <EnumeratedParameterType name="AIRLINER_ModeSlot_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="0" label="PX4_MODE_SLOT_1"/>
-                            <Enumeration value="1" label="PX4_MODE_SLOT_2"/>
-                            <Enumeration value="2" label="PX4_MODE_SLOT_3"/>
-                            <Enumeration value="3" label="PX4_MODE_SLOT_4"/>
-                            <Enumeration value="4" label="PX4_MODE_SLOT_5"/>
-                            <Enumeration value="5" label="PX4_MODE_SLOT_6"/>
-                            <Enumeration value="6" label="PX4_MODE_SLOT_MAX"/>
-                            <Enumeration value="-1" label="PX4_MODE_SLOT_NONE"/>
+                            <Enumeration value="0" label="AIRLINER_MODE_SLOT_1"/>
+                            <Enumeration value="1" label="AIRLINER_MODE_SLOT_2"/>
+                            <Enumeration value="2" label="AIRLINER_MODE_SLOT_3"/>
+                            <Enumeration value="3" label="AIRLINER_MODE_SLOT_4"/>
+                            <Enumeration value="4" label="AIRLINER_MODE_SLOT_5"/>
+                            <Enumeration value="5" label="AIRLINER_MODE_SLOT_6"/>
+                            <Enumeration value="6" label="AIRLINER_MODE_SLOT_MAX"/>
+                            <Enumeration value="-1" label="AIRLINER_MODE_SLOT_NONE"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_ManualControlDataSource_t">
+                    <EnumeratedParameterType name="AIRLINER_ManualControlDataSource_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_MANUAL_CONTROL_SOURCE_MAVLINK_0"/>
-                            <Enumeration value="3" label="PX4_MANUAL_CONTROL_SOURCE_MAVLINK_1"/>
-                            <Enumeration value="4" label="PX4_MANUAL_CONTROL_SOURCE_MAVLINK_2"/>
-                            <Enumeration value="5" label="PX4_MANUAL_CONTROL_SOURCE_MAVLINK_3"/>
-                            <Enumeration value="1" label="PX4_MANUAL_CONTROL_SOURCE_RC"/>
+                            <Enumeration value="2" label="AIRLINER_MANUAL_CONTROL_SOURCE_MAVLINK_0"/>
+                            <Enumeration value="3" label="AIRLINER_MANUAL_CONTROL_SOURCE_MAVLINK_1"/>
+                            <Enumeration value="4" label="AIRLINER_MANUAL_CONTROL_SOURCE_MAVLINK_2"/>
+                            <Enumeration value="5" label="AIRLINER_MANUAL_CONTROL_SOURCE_MAVLINK_3"/>
+                            <Enumeration value="1" label="AIRLINER_MANUAL_CONTROL_SOURCE_RC"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_SetpointType_t">
+                    <EnumeratedParameterType name="AIRLINER_SetpointType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="7" label="PX4_SETPOINT_TYPE_FOLLOW_TARGET"/>
-                            <Enumeration value="5" label="PX4_SETPOINT_TYPE_IDLE"/>
-                            <Enumeration value="4" label="PX4_SETPOINT_TYPE_LAND"/>
-                            <Enumeration value="2" label="PX4_SETPOINT_TYPE_LOITER"/>
-                            <Enumeration value="6" label="PX4_SETPOINT_TYPE_OFFBOARD"/>
-                            <Enumeration value="0" label="PX4_SETPOINT_TYPE_POSITION"/>
-                            <Enumeration value="3" label="PX4_SETPOINT_TYPE_TAKEOFF"/>
-                            <Enumeration value="1" label="PX4_SETPOINT_TYPE_VELOCITY"/>
+                            <Enumeration value="7" label="AIRLINER_SETPOINT_TYPE_FOLLOW_TARGET"/>
+                            <Enumeration value="5" label="AIRLINER_SETPOINT_TYPE_IDLE"/>
+                            <Enumeration value="4" label="AIRLINER_SETPOINT_TYPE_LAND"/>
+                            <Enumeration value="2" label="AIRLINER_SETPOINT_TYPE_LOITER"/>
+                            <Enumeration value="6" label="AIRLINER_SETPOINT_TYPE_OFFBOARD"/>
+                            <Enumeration value="0" label="AIRLINER_SETPOINT_TYPE_POSITION"/>
+                            <Enumeration value="3" label="AIRLINER_SETPOINT_TYPE_TAKEOFF"/>
+                            <Enumeration value="1" label="AIRLINER_SETPOINT_TYPE_VELOCITY"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_RcChannelFunction_t">
+                    <EnumeratedParameterType name="AIRLINER_RcChannelFunction_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="9" label="PX4_RC_CHANNELS_FUNCTION_ACRO"/>
-                            <Enumeration value="26" label="PX4_RC_CHANNELS_FUNCTION_ALTCTL"/>
-                            <Enumeration value="23" label="PX4_RC_CHANNELS_FUNCTION_ARMSWITCH"/>
-                            <Enumeration value="11" label="PX4_RC_CHANNELS_FUNCTION_AUX_1"/>
-                            <Enumeration value="12" label="PX4_RC_CHANNELS_FUNCTION_AUX_2"/>
-                            <Enumeration value="13" label="PX4_RC_CHANNELS_FUNCTION_AUX_3"/>
-                            <Enumeration value="14" label="PX4_RC_CHANNELS_FUNCTION_AUX_4"/>
-                            <Enumeration value="15" label="PX4_RC_CHANNELS_FUNCTION_AUX_5"/>
-                            <Enumeration value="27" label="PX4_RC_CHANNELS_FUNCTION_COUNT"/>
-                            <Enumeration value="10" label="PX4_RC_CHANNELS_FUNCTION_FLAPS"/>
-                            <Enumeration value="22" label="PX4_RC_CHANNELS_FUNCTION_GEAR"/>
-                            <Enumeration value="20" label="PX4_RC_CHANNELS_FUNCTION_KILLSWITCH"/>
-                            <Enumeration value="7" label="PX4_RC_CHANNELS_FUNCTION_LOITER"/>
-                            <Enumeration value="25" label="PX4_RC_CHANNELS_FUNCTION_MAN"/>
-                            <Enumeration value="4" label="PX4_RC_CHANNELS_FUNCTION_MODE"/>
-                            <Enumeration value="8" label="PX4_RC_CHANNELS_FUNCTION_OFFBOARD"/>
-                            <Enumeration value="16" label="PX4_RC_CHANNELS_FUNCTION_PARAM_1"/>
-                            <Enumeration value="17" label="PX4_RC_CHANNELS_FUNCTION_PARAM_2"/>
-                            <Enumeration value="18" label="PX4_RC_CHANNELS_FUNCTION_PARAM_3"/>
-                            <Enumeration value="2" label="PX4_RC_CHANNELS_FUNCTION_PITCH"/>
-                            <Enumeration value="6" label="PX4_RC_CHANNELS_FUNCTION_POSCTL"/>
-                            <Enumeration value="19" label="PX4_RC_CHANNELS_FUNCTION_RATTITUDE"/>
-                            <Enumeration value="5" label="PX4_RC_CHANNELS_FUNCTION_RETURN"/>
-                            <Enumeration value="1" label="PX4_RC_CHANNELS_FUNCTION_ROLL"/>
-                            <Enumeration value="24" label="PX4_RC_CHANNELS_FUNCTION_STAB"/>
-                            <Enumeration value="0" label="PX4_RC_CHANNELS_FUNCTION_THROTTLE"/>
-                            <Enumeration value="21" label="PX4_RC_CHANNELS_FUNCTION_TRANSITION"/>
-                            <Enumeration value="3" label="PX4_RC_CHANNELS_FUNCTION_YAW"/>
+                            <Enumeration value="9" label="AIRLINER_RC_CHANNELS_FUNCTION_ACRO"/>
+                            <Enumeration value="26" label="AIRLINER_RC_CHANNELS_FUNCTION_ALTCTL"/>
+                            <Enumeration value="23" label="AIRLINER_RC_CHANNELS_FUNCTION_ARMSWITCH"/>
+                            <Enumeration value="11" label="AIRLINER_RC_CHANNELS_FUNCTION_AUX_1"/>
+                            <Enumeration value="12" label="AIRLINER_RC_CHANNELS_FUNCTION_AUX_2"/>
+                            <Enumeration value="13" label="AIRLINER_RC_CHANNELS_FUNCTION_AUX_3"/>
+                            <Enumeration value="14" label="AIRLINER_RC_CHANNELS_FUNCTION_AUX_4"/>
+                            <Enumeration value="15" label="AIRLINER_RC_CHANNELS_FUNCTION_AUX_5"/>
+                            <Enumeration value="27" label="AIRLINER_RC_CHANNELS_FUNCTION_COUNT"/>
+                            <Enumeration value="10" label="AIRLINER_RC_CHANNELS_FUNCTION_FLAPS"/>
+                            <Enumeration value="22" label="AIRLINER_RC_CHANNELS_FUNCTION_GEAR"/>
+                            <Enumeration value="20" label="AIRLINER_RC_CHANNELS_FUNCTION_KILLSWITCH"/>
+                            <Enumeration value="7" label="AIRLINER_RC_CHANNELS_FUNCTION_LOITER"/>
+                            <Enumeration value="25" label="AIRLINER_RC_CHANNELS_FUNCTION_MAN"/>
+                            <Enumeration value="4" label="AIRLINER_RC_CHANNELS_FUNCTION_MODE"/>
+                            <Enumeration value="8" label="AIRLINER_RC_CHANNELS_FUNCTION_OFFBOARD"/>
+                            <Enumeration value="16" label="AIRLINER_RC_CHANNELS_FUNCTION_PARAM_1"/>
+                            <Enumeration value="17" label="AIRLINER_RC_CHANNELS_FUNCTION_PARAM_2"/>
+                            <Enumeration value="18" label="AIRLINER_RC_CHANNELS_FUNCTION_PARAM_3"/>
+                            <Enumeration value="2" label="AIRLINER_RC_CHANNELS_FUNCTION_PITCH"/>
+                            <Enumeration value="6" label="AIRLINER_RC_CHANNELS_FUNCTION_POSCTL"/>
+                            <Enumeration value="19" label="AIRLINER_RC_CHANNELS_FUNCTION_RATTITUDE"/>
+                            <Enumeration value="5" label="AIRLINER_RC_CHANNELS_FUNCTION_RETURN"/>
+                            <Enumeration value="1" label="AIRLINER_RC_CHANNELS_FUNCTION_ROLL"/>
+                            <Enumeration value="24" label="AIRLINER_RC_CHANNELS_FUNCTION_STAB"/>
+                            <Enumeration value="0" label="AIRLINER_RC_CHANNELS_FUNCTION_THROTTLE"/>
+                            <Enumeration value="21" label="AIRLINER_RC_CHANNELS_FUNCTION_TRANSITION"/>
+                            <Enumeration value="3" label="AIRLINER_RC_CHANNELS_FUNCTION_YAW"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_SubsystemType_t">
+                    <EnumeratedParameterType name="AIRLINER_SubsystemType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="8" label="PX4_SUBSYSTEM_TYPE_ABSPRESSURE"/>
-                            <Enumeration value="2" label="PX4_SUBSYSTEM_TYPE_ACC"/>
-                            <Enumeration value="16384" label="PX4_SUBSYSTEM_TYPE_ALTITUDECONTROL"/>
-                            <Enumeration value="1024" label="PX4_SUBSYSTEM_TYPE_ANGULARRATECONTROL"/>
-                            <Enumeration value="2048" label="PX4_SUBSYSTEM_TYPE_ATTITUDESTABILIZATION"/>
-                            <Enumeration value="128" label="PX4_SUBSYSTEM_TYPE_CVPOSITION"/>
-                            <Enumeration value="16" label="PX4_SUBSYSTEM_TYPE_DIFFPRESSURE"/>
-                            <Enumeration value="512" label="PX4_SUBSYSTEM_TYPE_EXTERNALGROUNDTRUTH"/>
-                            <Enumeration value="32" label="PX4_SUBSYSTEM_TYPE_GPS"/>
-                            <Enumeration value="1" label="PX4_SUBSYSTEM_TYPE_GYRO"/>
-                            <Enumeration value="256" label="PX4_SUBSYSTEM_TYPE_LASERPOSITION"/>
-                            <Enumeration value="4" label="PX4_SUBSYSTEM_TYPE_MAG"/>
-                            <Enumeration value="65536" label="PX4_SUBSYSTEM_TYPE_MOTORCONTROL"/>
-                            <Enumeration value="64" label="PX4_SUBSYSTEM_TYPE_OPTICALFLOW"/>
-                            <Enumeration value="32768" label="PX4_SUBSYSTEM_TYPE_POSITIONCONTROL"/>
-                            <Enumeration value="131072" label="PX4_SUBSYSTEM_TYPE_RANGEFINDER"/>
-                            <Enumeration value="4096" label="PX4_SUBSYSTEM_TYPE_YAWPOSITION"/>
+                            <Enumeration value="8" label="AIRLINER_SUBSYSTEM_TYPE_ABSPRESSURE"/>
+                            <Enumeration value="2" label="AIRLINER_SUBSYSTEM_TYPE_ACC"/>
+                            <Enumeration value="16384" label="AIRLINER_SUBSYSTEM_TYPE_ALTITUDECONTROL"/>
+                            <Enumeration value="1024" label="AIRLINER_SUBSYSTEM_TYPE_ANGULARRATECONTROL"/>
+                            <Enumeration value="2048" label="AIRLINER_SUBSYSTEM_TYPE_ATTITUDESTABILIZATION"/>
+                            <Enumeration value="128" label="AIRLINER_SUBSYSTEM_TYPE_CVPOSITION"/>
+                            <Enumeration value="16" label="AIRLINER_SUBSYSTEM_TYPE_DIFFPRESSURE"/>
+                            <Enumeration value="512" label="AIRLINER_SUBSYSTEM_TYPE_EXTERNALGROUNDTRUTH"/>
+                            <Enumeration value="32" label="AIRLINER_SUBSYSTEM_TYPE_GPS"/>
+                            <Enumeration value="1" label="AIRLINER_SUBSYSTEM_TYPE_GYRO"/>
+                            <Enumeration value="256" label="AIRLINER_SUBSYSTEM_TYPE_LASERPOSITION"/>
+                            <Enumeration value="4" label="AIRLINER_SUBSYSTEM_TYPE_MAG"/>
+                            <Enumeration value="65536" label="AIRLINER_SUBSYSTEM_TYPE_MOTORCONTROL"/>
+                            <Enumeration value="64" label="AIRLINER_SUBSYSTEM_TYPE_OPTICALFLOW"/>
+                            <Enumeration value="32768" label="AIRLINER_SUBSYSTEM_TYPE_POSITIONCONTROL"/>
+                            <Enumeration value="131072" label="AIRLINER_SUBSYSTEM_TYPE_RANGEFINDER"/>
+                            <Enumeration value="4096" label="AIRLINER_SUBSYSTEM_TYPE_YAWPOSITION"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_TecsMode_t">
+                    <EnumeratedParameterType name="AIRLINER_TecsMode_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="5" label="PX4_TECS_MODE_BAD_DESCENT"/>
-                            <Enumeration value="6" label="PX4_TECS_MODE_CLIMBOUT"/>
-                            <Enumeration value="3" label="PX4_TECS_MODE_LAND"/>
-                            <Enumeration value="4" label="PX4_TECS_MODE_LAND_THROTTLELIM"/>
-                            <Enumeration value="0" label="PX4_TECS_MODE_NORMAL"/>
-                            <Enumeration value="2" label="PX4_TECS_MODE_TAKEOFF"/>
-                            <Enumeration value="1" label="PX4_TECS_MODE_UNDERSPEED"/>
+                            <Enumeration value="5" label="AIRLINER_TECS_MODE_BAD_DESCENT"/>
+                            <Enumeration value="6" label="AIRLINER_TECS_MODE_CLIMBOUT"/>
+                            <Enumeration value="3" label="AIRLINER_TECS_MODE_LAND"/>
+                            <Enumeration value="4" label="AIRLINER_TECS_MODE_LAND_THROTTLELIM"/>
+                            <Enumeration value="0" label="AIRLINER_TECS_MODE_NORMAL"/>
+                            <Enumeration value="2" label="AIRLINER_TECS_MODE_TAKEOFF"/>
+                            <Enumeration value="1" label="AIRLINER_TECS_MODE_UNDERSPEED"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_TelemetryStatusRadioType_t">
+                    <EnumeratedParameterType name="AIRLINER_TelemetryStatusRadioType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="1" label="PX4_TELEMETRY_STATUS_RADIO_TYPE_3DR_RADIO"/>
-                            <Enumeration value="0" label="PX4_TELEMETRY_STATUS_RADIO_TYPE_GENERIC"/>
-                            <Enumeration value="2" label="PX4_TELEMETRY_STATUS_RADIO_TYPE_UBIQUITY_BULLET"/>
-                            <Enumeration value="4" label="PX4_TELEMETRY_STATUS_RADIO_TYPE_USB"/>
-                            <Enumeration value="3" label="PX4_TELEMETRY_STATUS_RADIO_TYPE_WIRE"/>
+                            <Enumeration value="1" label="AIRLINER_TELEMETRY_STATUS_RADIO_TYPE_3DR_RADIO"/>
+                            <Enumeration value="0" label="AIRLINER_TELEMETRY_STATUS_RADIO_TYPE_GENERIC"/>
+                            <Enumeration value="2" label="AIRLINER_TELEMETRY_STATUS_RADIO_TYPE_UBIQUITY_BULLET"/>
+                            <Enumeration value="4" label="AIRLINER_TELEMETRY_STATUS_RADIO_TYPE_USB"/>
+                            <Enumeration value="3" label="AIRLINER_TELEMETRY_STATUS_RADIO_TYPE_WIRE"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_VehicleCmd_t">
+                    <EnumeratedParameterType name="AIRLINER_VehicleCmd_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="400" label="PX4_VEHICLE_CMD_COMPONENT_ARM_DISARM"/>
-                            <Enumeration value="113" label="PX4_VEHICLE_CMD_CONDITION_CHANGE_ALT"/>
-                            <Enumeration value="112" label="PX4_VEHICLE_CMD_CONDITION_DELAY"/>
-                            <Enumeration value="114" label="PX4_VEHICLE_CMD_CONDITION_DISTANCE"/>
-                            <Enumeration value="159" label="PX4_VEHICLE_CMD_CONDITION_LAST"/>
-                            <Enumeration value="115" label="PX4_VEHICLE_CMD_CONDITION_YAW"/>
-                            <Enumeration value="1" label="PX4_VEHICLE_CMD_CUSTOM_0"/>
-                            <Enumeration value="2" label="PX4_VEHICLE_CMD_CUSTOM_1"/>
-                            <Enumeration value="3" label="PX4_VEHICLE_CMD_CUSTOM_2"/>
-                            <Enumeration value="178" label="PX4_VEHICLE_CMD_DO_CHANGE_SPEED"/>
-                            <Enumeration value="200" label="PX4_VEHICLE_CMD_DO_CONTROL_VIDEO"/>
-                            <Enumeration value="203" label="PX4_VEHICLE_CMD_DO_DIGICAM_CONTROL"/>
-                            <Enumeration value="207" label="PX4_VEHICLE_CMD_DO_FENCE_ENABLE"/>
-                            <Enumeration value="185" label="PX4_VEHICLE_CMD_DO_FLIGHTTERMINATION"/>
-                            <Enumeration value="191" label="PX4_VEHICLE_CMD_DO_GO_AROUND"/>
-                            <Enumeration value="222" label="PX4_VEHICLE_CMD_DO_GUIDED_LIMITS"/>
-                            <Enumeration value="221" label="PX4_VEHICLE_CMD_DO_GUIDED_MASTER"/>
-                            <Enumeration value="210" label="PX4_VEHICLE_CMD_DO_INVERTED_FLIGHT"/>
-                            <Enumeration value="177" label="PX4_VEHICLE_CMD_DO_JUMP"/>
-                            <Enumeration value="240" label="PX4_VEHICLE_CMD_DO_LAST"/>
-                            <Enumeration value="204" label="PX4_VEHICLE_CMD_DO_MOUNT_CONFIGURE"/>
-                            <Enumeration value="205" label="PX4_VEHICLE_CMD_DO_MOUNT_CONTROL"/>
-                            <Enumeration value="220" label="PX4_VEHICLE_CMD_DO_MOUNT_CONTROL_QUAT"/>
-                            <Enumeration value="208" label="PX4_VEHICLE_CMD_DO_PARACHUTE"/>
-                            <Enumeration value="193" label="PX4_VEHICLE_CMD_DO_PAUSE_CONTINUE"/>
-                            <Enumeration value="182" label="PX4_VEHICLE_CMD_DO_REPEAT_RELAY"/>
-                            <Enumeration value="184" label="PX4_VEHICLE_CMD_DO_REPEAT_SERVO"/>
-                            <Enumeration value="192" label="PX4_VEHICLE_CMD_DO_REPOSITION"/>
-                            <Enumeration value="206" label="PX4_VEHICLE_CMD_DO_SET_CAM_TRIGG_DIST"/>
-                            <Enumeration value="179" label="PX4_VEHICLE_CMD_DO_SET_HOME"/>
-                            <Enumeration value="176" label="PX4_VEHICLE_CMD_DO_SET_MODE"/>
-                            <Enumeration value="180" label="PX4_VEHICLE_CMD_DO_SET_PARAMETER"/>
-                            <Enumeration value="181" label="PX4_VEHICLE_CMD_DO_SET_RELAY"/>
-                            <Enumeration value="183" label="PX4_VEHICLE_CMD_DO_SET_SERVO"/>
-                            <Enumeration value="2003" label="PX4_VEHICLE_CMD_DO_TRIGGER_CONTROL"/>
-                            <Enumeration value="3000" label="PX4_VEHICLE_CMD_DO_VTOL_TRANSITION"/>
-                            <Enumeration value="300" label="PX4_VEHICLE_CMD_MISSION_START"/>
-                            <Enumeration value="92" label="PX4_VEHICLE_CMD_NAV_GUIDED_ENABLE"/>
-                            <Enumeration value="90" label="PX4_VEHICLE_CMD_NAV_GUIDED_LIMITS"/>
-                            <Enumeration value="91" label="PX4_VEHICLE_CMD_NAV_GUIDED_MASTER"/>
-                            <Enumeration value="21" label="PX4_VEHICLE_CMD_NAV_LAND"/>
-                            <Enumeration value="95" label="PX4_VEHICLE_CMD_NAV_LAST"/>
-                            <Enumeration value="19" label="PX4_VEHICLE_CMD_NAV_LOITER_TIME"/>
-                            <Enumeration value="31" label="PX4_VEHICLE_CMD_NAV_LOITER_TO_ALT"/>
-                            <Enumeration value="18" label="PX4_VEHICLE_CMD_NAV_LOITER_TURNS"/>
-                            <Enumeration value="17" label="PX4_VEHICLE_CMD_NAV_LOITER_UNLIM"/>
-                            <Enumeration value="81" label="PX4_VEHICLE_CMD_NAV_PATHPLANNING"/>
-                            <Enumeration value="20" label="PX4_VEHICLE_CMD_NAV_RETURN_TO_LAUNCH"/>
-                            <Enumeration value="80" label="PX4_VEHICLE_CMD_NAV_ROI"/>
-                            <Enumeration value="22" label="PX4_VEHICLE_CMD_NAV_TAKEOFF"/>
-                            <Enumeration value="85" label="PX4_VEHICLE_CMD_NAV_VTOL_LAND"/>
-                            <Enumeration value="84" label="PX4_VEHICLE_CMD_NAV_VTOL_TAKEOFF"/>
-                            <Enumeration value="16" label="PX4_VEHICLE_CMD_NAV_WAYPOINT"/>
-                            <Enumeration value="0" label="PX4_VEHICLE_CMD_NONE"/>
-                            <Enumeration value="252" label="PX4_VEHICLE_CMD_OVERRIDE_GOTO"/>
-                            <Enumeration value="30002" label="PX4_VEHICLE_CMD_PAYLOAD_CONTROL_DEPLOY"/>
-                            <Enumeration value="30001" label="PX4_VEHICLE_CMD_PAYLOAD_PREPARE_DEPLOY"/>
-                            <Enumeration value="241" label="PX4_VEHICLE_CMD_PREFLIGHT_CALIBRATION"/>
-                            <Enumeration value="246" label="PX4_VEHICLE_CMD_PREFLIGHT_REBOOT_SHUTDOWN"/>
-                            <Enumeration value="242" label="PX4_VEHICLE_CMD_PREFLIGHT_SET_SENSOR_OFFSETS"/>
-                            <Enumeration value="245" label="PX4_VEHICLE_CMD_PREFLIGHT_STORAGE"/>
-                            <Enumeration value="243" label="PX4_VEHICLE_CMD_PREFLIGHT_UAVCAN"/>
-                            <Enumeration value="500" label="PX4_VEHICLE_CMD_START_RX_PAIR"/>
+                            <Enumeration value="400" label="AIRLINER_VEHICLE_CMD_COMPONENT_ARM_DISARM"/>
+                            <Enumeration value="113" label="AIRLINER_VEHICLE_CMD_CONDITION_CHANGE_ALT"/>
+                            <Enumeration value="112" label="AIRLINER_VEHICLE_CMD_CONDITION_DELAY"/>
+                            <Enumeration value="114" label="AIRLINER_VEHICLE_CMD_CONDITION_DISTANCE"/>
+                            <Enumeration value="159" label="AIRLINER_VEHICLE_CMD_CONDITION_LAST"/>
+                            <Enumeration value="115" label="AIRLINER_VEHICLE_CMD_CONDITION_YAW"/>
+                            <Enumeration value="1" label="AIRLINER_VEHICLE_CMD_CUSTOM_0"/>
+                            <Enumeration value="2" label="AIRLINER_VEHICLE_CMD_CUSTOM_1"/>
+                            <Enumeration value="3" label="AIRLINER_VEHICLE_CMD_CUSTOM_2"/>
+                            <Enumeration value="178" label="AIRLINER_VEHICLE_CMD_DO_CHANGE_SPEED"/>
+                            <Enumeration value="200" label="AIRLINER_VEHICLE_CMD_DO_CONTROL_VIDEO"/>
+                            <Enumeration value="203" label="AIRLINER_VEHICLE_CMD_DO_DIGICAM_CONTROL"/>
+                            <Enumeration value="207" label="AIRLINER_VEHICLE_CMD_DO_FENCE_ENABLE"/>
+                            <Enumeration value="185" label="AIRLINER_VEHICLE_CMD_DO_FLIGHTTERMINATION"/>
+                            <Enumeration value="191" label="AIRLINER_VEHICLE_CMD_DO_GO_AROUND"/>
+                            <Enumeration value="222" label="AIRLINER_VEHICLE_CMD_DO_GUIDED_LIMITS"/>
+                            <Enumeration value="221" label="AIRLINER_VEHICLE_CMD_DO_GUIDED_MASTER"/>
+                            <Enumeration value="210" label="AIRLINER_VEHICLE_CMD_DO_INVERTED_FLIGHT"/>
+                            <Enumeration value="177" label="AIRLINER_VEHICLE_CMD_DO_JUMP"/>
+                            <Enumeration value="240" label="AIRLINER_VEHICLE_CMD_DO_LAST"/>
+                            <Enumeration value="204" label="AIRLINER_VEHICLE_CMD_DO_MOUNT_CONFIGURE"/>
+                            <Enumeration value="205" label="AIRLINER_VEHICLE_CMD_DO_MOUNT_CONTROL"/>
+                            <Enumeration value="220" label="AIRLINER_VEHICLE_CMD_DO_MOUNT_CONTROL_QUAT"/>
+                            <Enumeration value="208" label="AIRLINER_VEHICLE_CMD_DO_PARACHUTE"/>
+                            <Enumeration value="193" label="AIRLINER_VEHICLE_CMD_DO_PAUSE_CONTINUE"/>
+                            <Enumeration value="182" label="AIRLINER_VEHICLE_CMD_DO_REPEAT_RELAY"/>
+                            <Enumeration value="184" label="AIRLINER_VEHICLE_CMD_DO_REPEAT_SERVO"/>
+                            <Enumeration value="192" label="AIRLINER_VEHICLE_CMD_DO_REPOSITION"/>
+                            <Enumeration value="206" label="AIRLINER_VEHICLE_CMD_DO_SET_CAM_TRIGG_DIST"/>
+                            <Enumeration value="179" label="AIRLINER_VEHICLE_CMD_DO_SET_HOME"/>
+                            <Enumeration value="176" label="AIRLINER_VEHICLE_CMD_DO_SET_MODE"/>
+                            <Enumeration value="180" label="AIRLINER_VEHICLE_CMD_DO_SET_PARAMETER"/>
+                            <Enumeration value="181" label="AIRLINER_VEHICLE_CMD_DO_SET_RELAY"/>
+                            <Enumeration value="183" label="AIRLINER_VEHICLE_CMD_DO_SET_SERVO"/>
+                            <Enumeration value="2003" label="AIRLINER_VEHICLE_CMD_DO_TRIGGER_CONTROL"/>
+                            <Enumeration value="3000" label="AIRLINER_VEHICLE_CMD_DO_VTOL_TRANSITION"/>
+                            <Enumeration value="300" label="AIRLINER_VEHICLE_CMD_MISSION_START"/>
+                            <Enumeration value="92" label="AIRLINER_VEHICLE_CMD_NAV_GUIDED_ENABLE"/>
+                            <Enumeration value="90" label="AIRLINER_VEHICLE_CMD_NAV_GUIDED_LIMITS"/>
+                            <Enumeration value="91" label="AIRLINER_VEHICLE_CMD_NAV_GUIDED_MASTER"/>
+                            <Enumeration value="21" label="AIRLINER_VEHICLE_CMD_NAV_LAND"/>
+                            <Enumeration value="95" label="AIRLINER_VEHICLE_CMD_NAV_LAST"/>
+                            <Enumeration value="19" label="AIRLINER_VEHICLE_CMD_NAV_LOITER_TIME"/>
+                            <Enumeration value="31" label="AIRLINER_VEHICLE_CMD_NAV_LOITER_TO_ALT"/>
+                            <Enumeration value="18" label="AIRLINER_VEHICLE_CMD_NAV_LOITER_TURNS"/>
+                            <Enumeration value="17" label="AIRLINER_VEHICLE_CMD_NAV_LOITER_UNLIM"/>
+                            <Enumeration value="81" label="AIRLINER_VEHICLE_CMD_NAV_PATHPLANNING"/>
+                            <Enumeration value="20" label="AIRLINER_VEHICLE_CMD_NAV_RETURN_TO_LAUNCH"/>
+                            <Enumeration value="80" label="AIRLINER_VEHICLE_CMD_NAV_ROI"/>
+                            <Enumeration value="22" label="AIRLINER_VEHICLE_CMD_NAV_TAKEOFF"/>
+                            <Enumeration value="85" label="AIRLINER_VEHICLE_CMD_NAV_VTOL_LAND"/>
+                            <Enumeration value="84" label="AIRLINER_VEHICLE_CMD_NAV_VTOL_TAKEOFF"/>
+                            <Enumeration value="16" label="AIRLINER_VEHICLE_CMD_NAV_WAYPOINT"/>
+                            <Enumeration value="0" label="AIRLINER_VEHICLE_CMD_NONE"/>
+                            <Enumeration value="252" label="AIRLINER_VEHICLE_CMD_OVERRIDE_GOTO"/>
+                            <Enumeration value="30002" label="AIRLINER_VEHICLE_CMD_PAYLOAD_CONTROL_DEPLOY"/>
+                            <Enumeration value="30001" label="AIRLINER_VEHICLE_CMD_PAYLOAD_PREPARE_DEPLOY"/>
+                            <Enumeration value="241" label="AIRLINER_VEHICLE_CMD_PREFLIGHT_CALIBRATION"/>
+                            <Enumeration value="246" label="AIRLINER_VEHICLE_CMD_PREFLIGHT_REBOOT_SHUTDOWN"/>
+                            <Enumeration value="242" label="AIRLINER_VEHICLE_CMD_PREFLIGHT_SET_SENSOR_OFFSETS"/>
+                            <Enumeration value="245" label="AIRLINER_VEHICLE_CMD_PREFLIGHT_STORAGE"/>
+                            <Enumeration value="243" label="AIRLINER_VEHICLE_CMD_PREFLIGHT_UAVCAN"/>
+                            <Enumeration value="500" label="AIRLINER_VEHICLE_CMD_START_RX_PAIR"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_GpsFixType_t">
+                    <EnumeratedParameterType name="AIRLINER_GpsFixType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_GPS_2D_FIX"/>
-                            <Enumeration value="3" label="PX4_GPS_3D_FIX"/>
-                            <Enumeration value="4" label="PX4_GPS_DGPS_FIX"/>
-                            <Enumeration value="0" label="PX4_GPS_NONE0_FIX"/>
-                            <Enumeration value="1" label="PX4_GPS_NONE1_FIX"/>
-                            <Enumeration value="5" label="PX4_GPS_RTK_FIX"/>
+                            <Enumeration value="2" label="AIRLINER_GPS_2D_FIX"/>
+                            <Enumeration value="3" label="AIRLINER_GPS_3D_FIX"/>
+                            <Enumeration value="4" label="AIRLINER_GPS_DGPS_FIX"/>
+                            <Enumeration value="0" label="AIRLINER_GPS_NONE0_FIX"/>
+                            <Enumeration value="1" label="AIRLINER_GPS_NONE1_FIX"/>
+                            <Enumeration value="5" label="AIRLINER_GPS_RTK_FIX"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_NavigationState_t">
+                    <EnumeratedParameterType name="AIRLINER_NavigationState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="10" label="PX4_NAVIGATION_STATE_ACRO"/>
-                            <Enumeration value="1" label="PX4_NAVIGATION_STATE_ALTCTL"/>
-                            <Enumeration value="19" label="PX4_NAVIGATION_STATE_AUTO_FOLLOW_TARGET"/>
-                            <Enumeration value="18" label="PX4_NAVIGATION_STATE_AUTO_LAND"/>
-                            <Enumeration value="8" label="PX4_NAVIGATION_STATE_AUTO_LANDENGFAIL"/>
-                            <Enumeration value="9" label="PX4_NAVIGATION_STATE_AUTO_LANDGPSFAIL"/>
-                            <Enumeration value="4" label="PX4_NAVIGATION_STATE_AUTO_LOITER"/>
-                            <Enumeration value="3" label="PX4_NAVIGATION_STATE_AUTO_MISSION"/>
-                            <Enumeration value="20" label="PX4_NAVIGATION_STATE_AUTO_PRECLAND"/>
-                            <Enumeration value="6" label="PX4_NAVIGATION_STATE_AUTO_RCRECOVER"/>
-                            <Enumeration value="7" label="PX4_NAVIGATION_STATE_AUTO_RTGS"/>
-                            <Enumeration value="5" label="PX4_NAVIGATION_STATE_AUTO_RTL"/>
-                            <Enumeration value="17" label="PX4_NAVIGATION_STATE_AUTO_TAKEOFF"/>
-                            <Enumeration value="12" label="PX4_NAVIGATION_STATE_DESCEND"/>
-                            <Enumeration value="0" label="PX4_NAVIGATION_STATE_MANUAL"/>
-                            <Enumeration value="21" label="PX4_NAVIGATION_STATE_MAX"/>
-                            <Enumeration value="14" label="PX4_NAVIGATION_STATE_OFFBOARD"/>
-                            <Enumeration value="2" label="PX4_NAVIGATION_STATE_POSCTL"/>
-                            <Enumeration value="16" label="PX4_NAVIGATION_STATE_RATTITUDE"/>
-                            <Enumeration value="15" label="PX4_NAVIGATION_STATE_STAB"/>
-                            <Enumeration value="13" label="PX4_NAVIGATION_STATE_TERMINATION"/>
-                            <Enumeration value="11" label="PX4_NAVIGATION_STATE_UNUSED"/>
+                            <Enumeration value="10" label="AIRLINER_NAVIGATION_STATE_ACRO"/>
+                            <Enumeration value="1" label="AIRLINER_NAVIGATION_STATE_ALTCTL"/>
+                            <Enumeration value="19" label="AIRLINER_NAVIGATION_STATE_AUTO_FOLLOW_TARGET"/>
+                            <Enumeration value="18" label="AIRLINER_NAVIGATION_STATE_AUTO_LAND"/>
+                            <Enumeration value="8" label="AIRLINER_NAVIGATION_STATE_AUTO_LANDENGFAIL"/>
+                            <Enumeration value="9" label="AIRLINER_NAVIGATION_STATE_AUTO_LANDGPSFAIL"/>
+                            <Enumeration value="4" label="AIRLINER_NAVIGATION_STATE_AUTO_LOITER"/>
+                            <Enumeration value="3" label="AIRLINER_NAVIGATION_STATE_AUTO_MISSION"/>
+                            <Enumeration value="20" label="AIRLINER_NAVIGATION_STATE_AUTO_PRECLAND"/>
+                            <Enumeration value="6" label="AIRLINER_NAVIGATION_STATE_AUTO_RCRECOVER"/>
+                            <Enumeration value="7" label="AIRLINER_NAVIGATION_STATE_AUTO_RTGS"/>
+                            <Enumeration value="5" label="AIRLINER_NAVIGATION_STATE_AUTO_RTL"/>
+                            <Enumeration value="17" label="AIRLINER_NAVIGATION_STATE_AUTO_TAKEOFF"/>
+                            <Enumeration value="12" label="AIRLINER_NAVIGATION_STATE_DESCEND"/>
+                            <Enumeration value="0" label="AIRLINER_NAVIGATION_STATE_MANUAL"/>
+                            <Enumeration value="21" label="AIRLINER_NAVIGATION_STATE_MAX"/>
+                            <Enumeration value="14" label="AIRLINER_NAVIGATION_STATE_OFFBOARD"/>
+                            <Enumeration value="2" label="AIRLINER_NAVIGATION_STATE_POSCTL"/>
+                            <Enumeration value="16" label="AIRLINER_NAVIGATION_STATE_RATTITUDE"/>
+                            <Enumeration value="15" label="AIRLINER_NAVIGATION_STATE_STAB"/>
+                            <Enumeration value="13" label="AIRLINER_NAVIGATION_STATE_TERMINATION"/>
+                            <Enumeration value="11" label="AIRLINER_NAVIGATION_STATE_UNUSED"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_ArmingState_t">
+                    <EnumeratedParameterType name="AIRLINER_ArmingState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_ARMING_STATE_ARMED"/>
-                            <Enumeration value="3" label="PX4_ARMING_STATE_ARMED_ERROR"/>
-                            <Enumeration value="0" label="PX4_ARMING_STATE_INIT"/>
-                            <Enumeration value="6" label="PX4_ARMING_STATE_IN_AIR_RESTORE"/>
-                            <Enumeration value="7" label="PX4_ARMING_STATE_MAX"/>
-                            <Enumeration value="5" label="PX4_ARMING_STATE_REBOOT"/>
-                            <Enumeration value="1" label="PX4_ARMING_STATE_STANDBY"/>
-                            <Enumeration value="4" label="PX4_ARMING_STATE_STANDBY_ERROR"/>
+                            <Enumeration value="2" label="AIRLINER_ARMING_STATE_ARMED"/>
+                            <Enumeration value="3" label="AIRLINER_ARMING_STATE_ARMED_ERROR"/>
+                            <Enumeration value="0" label="AIRLINER_ARMING_STATE_INIT"/>
+                            <Enumeration value="6" label="AIRLINER_ARMING_STATE_IN_AIR_RESTORE"/>
+                            <Enumeration value="7" label="AIRLINER_ARMING_STATE_MAX"/>
+                            <Enumeration value="5" label="AIRLINER_ARMING_STATE_REBOOT"/>
+                            <Enumeration value="1" label="AIRLINER_ARMING_STATE_STANDBY"/>
+                            <Enumeration value="4" label="AIRLINER_ARMING_STATE_STANDBY_ERROR"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_HilState_t">
+                    <EnumeratedParameterType name="AIRLINER_HilState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="0" label="PX4_HIL_STATE_OFF"/>
-                            <Enumeration value="1" label="PX4_HIL_STATE_ON"/>
+                            <Enumeration value="0" label="AIRLINER_HIL_STATE_OFF"/>
+                            <Enumeration value="1" label="AIRLINER_HIL_STATE_ON"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_SystemType_t">
+                    <EnumeratedParameterType name="AIRLINER_SystemType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="27" label="PX4_SYSTEM_TYPE_ADSB"/>
-                            <Enumeration value="7" label="PX4_SYSTEM_TYPE_AIRSHIP"/>
-                            <Enumeration value="5" label="PX4_SYSTEM_TYPE_ANTENNA_TRACKER"/>
-                            <Enumeration value="3" label="PX4_SYSTEM_TYPE_COAXIAL"/>
-                            <Enumeration value="1" label="PX4_SYSTEM_TYPE_FIXED_WING"/>
-                            <Enumeration value="16" label="PX4_SYSTEM_TYPE_FLAPPING_WING"/>
-                            <Enumeration value="8" label="PX4_SYSTEM_TYPE_FREE_BALLOON"/>
-                            <Enumeration value="6" label="PX4_SYSTEM_TYPE_GCS"/>
-                            <Enumeration value="0" label="PX4_SYSTEM_TYPE_GENERIC"/>
-                            <Enumeration value="26" label="PX4_SYSTEM_TYPE_GIMBAL"/>
-                            <Enumeration value="10" label="PX4_SYSTEM_TYPE_GROUND_ROVER"/>
-                            <Enumeration value="4" label="PX4_SYSTEM_TYPE_HELICOPTER"/>
-                            <Enumeration value="13" label="PX4_SYSTEM_TYPE_HEXAROTOR"/>
-                            <Enumeration value="17" label="PX4_SYSTEM_TYPE_KITE"/>
-                            <Enumeration value="14" label="PX4_SYSTEM_TYPE_OCTOROTOR"/>
-                            <Enumeration value="18" label="PX4_SYSTEM_TYPE_ONBOARD_CONTROLLER"/>
-                            <Enumeration value="2" label="PX4_SYSTEM_TYPE_QUADROTOR"/>
-                            <Enumeration value="9" label="PX4_SYSTEM_TYPE_ROCKET"/>
-                            <Enumeration value="12" label="PX4_SYSTEM_TYPE_SUBMARINE"/>
-                            <Enumeration value="11" label="PX4_SYSTEM_TYPE_SURFACE_BOAT"/>
-                            <Enumeration value="15" label="PX4_SYSTEM_TYPE_TRICOPTER"/>
-                            <Enumeration value="19" label="PX4_SYSTEM_TYPE_VTOL_DUOROTOR"/>
-                            <Enumeration value="20" label="PX4_SYSTEM_TYPE_VTOL_QUADROTOR"/>
-                            <Enumeration value="22" label="PX4_SYSTEM_TYPE_VTOL_RESERVED2"/>
-                            <Enumeration value="23" label="PX4_SYSTEM_TYPE_VTOL_RESERVED3"/>
-                            <Enumeration value="24" label="PX4_SYSTEM_TYPE_VTOL_RESERVED4"/>
-                            <Enumeration value="25" label="PX4_SYSTEM_TYPE_VTOL_RESERVED5"/>
-                            <Enumeration value="21" label="PX4_SYSTEM_TYPE_VTOL_TILTROTOR"/>
+                            <Enumeration value="27" label="AIRLINER_SYSTEM_TYPE_ADSB"/>
+                            <Enumeration value="7" label="AIRLINER_SYSTEM_TYPE_AIRSHIP"/>
+                            <Enumeration value="5" label="AIRLINER_SYSTEM_TYPE_ANTENNA_TRACKER"/>
+                            <Enumeration value="3" label="AIRLINER_SYSTEM_TYPE_COAXIAL"/>
+                            <Enumeration value="1" label="AIRLINER_SYSTEM_TYPE_FIXED_WING"/>
+                            <Enumeration value="16" label="AIRLINER_SYSTEM_TYPE_FLAPPING_WING"/>
+                            <Enumeration value="8" label="AIRLINER_SYSTEM_TYPE_FREE_BALLOON"/>
+                            <Enumeration value="6" label="AIRLINER_SYSTEM_TYPE_GCS"/>
+                            <Enumeration value="0" label="AIRLINER_SYSTEM_TYPE_GENERIC"/>
+                            <Enumeration value="26" label="AIRLINER_SYSTEM_TYPE_GIMBAL"/>
+                            <Enumeration value="10" label="AIRLINER_SYSTEM_TYPE_GROUND_ROVER"/>
+                            <Enumeration value="4" label="AIRLINER_SYSTEM_TYPE_HELICOPTER"/>
+                            <Enumeration value="13" label="AIRLINER_SYSTEM_TYPE_HEXAROTOR"/>
+                            <Enumeration value="17" label="AIRLINER_SYSTEM_TYPE_KITE"/>
+                            <Enumeration value="14" label="AIRLINER_SYSTEM_TYPE_OCTOROTOR"/>
+                            <Enumeration value="18" label="AIRLINER_SYSTEM_TYPE_ONBOARD_CONTROLLER"/>
+                            <Enumeration value="2" label="AIRLINER_SYSTEM_TYPE_QUADROTOR"/>
+                            <Enumeration value="9" label="AIRLINER_SYSTEM_TYPE_ROCKET"/>
+                            <Enumeration value="12" label="AIRLINER_SYSTEM_TYPE_SUBMARINE"/>
+                            <Enumeration value="11" label="AIRLINER_SYSTEM_TYPE_SURFACE_BOAT"/>
+                            <Enumeration value="15" label="AIRLINER_SYSTEM_TYPE_TRICOPTER"/>
+                            <Enumeration value="19" label="AIRLINER_SYSTEM_TYPE_VTOL_DUOROTOR"/>
+                            <Enumeration value="20" label="AIRLINER_SYSTEM_TYPE_VTOL_QUADROTOR"/>
+                            <Enumeration value="22" label="AIRLINER_SYSTEM_TYPE_VTOL_RESERVED2"/>
+                            <Enumeration value="23" label="AIRLINER_SYSTEM_TYPE_VTOL_RESERVED3"/>
+                            <Enumeration value="24" label="AIRLINER_SYSTEM_TYPE_VTOL_RESERVED4"/>
+                            <Enumeration value="25" label="AIRLINER_SYSTEM_TYPE_VTOL_RESERVED5"/>
+                            <Enumeration value="21" label="AIRLINER_SYSTEM_TYPE_VTOL_TILTROTOR"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_RcInMode_t">
+                    <EnumeratedParameterType name="AIRLINER_RcInMode_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="0" label="PX4_RC_IN_MODE_DEFAULT"/>
-                            <Enumeration value="2" label="PX4_RC_IN_MODE_GENERATED"/>
-                            <Enumeration value="1" label="PX4_RC_IN_MODE_OFF"/>
+                            <Enumeration value="0" label="AIRLINER_RC_IN_MODE_DEFAULT"/>
+                            <Enumeration value="2" label="AIRLINER_RC_IN_MODE_GENERATED"/>
+                            <Enumeration value="1" label="AIRLINER_RC_IN_MODE_OFF"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <AggregateParameterType name="PX4_ActuatorArmedMsg_t">
+                    <AggregateParameterType name="AIRLINER_ActuatorArmedMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Armed" typeRef="BaseType/boolean8_LE"/>
@@ -9255,21 +9255,21 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_ActuatorControlsMsg_t">
+                    <AggregateParameterType name="AIRLINER_ActuatorControlsMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="SampleTime" typeRef="BaseType/uint64_LE"/>
                             <Member name="Control" typeRef="BaseType/Array_7Dim_BaseType_float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_ActuatorOutputsMsg_t">
+                    <AggregateParameterType name="AIRLINER_ActuatorOutputsMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Count" typeRef="BaseType/uint32_LE"/>
                             <Member name="Output" typeRef="BaseType/Array_15Dim_BaseType_float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_AirspeedMsg_t">
+                    <AggregateParameterType name="AIRLINER_AirspeedMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="IndicatedAirspeed" typeRef="BaseType/float32_LE"/>
@@ -9279,7 +9279,7 @@
                             <Member name="Confidence" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_BatteryStatusMsg_t">
+                    <AggregateParameterType name="AIRLINER_BatteryStatusMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Voltage" typeRef="BaseType/float32_LE"/>
@@ -9292,16 +9292,16 @@
                             <Member name="CellCount" typeRef="BaseType/int32_LE"/>
                             <Member name="Connected" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="Warning" typeRef="PX4_BatteryWarningSeverity_t"/>
+                            <Member name="Warning" typeRef="AIRLINER_BatteryWarningSeverity_t"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_CommanderStateMsg_t">
+                    <AggregateParameterType name="AIRLINER_CommanderStateMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
-                            <Member name="MainState" typeRef="PX4_CommanderMainState_t"/>
+                            <Member name="MainState" typeRef="AIRLINER_CommanderMainState_t"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_ControlStateMsg_t">
+                    <AggregateParameterType name="AIRLINER_ControlStateMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="AccX" typeRef="BaseType/float32_LE"/>
@@ -9330,7 +9330,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_DifferentialPressureMsg_t">
+                    <AggregateParameterType name="AIRLINER_DifferentialPressureMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="ErrorCount" typeRef="BaseType/uint64_LE"/>
@@ -9339,19 +9339,19 @@
                             <Member name="Temperature" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_DistanceSensorMsg_t">
+                    <AggregateParameterType name="AIRLINER_DistanceSensorMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="MinDistance" typeRef="BaseType/float32_LE"/>
                             <Member name="MaxDistance" typeRef="BaseType/float32_LE"/>
                             <Member name="CurrentDistance" typeRef="BaseType/float32_LE"/>
                             <Member name="Covariance" typeRef="BaseType/float32_LE"/>
-                            <Member name="Orientation" typeRef="PX4_SensorOrientation_t"/>
-                            <Member name="Type" typeRef="PX4_DistanceSensorType_t"/>
+                            <Member name="Orientation" typeRef="AIRLINER_SensorOrientation_t"/>
+                            <Member name="Type" typeRef="AIRLINER_DistanceSensorType_t"/>
                             <Member name="ID" typeRef="BaseType/uint8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_EstimatorStatusMsg_t">
+                    <AggregateParameterType name="AIRLINER_EstimatorStatusMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="States" typeRef="BaseType/Array_31Dim_BaseType_float32_LE"/>
@@ -9367,7 +9367,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding24_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_GpsInjectDataMsg_t">
+                    <AggregateParameterType name="AIRLINER_GpsInjectDataMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Len" typeRef="BaseType/uint8_LE"/>
@@ -9375,7 +9375,7 @@
                             <Member name="Data" typeRef="BaseType/Array_181Dim_BaseType_int8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_HomePositionMsg_t">
+                    <AggregateParameterType name="AIRLINER_HomePositionMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Lat" typeRef="BaseType/float64_LE"/>
@@ -9390,7 +9390,7 @@
                             <Member name="DirectionZ" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_InputRcMsg_t">
+                    <AggregateParameterType name="AIRLINER_InputRcMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="LastSignal" typeRef="BaseType/uint64_LE"/>
@@ -9402,10 +9402,10 @@
                             <Member name="Values" typeRef="BaseType/Array_17Dim_BaseType_uint16_LE"/>
                             <Member name="RcFailsafe" typeRef="BaseType/boolean8_LE"/>
                             <Member name="RcLost" typeRef="BaseType/boolean8_LE"/>
-                            <Member name="InputSource" typeRef="PX4_RcInputSource_t"/>
+                            <Member name="InputSource" typeRef="AIRLINER_RcInputSource_t"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_LedControlMsg_t">
+                    <AggregateParameterType name="AIRLINER_LedControlMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="LedMask" typeRef="BaseType/uint8_LE"/>
@@ -9416,7 +9416,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding24_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_ManualControlSetpointMsg_t">
+                    <AggregateParameterType name="AIRLINER_ManualControlSetpointMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="X" typeRef="BaseType/float32_LE"/>
@@ -9429,25 +9429,25 @@
                             <Member name="Aux3" typeRef="BaseType/float32_LE"/>
                             <Member name="Aux4" typeRef="BaseType/float32_LE"/>
                             <Member name="Aux5" typeRef="BaseType/float32_LE"/>
-                            <Member name="ModeSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="ReturnSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="RattitudeSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="PosctlSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="LoiterSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="AcroSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="OffboardSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="KillSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="TransitionSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="GearSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="ArmSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="StabSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="ManSwitch" typeRef="PX4_SwitchPos_t"/>
-                            <Member name="ModeSlot" typeRef="PX4_ModeSlot_t"/>
-                            <Member name="DataSource" typeRef="PX4_ManualControlDataSource_t"/>
-                            <Member name="AltctlSwitch" typeRef="PX4_SwitchPos_t"/>
+                            <Member name="ModeSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="ReturnSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="RattitudeSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="PosctlSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="LoiterSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="AcroSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="OffboardSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="KillSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="TransitionSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="GearSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="ArmSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="StabSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="ManSwitch" typeRef="AIRLINER_SwitchPos_t"/>
+                            <Member name="ModeSlot" typeRef="AIRLINER_ModeSlot_t"/>
+                            <Member name="DataSource" typeRef="AIRLINER_ManualControlDataSource_t"/>
+                            <Member name="AltctlSwitch" typeRef="AIRLINER_SwitchPos_t"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_MissionMsg_t">
+                    <AggregateParameterType name="AIRLINER_MissionMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="DatamanID" typeRef="BaseType/int32_LE"/>
@@ -9455,7 +9455,7 @@
                             <Member name="CurrentSeq" typeRef="BaseType/int32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_MissionResultMsg_t">
+                    <AggregateParameterType name="AIRLINER_MissionResultMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="InstanceCount" typeRef="BaseType/uint32_LE"/>
@@ -9474,7 +9474,7 @@
                             <Member name="ItemDoJumpChanged" typeRef="BaseType/boolean8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_OpticalFlowMsg_t">
+                    <AggregateParameterType name="AIRLINER_OpticalFlowMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="PixelFlowXIntegral" typeRef="BaseType/float32_LE"/>
@@ -9492,7 +9492,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_PositionSetpoint_t">
+                    <AggregateParameterType name="AIRLINER_PositionSetpoint_t">
                         <MemberList>
                             <Member name="Lon" typeRef="BaseType/float64_LE"/>
                             <Member name="X" typeRef="BaseType/float32_LE"/>
@@ -9514,7 +9514,7 @@
                             <Member name="CruisingThrottle" typeRef="BaseType/float32_LE"/>
                             <Member name="Valid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="Type" typeRef="PX4_SetpointType_t"/>
+                            <Member name="Type" typeRef="AIRLINER_SetpointType_t"/>
                             <Member name="PositionValid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="VelocityValid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="VelocityFrame" typeRef="BaseType/uint8_LE"/>
@@ -9528,15 +9528,15 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_PositionSetpointTripletMsg_t">
+                    <AggregateParameterType name="AIRLINER_PositionSetpointTripletMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
-                            <Member name="Previous" typeRef="PX4_PositionSetpoint_t"/>
-                            <Member name="Current" typeRef="PX4_PositionSetpoint_t"/>
-                            <Member name="Next" typeRef="PX4_PositionSetpoint_t"/>
+                            <Member name="Previous" typeRef="AIRLINER_PositionSetpoint_t"/>
+                            <Member name="Current" typeRef="AIRLINER_PositionSetpoint_t"/>
+                            <Member name="Next" typeRef="AIRLINER_PositionSetpoint_t"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_RcChannelsMsg_t">
+                    <AggregateParameterType name="AIRLINER_RcChannelsMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="TimestampLastValid" typeRef="BaseType/uint64_LE"/>
@@ -9544,13 +9544,13 @@
                             <Member name="FrameDropCount" typeRef="BaseType/uint32_LE"/>
                             <Member name="ChannelCount" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="Function" typeRef="BaseType/Array_26Dim__cpd_apps_px4lib_PX4_RcChannelFunction_t"/>
+                            <Member name="Function" typeRef="BaseType/Array_26Dim__cpd_apps_airlinerlib_AIRLINER_RcChannelFunction_t"/>
                             <Member name="RSSI" typeRef="BaseType/uint8_LE"/>
                             <Member name="SignalLost" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SafetyMsg_t">
+                    <AggregateParameterType name="AIRLINER_SafetyMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="SafetySwitchAvailable" typeRef="BaseType/boolean8_LE"/>
@@ -9558,7 +9558,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SatelliteInfoMsg_t">
+                    <AggregateParameterType name="AIRLINER_SatelliteInfoMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Count" typeRef="BaseType/uint8_LE"/>
@@ -9570,7 +9570,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding24_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SensorAccelMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorAccelMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="IntegralDt" typeRef="BaseType/uint64_LE"/>
@@ -9591,7 +9591,7 @@
                             <Member name="TemperatureRaw" typeRef="BaseType/int16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SensorBaroMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorBaroMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="ErrorCount" typeRef="BaseType/uint32_LE"/>
@@ -9600,7 +9600,7 @@
                             <Member name="Temperature" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SensorCombinedMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorCombinedMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="GyroRad" typeRef="BaseType/Array_2Dim_BaseType_float32_LE"/>
@@ -9619,7 +9619,7 @@
                             <Member name="BaroTemp" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SensorGyroMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorGyroMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="IntegralDt" typeRef="BaseType/uint64_LE"/>
@@ -9640,7 +9640,7 @@
                             <Member name="TemperatureRaw" typeRef="BaseType/int16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SensorMagMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorMagMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="ErrorCount" typeRef="BaseType/uint64_LE"/>
@@ -9657,19 +9657,19 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SubsystemInfoMsg_t">
+                    <AggregateParameterType name="AIRLINER_SubsystemInfoMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
-                            <Member name="SubsystemType" typeRef="PX4_SubsystemType_t"/>
+                            <Member name="SubsystemType" typeRef="AIRLINER_SubsystemType_t"/>
                             <Member name="Present" typeRef="BaseType/boolean8_LE"/>
                             <Member name="Enabled" typeRef="BaseType/boolean8_LE"/>
                             <Member name="Ok" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare_end" typeRef="BaseType/_padding8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_TecsStatusMsg_t">
+                    <AggregateParameterType name="AIRLINER_TecsStatusMsg_t">
                         <MemberList>
-                            <Member name="Mode" typeRef="PX4_TecsMode_t"/>
+                            <Member name="Mode" typeRef="AIRLINER_TecsMode_t"/>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="AltitudeSp" typeRef="BaseType/float32_LE"/>
                             <Member name="AltitudeFiltered" typeRef="BaseType/float32_LE"/>
@@ -9687,14 +9687,14 @@
                             <Member name="PitchInteg" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_TelemetryStatusMsg_t">
+                    <AggregateParameterType name="AIRLINER_TelemetryStatusMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="HeartbeatTime" typeRef="BaseType/uint64_LE"/>
                             <Member name="TelemTime" typeRef="BaseType/uint64_LE"/>
                             <Member name="RxErrors" typeRef="BaseType/uint16_LE"/>
                             <Member name="Fixed" typeRef="BaseType/uint16_LE"/>
-                            <Member name="Type" typeRef="PX4_TelemetryStatusRadioType_t"/>
+                            <Member name="Type" typeRef="AIRLINER_TelemetryStatusRadioType_t"/>
                             <Member name="RSSI" typeRef="BaseType/uint8_LE"/>
                             <Member name="RemoteRSSI" typeRef="BaseType/uint8_LE"/>
                             <Member name="Noise" typeRef="BaseType/uint8_LE"/>
@@ -9705,7 +9705,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleAttitudeMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleAttitudeMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="RollSpeed" typeRef="BaseType/float32_LE"/>
@@ -9714,7 +9714,7 @@
                             <Member name="Q" typeRef="BaseType/Array_3Dim_BaseType_float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleAttitudeSetpointMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleAttitudeSetpointMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="RollBody" typeRef="BaseType/float32_LE"/>
@@ -9735,7 +9735,7 @@
                             <Member name="LandingGear" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleCommandMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleCommandMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Param5" typeRef="BaseType/float64_LE"/>
@@ -9745,7 +9745,7 @@
                             <Member name="Param3" typeRef="BaseType/float32_LE"/>
                             <Member name="Param4" typeRef="BaseType/float32_LE"/>
                             <Member name="Param7" typeRef="BaseType/float32_LE"/>
-                            <Member name="Command" typeRef="PX4_VehicleCmd_t"/>
+                            <Member name="Command" typeRef="AIRLINER_VehicleCmd_t"/>
                             <Member name="TargetSystem" typeRef="BaseType/uint32_LE"/>
                             <Member name="TargetComponent" typeRef="BaseType/uint32_LE"/>
                             <Member name="SourceSystem" typeRef="BaseType/uint32_LE"/>
@@ -9754,7 +9754,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding24_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleControlModeMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleControlModeMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Armed" typeRef="BaseType/boolean8_LE"/>
@@ -9778,7 +9778,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleGlobalPositionMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleGlobalPositionMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="TimeUtcUsec" typeRef="BaseType/uint64_LE"/>
@@ -9805,7 +9805,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleGpsPositionMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleGpsPositionMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="TimeUtcUsec" typeRef="BaseType/uint64_LE"/>
@@ -9827,13 +9827,13 @@
                             <Member name="Vel_d_m_s" typeRef="BaseType/float32_LE"/>
                             <Member name="COG" typeRef="BaseType/float32_LE"/>
                             <Member name="TimestampTimeRelative" typeRef="BaseType/int32_LE"/>
-                            <Member name="FixType" typeRef="PX4_GpsFixType_t"/>
+                            <Member name="FixType" typeRef="AIRLINER_GpsFixType_t"/>
                             <Member name="VelNedValid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="SatellitesUsed" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleLandDetectedMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleLandDetectedMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="AltMax" typeRef="BaseType/float32_LE"/>
@@ -9843,7 +9843,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleLocalPositionMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleLocalPositionMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="RefTimestamp" typeRef="BaseType/uint64_LE"/>
@@ -9885,7 +9885,7 @@
                             <Member name="DistBottomValid" typeRef="BaseType/boolean8_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleRatesSetpointMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleRatesSetpointMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Roll" typeRef="BaseType/float32_LE"/>
@@ -9894,7 +9894,7 @@
                             <Member name="Thrust" typeRef="BaseType/float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_VehicleStatusMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleStatusMsg_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="SystemID" typeRef="BaseType/uint32_LE"/>
@@ -9902,19 +9902,19 @@
                             <Member name="OnboardControlSensorsPresent" typeRef="BaseType/uint32_LE"/>
                             <Member name="OnboardControlSensorsEnabled" typeRef="BaseType/uint32_LE"/>
                             <Member name="OnboardControlSensorsHealth" typeRef="BaseType/uint32_LE"/>
-                            <Member name="NavState" typeRef="PX4_NavigationState_t"/>
-                            <Member name="ArmingState" typeRef="PX4_ArmingState_t"/>
-                            <Member name="HilState" typeRef="PX4_HilState_t"/>
+                            <Member name="NavState" typeRef="AIRLINER_NavigationState_t"/>
+                            <Member name="ArmingState" typeRef="AIRLINER_ArmingState_t"/>
+                            <Member name="HilState" typeRef="AIRLINER_HilState_t"/>
                             <Member name="Failsafe" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="SystemType" typeRef="PX4_SystemType_t"/>
+                            <Member name="SystemType" typeRef="AIRLINER_SystemType_t"/>
                             <Member name="IsRotaryWing" typeRef="BaseType/boolean8_LE"/>
                             <Member name="IsVtol" typeRef="BaseType/boolean8_LE"/>
                             <Member name="VtolFwPermanentStab" typeRef="BaseType/boolean8_LE"/>
                             <Member name="InTransitionMode" typeRef="BaseType/boolean8_LE"/>
                             <Member name="RcSignalLost" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare1" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="RcInputMode" typeRef="PX4_RcInMode_t"/>
+                            <Member name="RcInputMode" typeRef="AIRLINER_RcInMode_t"/>
                             <Member name="DataLinkLost" typeRef="BaseType/boolean8_LE"/>
                             <Member name="DataLinkLostCounter" typeRef="BaseType/uint8_LE"/>
                             <Member name="EngineFailure" typeRef="BaseType/boolean8_LE"/>
@@ -9923,7 +9923,7 @@
                             <Member name="_spare_end" typeRef="BaseType/_padding24_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_Position_Control_Status_t">
+                    <AggregateParameterType name="AIRLINER_Position_Control_Status_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="NAV_ROLL" typeRef="BaseType/float32_LE"/>
@@ -9942,58 +9942,58 @@
                     </AggregateParameterType>
                 </ParameterTypeSet>
                 <ParameterSet>
-                    <Parameter name="PX4_ACTUATOR_ARMED_MID" parameterTypeRef="PX4_ActuatorArmedMsg_t"/>
-                    <Parameter name="PX4_ACTUATOR_CONTROLS_0_MID" parameterTypeRef="PX4_ActuatorControlsMsg_t"/>
-                    <Parameter name="PX4_ACTUATOR_CONTROLS_1_MID" parameterTypeRef="PX4_ActuatorControlsMsg_t"/>
-                    <Parameter name="PX4_ACTUATOR_CONTROLS_2_MID" parameterTypeRef="PX4_ActuatorControlsMsg_t"/>
-                    <Parameter name="PX4_ACTUATOR_CONTROLS_3_MID" parameterTypeRef="PX4_ActuatorControlsMsg_t"/>
-                    <Parameter name="PX4_ACTUATOR_OUTPUTS_MID" parameterTypeRef="PX4_ActuatorOutputsMsg_t"/>
-                    <Parameter name="PX4_ADC_REPORT_MID" parameterTypeRef="PX4_ActuatorOutputsMsg_t"/>
-                    <Parameter name="PX4_AIRSPEED_MID" parameterTypeRef="PX4_AirspeedMsg_t"/>
-                    <Parameter name="PX4_BATTERY_STATUS_MID" parameterTypeRef="PX4_BatteryStatusMsg_t"/>
-                    <Parameter name="PX4_COMMANDER_STATE_MID" parameterTypeRef="PX4_CommanderStateMsg_t"/>
-                    <Parameter name="PX4_CONTROL_STATE_MID" parameterTypeRef="PX4_ControlStateMsg_t"/>
-                    <Parameter name="PX4_DIFFERENTIAL_PRESSURE_MID" parameterTypeRef="PX4_DifferentialPressureMsg_t"/>
-                    <Parameter name="PX4_DISTANCE_SENSOR_MID" parameterTypeRef="PX4_DistanceSensorMsg_t"/>
-                    <Parameter name="PX4_ESTIMATOR_STATUS_MID" parameterTypeRef="PX4_EstimatorStatusMsg_t"/>
-                    <Parameter name="PX4_GPS_INJECT_DATA_MID" parameterTypeRef="PX4_GpsInjectDataMsg_t"/>
-                    <Parameter name="PX4_HOME_POSITION_MID" parameterTypeRef="PX4_HomePositionMsg_t"/>
-                    <Parameter name="PX4_INPUT_RC_MID" parameterTypeRef="PX4_InputRcMsg_t"/>
-                    <Parameter name="PX4_LED_CONTROL_MID" parameterTypeRef="PX4_LedControlMsg_t"/>
-                    <Parameter name="PX4_MANUAL_CONTROL_SETPOINT_MID" parameterTypeRef="PX4_ManualControlSetpointMsg_t"/>
-                    <Parameter name="PX4_MISSION_MID" parameterTypeRef="PX4_MissionMsg_t"/>
-                    <Parameter name="PX4_MISSION_RESULT_MID" parameterTypeRef="PX4_MissionResultMsg_t"/>
-                    <Parameter name="PX4_OPTICAL_FLOW_MID" parameterTypeRef="PX4_OpticalFlowMsg_t"/>
-                    <Parameter name="PX4_POSITION_SETPOINT_MID" parameterTypeRef="PX4_PositionSetpoint_t"/>
-                    <Parameter name="PX4_POSITION_SETPOINT_TRIPLET_MID" parameterTypeRef="PX4_PositionSetpointTripletMsg_t"/>
-                    <Parameter name="PX4_RC_CHANNELS_MID" parameterTypeRef="PX4_RcChannelsMsg_t"/>
-                    <Parameter name="PX4_SAFETY_MID" parameterTypeRef="PX4_SafetyMsg_t"/>
-                    <Parameter name="PX4_SATELLITE_INFO_MID" parameterTypeRef="PX4_SatelliteInfoMsg_t"/>
-                    <Parameter name="PX4_SENSOR_ACCEL_MID" parameterTypeRef="PX4_SensorAccelMsg_t"/>
-                    <Parameter name="PX4_SENSOR_BARO_MID" parameterTypeRef="PX4_SensorBaroMsg_t"/>
-                    <Parameter name="PX4_SENSOR_COMBINED_MID" parameterTypeRef="PX4_SensorCombinedMsg_t"/>
-                    <Parameter name="PX4_SENSOR_GYRO_MID" parameterTypeRef="PX4_SensorGyroMsg_t"/>
-                    <Parameter name="PX4_SENSOR_MAG_MID" parameterTypeRef="PX4_SensorMagMsg_t"/>
-                    <Parameter name="PX4_SUBSYSTEM_INFO_MID" parameterTypeRef="PX4_SubsystemInfoMsg_t"/>
-                    <Parameter name="PX4_TECS_STATUS_MID" parameterTypeRef="PX4_TecsStatusMsg_t"/>
-                    <Parameter name="PX4_TELEMETRY_STATUS_MID" parameterTypeRef="PX4_TelemetryStatusMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_ATTITUDE_MID" parameterTypeRef="PX4_VehicleAttitudeMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_ATTITUDE_SETPOINT_MID" parameterTypeRef="PX4_VehicleAttitudeSetpointMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_COMMAND_MID" parameterTypeRef="PX4_VehicleCommandMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_CONTROL_MODE_MID" parameterTypeRef="PX4_VehicleControlModeMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_GLOBAL_POSITION_MID" parameterTypeRef="PX4_VehicleGlobalPositionMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_GPS_POSITION_MID" parameterTypeRef="PX4_VehicleGpsPositionMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_LAND_DETECTED_MID" parameterTypeRef="PX4_VehicleLandDetectedMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_LOCAL_POSITION_MID" parameterTypeRef="PX4_VehicleLocalPositionMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_RATES_SETPOINT_MID" parameterTypeRef="PX4_VehicleRatesSetpointMsg_t"/>
-                    <Parameter name="PX4_VEHICLE_STATUS_MID" parameterTypeRef="PX4_VehicleStatusMsg_t"/>
-                    <Parameter name="PX4_POSITION_CONTROL_STATUS_MID" parameterTypeRef="PX4_Position_Control_Status_t"/>
+                    <Parameter name="AIRLINER_ACTUATOR_ARMED_MID" parameterTypeRef="AIRLINER_ActuatorArmedMsg_t"/>
+                    <Parameter name="AIRLINER_ACTUATOR_CONTROLS_0_MID" parameterTypeRef="AIRLINER_ActuatorControlsMsg_t"/>
+                    <Parameter name="AIRLINER_ACTUATOR_CONTROLS_1_MID" parameterTypeRef="AIRLINER_ActuatorControlsMsg_t"/>
+                    <Parameter name="AIRLINER_ACTUATOR_CONTROLS_2_MID" parameterTypeRef="AIRLINER_ActuatorControlsMsg_t"/>
+                    <Parameter name="AIRLINER_ACTUATOR_CONTROLS_3_MID" parameterTypeRef="AIRLINER_ActuatorControlsMsg_t"/>
+                    <Parameter name="AIRLINER_ACTUATOR_OUTPUTS_MID" parameterTypeRef="AIRLINER_ActuatorOutputsMsg_t"/>
+                    <Parameter name="AIRLINER_ADC_REPORT_MID" parameterTypeRef="AIRLINER_ActuatorOutputsMsg_t"/>
+                    <Parameter name="AIRLINER_AIRSPEED_MID" parameterTypeRef="AIRLINER_AirspeedMsg_t"/>
+                    <Parameter name="AIRLINER_BATTERY_STATUS_MID" parameterTypeRef="AIRLINER_BatteryStatusMsg_t"/>
+                    <Parameter name="AIRLINER_COMMANDER_STATE_MID" parameterTypeRef="AIRLINER_CommanderStateMsg_t"/>
+                    <Parameter name="AIRLINER_CONTROL_STATE_MID" parameterTypeRef="AIRLINER_ControlStateMsg_t"/>
+                    <Parameter name="AIRLINER_DIFFERENTIAL_PRESSURE_MID" parameterTypeRef="AIRLINER_DifferentialPressureMsg_t"/>
+                    <Parameter name="AIRLINER_DISTANCE_SENSOR_MID" parameterTypeRef="AIRLINER_DistanceSensorMsg_t"/>
+                    <Parameter name="AIRLINER_ESTIMATOR_STATUS_MID" parameterTypeRef="AIRLINER_EstimatorStatusMsg_t"/>
+                    <Parameter name="AIRLINER_GPS_INJECT_DATA_MID" parameterTypeRef="AIRLINER_GpsInjectDataMsg_t"/>
+                    <Parameter name="AIRLINER_HOME_POSITION_MID" parameterTypeRef="AIRLINER_HomePositionMsg_t"/>
+                    <Parameter name="AIRLINER_INPUT_RC_MID" parameterTypeRef="AIRLINER_InputRcMsg_t"/>
+                    <Parameter name="AIRLINER_LED_CONTROL_MID" parameterTypeRef="AIRLINER_LedControlMsg_t"/>
+                    <Parameter name="AIRLINER_MANUAL_CONTROL_SETPOINT_MID" parameterTypeRef="AIRLINER_ManualControlSetpointMsg_t"/>
+                    <Parameter name="AIRLINER_MISSION_MID" parameterTypeRef="AIRLINER_MissionMsg_t"/>
+                    <Parameter name="AIRLINER_MISSION_RESULT_MID" parameterTypeRef="AIRLINER_MissionResultMsg_t"/>
+                    <Parameter name="AIRLINER_OPTICAL_FLOW_MID" parameterTypeRef="AIRLINER_OpticalFlowMsg_t"/>
+                    <Parameter name="AIRLINER_POSITION_SETPOINT_MID" parameterTypeRef="AIRLINER_PositionSetpoint_t"/>
+                    <Parameter name="AIRLINER_POSITION_SETPOINT_TRIPLET_MID" parameterTypeRef="AIRLINER_PositionSetpointTripletMsg_t"/>
+                    <Parameter name="AIRLINER_RC_CHANNELS_MID" parameterTypeRef="AIRLINER_RcChannelsMsg_t"/>
+                    <Parameter name="AIRLINER_SAFETY_MID" parameterTypeRef="AIRLINER_SafetyMsg_t"/>
+                    <Parameter name="AIRLINER_SATELLITE_INFO_MID" parameterTypeRef="AIRLINER_SatelliteInfoMsg_t"/>
+                    <Parameter name="AIRLINER_SENSOR_ACCEL_MID" parameterTypeRef="AIRLINER_SensorAccelMsg_t"/>
+                    <Parameter name="AIRLINER_SENSOR_BARO_MID" parameterTypeRef="AIRLINER_SensorBaroMsg_t"/>
+                    <Parameter name="AIRLINER_SENSOR_COMBINED_MID" parameterTypeRef="AIRLINER_SensorCombinedMsg_t"/>
+                    <Parameter name="AIRLINER_SENSOR_GYRO_MID" parameterTypeRef="AIRLINER_SensorGyroMsg_t"/>
+                    <Parameter name="AIRLINER_SENSOR_MAG_MID" parameterTypeRef="AIRLINER_SensorMagMsg_t"/>
+                    <Parameter name="AIRLINER_SUBSYSTEM_INFO_MID" parameterTypeRef="AIRLINER_SubsystemInfoMsg_t"/>
+                    <Parameter name="AIRLINER_TECS_STATUS_MID" parameterTypeRef="AIRLINER_TecsStatusMsg_t"/>
+                    <Parameter name="AIRLINER_TELEMETRY_STATUS_MID" parameterTypeRef="AIRLINER_TelemetryStatusMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_ATTITUDE_MID" parameterTypeRef="AIRLINER_VehicleAttitudeMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_ATTITUDE_SETPOINT_MID" parameterTypeRef="AIRLINER_VehicleAttitudeSetpointMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_COMMAND_MID" parameterTypeRef="AIRLINER_VehicleCommandMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_CONTROL_MODE_MID" parameterTypeRef="AIRLINER_VehicleControlModeMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_GLOBAL_POSITION_MID" parameterTypeRef="AIRLINER_VehicleGlobalPositionMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_GPS_POSITION_MID" parameterTypeRef="AIRLINER_VehicleGpsPositionMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_LAND_DETECTED_MID" parameterTypeRef="AIRLINER_VehicleLandDetectedMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_LOCAL_POSITION_MID" parameterTypeRef="AIRLINER_VehicleLocalPositionMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_RATES_SETPOINT_MID" parameterTypeRef="AIRLINER_VehicleRatesSetpointMsg_t"/>
+                    <Parameter name="AIRLINER_VEHICLE_STATUS_MID" parameterTypeRef="AIRLINER_VehicleStatusMsg_t"/>
+                    <Parameter name="AIRLINER_POSITION_CONTROL_STATUS_MID" parameterTypeRef="AIRLINER_Position_Control_Status_t"/>
                 </ParameterSet>
                 <ContainerSet>
-                    <SequenceContainer name="PX4_ACTUATOR_ARMED_MID">
+                    <SequenceContainer name="AIRLINER_ACTUATOR_ARMED_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ACTUATOR_ARMED_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ACTUATOR_ARMED_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10003,10 +10003,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ACTUATOR_CONTROLS_0_MID">
+                    <SequenceContainer name="AIRLINER_ACTUATOR_CONTROLS_0_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ACTUATOR_CONTROLS_0_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ACTUATOR_CONTROLS_0_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10016,10 +10016,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ACTUATOR_CONTROLS_1_MID">
+                    <SequenceContainer name="AIRLINER_ACTUATOR_CONTROLS_1_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ACTUATOR_CONTROLS_1_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ACTUATOR_CONTROLS_1_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10029,10 +10029,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ACTUATOR_CONTROLS_2_MID">
+                    <SequenceContainer name="AIRLINER_ACTUATOR_CONTROLS_2_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ACTUATOR_CONTROLS_2_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ACTUATOR_CONTROLS_2_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10042,10 +10042,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ACTUATOR_CONTROLS_3_MID">
+                    <SequenceContainer name="AIRLINER_ACTUATOR_CONTROLS_3_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ACTUATOR_CONTROLS_3_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ACTUATOR_CONTROLS_3_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10055,10 +10055,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ACTUATOR_OUTPUTS_MID">
+                    <SequenceContainer name="AIRLINER_ACTUATOR_OUTPUTS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ACTUATOR_OUTPUTS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ACTUATOR_OUTPUTS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10068,10 +10068,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ADC_REPORT_MID">
+                    <SequenceContainer name="AIRLINER_ADC_REPORT_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ADC_REPORT_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ADC_REPORT_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10081,10 +10081,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_AIRSPEED_MID">
+                    <SequenceContainer name="AIRLINER_AIRSPEED_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_AIRSPEED_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_AIRSPEED_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10094,10 +10094,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_BATTERY_STATUS_MID">
+                    <SequenceContainer name="AIRLINER_BATTERY_STATUS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_BATTERY_STATUS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_BATTERY_STATUS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10107,10 +10107,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_COMMANDER_STATE_MID">
+                    <SequenceContainer name="AIRLINER_COMMANDER_STATE_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_COMMANDER_STATE_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_COMMANDER_STATE_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10120,10 +10120,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_CONTROL_STATE_MID">
+                    <SequenceContainer name="AIRLINER_CONTROL_STATE_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_CONTROL_STATE_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_CONTROL_STATE_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10133,10 +10133,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_DIFFERENTIAL_PRESSURE_MID">
+                    <SequenceContainer name="AIRLINER_DIFFERENTIAL_PRESSURE_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_DIFFERENTIAL_PRESSURE_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_DIFFERENTIAL_PRESSURE_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10146,10 +10146,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_DISTANCE_SENSOR_MID">
+                    <SequenceContainer name="AIRLINER_DISTANCE_SENSOR_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_DISTANCE_SENSOR_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_DISTANCE_SENSOR_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10159,10 +10159,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_ESTIMATOR_STATUS_MID">
+                    <SequenceContainer name="AIRLINER_ESTIMATOR_STATUS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_ESTIMATOR_STATUS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_ESTIMATOR_STATUS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10172,10 +10172,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_GPS_INJECT_DATA_MID">
+                    <SequenceContainer name="AIRLINER_GPS_INJECT_DATA_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_GPS_INJECT_DATA_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_GPS_INJECT_DATA_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10185,10 +10185,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_HOME_POSITION_MID">
+                    <SequenceContainer name="AIRLINER_HOME_POSITION_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_HOME_POSITION_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_HOME_POSITION_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10198,10 +10198,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_INPUT_RC_MID">
+                    <SequenceContainer name="AIRLINER_INPUT_RC_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_INPUT_RC_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_INPUT_RC_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10211,10 +10211,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_LED_CONTROL_MID">
+                    <SequenceContainer name="AIRLINER_LED_CONTROL_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_LED_CONTROL_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_LED_CONTROL_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10224,10 +10224,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_MANUAL_CONTROL_SETPOINT_MID">
+                    <SequenceContainer name="AIRLINER_MANUAL_CONTROL_SETPOINT_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_MANUAL_CONTROL_SETPOINT_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_MANUAL_CONTROL_SETPOINT_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10237,10 +10237,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_MISSION_MID">
+                    <SequenceContainer name="AIRLINER_MISSION_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_MISSION_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_MISSION_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10250,10 +10250,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_MISSION_RESULT_MID">
+                    <SequenceContainer name="AIRLINER_MISSION_RESULT_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_MISSION_RESULT_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_MISSION_RESULT_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10263,10 +10263,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_OPTICAL_FLOW_MID">
+                    <SequenceContainer name="AIRLINER_OPTICAL_FLOW_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_OPTICAL_FLOW_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_OPTICAL_FLOW_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10276,10 +10276,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_POSITION_SETPOINT_MID">
+                    <SequenceContainer name="AIRLINER_POSITION_SETPOINT_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_POSITION_SETPOINT_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_POSITION_SETPOINT_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10289,10 +10289,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_POSITION_SETPOINT_TRIPLET_MID">
+                    <SequenceContainer name="AIRLINER_POSITION_SETPOINT_TRIPLET_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_POSITION_SETPOINT_TRIPLET_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_POSITION_SETPOINT_TRIPLET_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10302,10 +10302,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_RC_CHANNELS_MID">
+                    <SequenceContainer name="AIRLINER_RC_CHANNELS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_RC_CHANNELS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_RC_CHANNELS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10315,10 +10315,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SAFETY_MID">
+                    <SequenceContainer name="AIRLINER_SAFETY_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SAFETY_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SAFETY_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10328,10 +10328,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SATELLITE_INFO_MID">
+                    <SequenceContainer name="AIRLINER_SATELLITE_INFO_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SATELLITE_INFO_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SATELLITE_INFO_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10341,10 +10341,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SENSOR_ACCEL_MID">
+                    <SequenceContainer name="AIRLINER_SENSOR_ACCEL_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SENSOR_ACCEL_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SENSOR_ACCEL_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10354,10 +10354,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SENSOR_BARO_MID">
+                    <SequenceContainer name="AIRLINER_SENSOR_BARO_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SENSOR_BARO_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SENSOR_BARO_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10367,10 +10367,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SENSOR_COMBINED_MID">
+                    <SequenceContainer name="AIRLINER_SENSOR_COMBINED_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SENSOR_COMBINED_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SENSOR_COMBINED_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10380,10 +10380,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SENSOR_GYRO_MID">
+                    <SequenceContainer name="AIRLINER_SENSOR_GYRO_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SENSOR_GYRO_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SENSOR_GYRO_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10393,10 +10393,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SENSOR_MAG_MID">
+                    <SequenceContainer name="AIRLINER_SENSOR_MAG_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SENSOR_MAG_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SENSOR_MAG_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10406,10 +10406,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_SUBSYSTEM_INFO_MID">
+                    <SequenceContainer name="AIRLINER_SUBSYSTEM_INFO_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_SUBSYSTEM_INFO_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_SUBSYSTEM_INFO_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10419,10 +10419,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_TECS_STATUS_MID">
+                    <SequenceContainer name="AIRLINER_TECS_STATUS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_TECS_STATUS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_TECS_STATUS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10432,10 +10432,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_TELEMETRY_STATUS_MID">
+                    <SequenceContainer name="AIRLINER_TELEMETRY_STATUS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_TELEMETRY_STATUS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_TELEMETRY_STATUS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10445,10 +10445,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_ATTITUDE_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_ATTITUDE_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_ATTITUDE_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_ATTITUDE_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10458,10 +10458,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_ATTITUDE_SETPOINT_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_ATTITUDE_SETPOINT_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_ATTITUDE_SETPOINT_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_ATTITUDE_SETPOINT_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10471,10 +10471,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_COMMAND_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_COMMAND_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_COMMAND_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_COMMAND_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10484,9 +10484,9 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_CONTROL_MODE_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_CONTROL_MODE_MID">
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_CONTROL_MODE_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_CONTROL_MODE_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10496,10 +10496,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_GLOBAL_POSITION_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_GLOBAL_POSITION_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_GLOBAL_POSITION_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_GLOBAL_POSITION_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10509,10 +10509,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_GPS_POSITION_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_GPS_POSITION_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_GPS_POSITION_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_GPS_POSITION_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10522,10 +10522,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_LAND_DETECTED_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_LAND_DETECTED_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_LAND_DETECTED_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_LAND_DETECTED_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10535,10 +10535,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_LOCAL_POSITION_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_LOCAL_POSITION_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_LOCAL_POSITION_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_LOCAL_POSITION_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10548,10 +10548,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_RATES_SETPOINT_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_RATES_SETPOINT_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_RATES_SETPOINT_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_RATES_SETPOINT_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10561,10 +10561,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_VEHICLE_STATUS_MID">
+                    <SequenceContainer name="AIRLINER_VEHICLE_STATUS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_VEHICLE_STATUS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_VEHICLE_STATUS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10574,10 +10574,10 @@
                             </RestrictionCriteria>
                         </BaseContainer>
                     </SequenceContainer>
-                    <SequenceContainer name="PX4_POSITION_CONTROL_STATUS_MID">
+                    <SequenceContainer name="AIRLINER_POSITION_CONTROL_STATUS_MID">
                         <DefaultRateInStream minimumValue="1.000000e+00"/>
                         <EntryList>
-                            <ParameterRefEntry parameterRef="PX4_POSITION_CONTROL_STATUS_MID"/>
+                            <ParameterRefEntry parameterRef="AIRLINER_POSITION_CONTROL_STATUS_MID"/>
                         </EntryList>
                         <BaseContainer containerRef="cfs/cfs-tlm-hdr">
                             <RestrictionCriteria>
@@ -10820,7 +10820,7 @@
                             <Member name="Conversion" typeRef="HMC5883_ConversionMsg_t"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_SensorMagMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorMagMsg_t">
                         <MemberList>
                             <Member name="TlmHeader" typeRef="BaseType/Array_11Dim_BaseType_uint8_LE"/>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
@@ -10844,7 +10844,7 @@
                             <Member name="usCmdErrCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="State" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding8_LE"/>
-                            <Member name="SensorMagMsg" typeRef="PX4_SensorMagMsg_t"/>
+                            <Member name="SensorMagMsg" typeRef="AIRLINER_SensorMagMsg_t"/>
                         </MemberList>
                     </AggregateParameterType>
                 </ParameterTypeSet>
@@ -14648,7 +14648,7 @@
         <xtce:SpaceSystem name="qae">
             <TelemetryMetaData>
                 <ParameterTypeSet>
-                    <AggregateParameterType name="PX4_VehicleAttitudeMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleAttitudeMsg_t">
                         <MemberList>
                             <Member name="TlmHeader" typeRef="BaseType/Array_11Dim_BaseType_uint8_LE"/>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
@@ -14658,7 +14658,7 @@
                             <Member name="Q" typeRef="BaseType/Array_3Dim_BaseType_float32_LE"/>
                         </MemberList>
                     </AggregateParameterType>
-                    <AggregateParameterType name="PX4_ControlStateMsg_t">
+                    <AggregateParameterType name="AIRLINER_ControlStateMsg_t">
                         <MemberList>
                             <Member name="TlmHeader" typeRef="BaseType/Array_11Dim_BaseType_uint8_LE"/>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
@@ -14697,8 +14697,8 @@
                             <Member name="usCmdErrCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="State" typeRef="BaseType/uint8_LE"/>
                             <Member name="EstimatorState" typeRef="BaseType/uint8_LE"/>
-                            <Member name="VehicleAttitudeMsg" typeRef="PX4_VehicleAttitudeMsg_t"/>
-                            <Member name="ControlStateMsg" typeRef="PX4_ControlStateMsg_t"/>
+                            <Member name="VehicleAttitudeMsg" typeRef="AIRLINER_VehicleAttitudeMsg_t"/>
+                            <Member name="ControlStateMsg" typeRef="AIRLINER_ControlStateMsg_t"/>
                             <Member name="ReceivedCoreData" typeRef="osalbool"/>
                             <Member name="_spare_end" typeRef="BaseType/_padding24_LE"/>
                         </MemberList>
@@ -14784,18 +14784,18 @@
         <xtce:SpaceSystem name="gps">
             <TelemetryMetaData>
                 <ParameterTypeSet>
-                    <EnumeratedParameterType name="PX4_GpsFixType_t">
+                    <EnumeratedParameterType name="AIRLINER_GpsFixType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_GPS_2D_FIX"/>
-                            <Enumeration value="3" label="PX4_GPS_3D_FIX"/>
-                            <Enumeration value="4" label="PX4_GPS_DGPS_FIX"/>
-                            <Enumeration value="0" label="PX4_GPS_NONE0_FIX"/>
-                            <Enumeration value="1" label="PX4_GPS_NONE1_FIX"/>
-                            <Enumeration value="5" label="PX4_GPS_RTK_FIX"/>
+                            <Enumeration value="2" label="AIRLINER_GPS_2D_FIX"/>
+                            <Enumeration value="3" label="AIRLINER_GPS_3D_FIX"/>
+                            <Enumeration value="4" label="AIRLINER_GPS_DGPS_FIX"/>
+                            <Enumeration value="0" label="AIRLINER_GPS_NONE0_FIX"/>
+                            <Enumeration value="1" label="AIRLINER_GPS_NONE1_FIX"/>
+                            <Enumeration value="5" label="AIRLINER_GPS_RTK_FIX"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <AggregateParameterType name="PX4_VehicleGpsPositionMsg_t">
+                    <AggregateParameterType name="AIRLINER_VehicleGpsPositionMsg_t">
                         <MemberList>
                             <Member name="TlmHeader" typeRef="BaseType/Array_11Dim_BaseType_uint8_LE"/>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
@@ -14818,7 +14818,7 @@
                             <Member name="Vel_d_m_s" typeRef="BaseType/float32_LE"/>
                             <Member name="COG" typeRef="BaseType/float32_LE"/>
                             <Member name="TimestampTimeRelative" typeRef="BaseType/int32_LE"/>
-                            <Member name="FixType" typeRef="PX4_GpsFixType_t"/>
+                            <Member name="FixType" typeRef="AIRLINER_GpsFixType_t"/>
                             <Member name="VelNedValid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="SatellitesUsed" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare_end" typeRef="BaseType/_padding16_LE"/>
@@ -14830,7 +14830,7 @@
                             <Member name="usCmdErrCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="State" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding8_LE"/>
-                            <Member name="VehicleGpsMsg" typeRef="PX4_VehicleGpsPositionMsg_t"/>
+                            <Member name="VehicleGpsMsg" typeRef="AIRLINER_VehicleGpsPositionMsg_t"/>
                         </MemberList>
                     </AggregateParameterType>
                 </ParameterTypeSet>
@@ -15365,17 +15365,17 @@
                             <Enumeration value="1" label="ECL_TECS_MODE_UNDERSPEED"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_SetpointType_t">
+                    <EnumeratedParameterType name="AIRLINER_SetpointType_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="7" label="PX4_SETPOINT_TYPE_FOLLOW_TARGET"/>
-                            <Enumeration value="5" label="PX4_SETPOINT_TYPE_IDLE"/>
-                            <Enumeration value="4" label="PX4_SETPOINT_TYPE_LAND"/>
-                            <Enumeration value="2" label="PX4_SETPOINT_TYPE_LOITER"/>
-                            <Enumeration value="6" label="PX4_SETPOINT_TYPE_OFFBOARD"/>
-                            <Enumeration value="0" label="PX4_SETPOINT_TYPE_POSITION"/>
-                            <Enumeration value="3" label="PX4_SETPOINT_TYPE_TAKEOFF"/>
-                            <Enumeration value="1" label="PX4_SETPOINT_TYPE_VELOCITY"/>
+                            <Enumeration value="7" label="AIRLINER_SETPOINT_TYPE_FOLLOW_TARGET"/>
+                            <Enumeration value="5" label="AIRLINER_SETPOINT_TYPE_IDLE"/>
+                            <Enumeration value="4" label="AIRLINER_SETPOINT_TYPE_LAND"/>
+                            <Enumeration value="2" label="AIRLINER_SETPOINT_TYPE_LOITER"/>
+                            <Enumeration value="6" label="AIRLINER_SETPOINT_TYPE_OFFBOARD"/>
+                            <Enumeration value="0" label="AIRLINER_SETPOINT_TYPE_POSITION"/>
+                            <Enumeration value="3" label="AIRLINER_SETPOINT_TYPE_TAKEOFF"/>
+                            <Enumeration value="1" label="AIRLINER_SETPOINT_TYPE_VELOCITY"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
                     <EnumeratedParameterType name="RunwayTakeoffState">
@@ -15388,7 +15388,7 @@
                             <Enumeration value="0" label="THROTTLE_RAMP"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <AggregateParameterType name="PX4_PositionSetpoint_t">
+                    <AggregateParameterType name="AIRLINER_PositionSetpoint_t">
                         <MemberList>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
                             <Member name="Lat" typeRef="BaseType/float64_LE"/>
@@ -15412,7 +15412,7 @@
                             <Member name="CruisingThrottle" typeRef="BaseType/float32_LE"/>
                             <Member name="Valid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="Type" typeRef="PX4_SetpointType_t"/>
+                            <Member name="Type" typeRef="AIRLINER_SetpointType_t"/>
                             <Member name="PositionValid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="VelocityValid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="VelocityFrame" typeRef="BaseType/uint8_LE"/>
@@ -15546,8 +15546,8 @@
                             <Member name="_time_started_landing" typeRef="BaseType/uint64_LE"/>
                             <Member name="use_tecs_pitch" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare2" typeRef="BaseType/_padding24_LE"/>
-                            <Member name="_hdg_hold_prev_wp" typeRef="PX4_PositionSetpoint_t"/>
-                            <Member name="_hdg_hold_curr_wp" typeRef="PX4_PositionSetpoint_t"/>
+                            <Member name="_hdg_hold_prev_wp" typeRef="AIRLINER_PositionSetpoint_t"/>
+                            <Member name="_hdg_hold_curr_wp" typeRef="AIRLINER_PositionSetpoint_t"/>
                             <Member name="_airspeed_valid" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare3" typeRef="BaseType/_padding24_LE"/>
                             <Member name="_airspeed_last_received" typeRef="BaseType/uint64_LE"/>
@@ -18179,7 +18179,7 @@
         <xtce:SpaceSystem name="sens">
             <TelemetryMetaData>
                 <ParameterTypeSet>
-                    <AggregateParameterType name="PX4_SensorCombinedMsg_t">
+                    <AggregateParameterType name="AIRLINER_SensorCombinedMsg_t">
                         <MemberList>
                             <Member name="TlmHeader" typeRef="BaseType/Array_11Dim_BaseType_uint8_LE"/>
                             <Member name="Timestamp" typeRef="BaseType/uint64_LE"/>
@@ -18204,7 +18204,7 @@
                             <Member name="usCmdCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="usCmdErrCnt" typeRef="BaseType/uint8_LE"/>
                             <Member name="_spare0" typeRef="BaseType/_padding16_LE"/>
-                            <Member name="SensorCombinedMsg" typeRef="PX4_SensorCombinedMsg_t"/>
+                            <Member name="SensorCombinedMsg" typeRef="AIRLINER_SensorCombinedMsg_t"/>
                         </MemberList>
                     </AggregateParameterType>
                 </ParameterTypeSet>
@@ -18441,53 +18441,53 @@
         <xtce:SpaceSystem name="hes">
             <TelemetryMetaData>
                 <ParameterTypeSet>
-                    <EnumeratedParameterType name="PX4_BatteryWarningSeverity_t">
+                    <EnumeratedParameterType name="AIRLINER_BatteryWarningSeverity_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_BATTERY_WARNING_CRITICAL"/>
-                            <Enumeration value="3" label="PX4_BATTERY_WARNING_EMERGENCY"/>
-                            <Enumeration value="1" label="PX4_BATTERY_WARNING_LOW"/>
-                            <Enumeration value="0" label="PX4_BATTERY_WARNING_NONE"/>
+                            <Enumeration value="2" label="AIRLINER_BATTERY_WARNING_CRITICAL"/>
+                            <Enumeration value="3" label="AIRLINER_BATTERY_WARNING_EMERGENCY"/>
+                            <Enumeration value="1" label="AIRLINER_BATTERY_WARNING_LOW"/>
+                            <Enumeration value="0" label="AIRLINER_BATTERY_WARNING_NONE"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_NavigationState_t">
+                    <EnumeratedParameterType name="AIRLINER_NavigationState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="10" label="PX4_NAVIGATION_STATE_ACRO"/>
-                            <Enumeration value="1" label="PX4_NAVIGATION_STATE_ALTCTL"/>
-                            <Enumeration value="19" label="PX4_NAVIGATION_STATE_AUTO_FOLLOW_TARGET"/>
-                            <Enumeration value="18" label="PX4_NAVIGATION_STATE_AUTO_LAND"/>
-                            <Enumeration value="8" label="PX4_NAVIGATION_STATE_AUTO_LANDENGFAIL"/>
-                            <Enumeration value="9" label="PX4_NAVIGATION_STATE_AUTO_LANDGPSFAIL"/>
-                            <Enumeration value="4" label="PX4_NAVIGATION_STATE_AUTO_LOITER"/>
-                            <Enumeration value="3" label="PX4_NAVIGATION_STATE_AUTO_MISSION"/>
-                            <Enumeration value="20" label="PX4_NAVIGATION_STATE_AUTO_PRECLAND"/>
-                            <Enumeration value="6" label="PX4_NAVIGATION_STATE_AUTO_RCRECOVER"/>
-                            <Enumeration value="7" label="PX4_NAVIGATION_STATE_AUTO_RTGS"/>
-                            <Enumeration value="5" label="PX4_NAVIGATION_STATE_AUTO_RTL"/>
-                            <Enumeration value="17" label="PX4_NAVIGATION_STATE_AUTO_TAKEOFF"/>
-                            <Enumeration value="12" label="PX4_NAVIGATION_STATE_DESCEND"/>
-                            <Enumeration value="0" label="PX4_NAVIGATION_STATE_MANUAL"/>
-                            <Enumeration value="21" label="PX4_NAVIGATION_STATE_MAX"/>
-                            <Enumeration value="14" label="PX4_NAVIGATION_STATE_OFFBOARD"/>
-                            <Enumeration value="2" label="PX4_NAVIGATION_STATE_POSCTL"/>
-                            <Enumeration value="16" label="PX4_NAVIGATION_STATE_RATTITUDE"/>
-                            <Enumeration value="15" label="PX4_NAVIGATION_STATE_STAB"/>
-                            <Enumeration value="13" label="PX4_NAVIGATION_STATE_TERMINATION"/>
-                            <Enumeration value="11" label="PX4_NAVIGATION_STATE_UNUSED"/>
+                            <Enumeration value="10" label="AIRLINER_NAVIGATION_STATE_ACRO"/>
+                            <Enumeration value="1" label="AIRLINER_NAVIGATION_STATE_ALTCTL"/>
+                            <Enumeration value="19" label="AIRLINER_NAVIGATION_STATE_AUTO_FOLLOW_TARGET"/>
+                            <Enumeration value="18" label="AIRLINER_NAVIGATION_STATE_AUTO_LAND"/>
+                            <Enumeration value="8" label="AIRLINER_NAVIGATION_STATE_AUTO_LANDENGFAIL"/>
+                            <Enumeration value="9" label="AIRLINER_NAVIGATION_STATE_AUTO_LANDGPSFAIL"/>
+                            <Enumeration value="4" label="AIRLINER_NAVIGATION_STATE_AUTO_LOITER"/>
+                            <Enumeration value="3" label="AIRLINER_NAVIGATION_STATE_AUTO_MISSION"/>
+                            <Enumeration value="20" label="AIRLINER_NAVIGATION_STATE_AUTO_PRECLAND"/>
+                            <Enumeration value="6" label="AIRLINER_NAVIGATION_STATE_AUTO_RCRECOVER"/>
+                            <Enumeration value="7" label="AIRLINER_NAVIGATION_STATE_AUTO_RTGS"/>
+                            <Enumeration value="5" label="AIRLINER_NAVIGATION_STATE_AUTO_RTL"/>
+                            <Enumeration value="17" label="AIRLINER_NAVIGATION_STATE_AUTO_TAKEOFF"/>
+                            <Enumeration value="12" label="AIRLINER_NAVIGATION_STATE_DESCEND"/>
+                            <Enumeration value="0" label="AIRLINER_NAVIGATION_STATE_MANUAL"/>
+                            <Enumeration value="21" label="AIRLINER_NAVIGATION_STATE_MAX"/>
+                            <Enumeration value="14" label="AIRLINER_NAVIGATION_STATE_OFFBOARD"/>
+                            <Enumeration value="2" label="AIRLINER_NAVIGATION_STATE_POSCTL"/>
+                            <Enumeration value="16" label="AIRLINER_NAVIGATION_STATE_RATTITUDE"/>
+                            <Enumeration value="15" label="AIRLINER_NAVIGATION_STATE_STAB"/>
+                            <Enumeration value="13" label="AIRLINER_NAVIGATION_STATE_TERMINATION"/>
+                            <Enumeration value="11" label="AIRLINER_NAVIGATION_STATE_UNUSED"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
-                    <EnumeratedParameterType name="PX4_ArmingState_t">
+                    <EnumeratedParameterType name="AIRLINER_ArmingState_t">
                         <IntegerDataEncoding bitOrder="leastSignificantBitFirst" byteOrder="leastSignificantByteFirst" sizeInBits="32"/>
                         <EnumerationList>
-                            <Enumeration value="2" label="PX4_ARMING_STATE_ARMED"/>
-                            <Enumeration value="3" label="PX4_ARMING_STATE_ARMED_ERROR"/>
-                            <Enumeration value="0" label="PX4_ARMING_STATE_INIT"/>
-                            <Enumeration value="6" label="PX4_ARMING_STATE_IN_AIR_RESTORE"/>
-                            <Enumeration value="7" label="PX4_ARMING_STATE_MAX"/>
-                            <Enumeration value="5" label="PX4_ARMING_STATE_REBOOT"/>
-                            <Enumeration value="1" label="PX4_ARMING_STATE_STANDBY"/>
-                            <Enumeration value="4" label="PX4_ARMING_STATE_STANDBY_ERROR"/>
+                            <Enumeration value="2" label="AIRLINER_ARMING_STATE_ARMED"/>
+                            <Enumeration value="3" label="AIRLINER_ARMING_STATE_ARMED_ERROR"/>
+                            <Enumeration value="0" label="AIRLINER_ARMING_STATE_INIT"/>
+                            <Enumeration value="6" label="AIRLINER_ARMING_STATE_IN_AIR_RESTORE"/>
+                            <Enumeration value="7" label="AIRLINER_ARMING_STATE_MAX"/>
+                            <Enumeration value="5" label="AIRLINER_ARMING_STATE_REBOOT"/>
+                            <Enumeration value="1" label="AIRLINER_ARMING_STATE_STANDBY"/>
+                            <Enumeration value="4" label="AIRLINER_ARMING_STATE_STANDBY_ERROR"/>
                         </EnumerationList>
                     </EnumeratedParameterType>
                     <AggregateParameterType name="HES_AirSpeed">
@@ -18576,14 +18576,14 @@
                             <Member name="CurrentFiltered" typeRef="BaseType/float32_LE"/>
                             <Member name="Discharged" typeRef="BaseType/float32_LE"/>
                             <Member name="Remaining" typeRef="BaseType/float32_LE"/>
-                            <Member name="Warning" typeRef="PX4_BatteryWarningSeverity_t"/>
+                            <Member name="Warning" typeRef="AIRLINER_BatteryWarningSeverity_t"/>
                             <Member name="way_points" typeRef="BaseType/Array_2Dim__cpd_apps_hes_HES_WayPoint_t"/>
                             <Member name="RcSignalLost" typeRef="BaseType/boolean8_LE"/>
                             <Member name="EngineFailure" typeRef="BaseType/boolean8_LE"/>
                             <Member name="landed" typeRef="BaseType/boolean8_LE"/>
                             <Member name="_spare1" typeRef="BaseType/_padding8_LE"/>
-                            <Member name="NavState" typeRef="PX4_NavigationState_t"/>
-                            <Member name="ArmingState" typeRef="PX4_ArmingState_t"/>
+                            <Member name="NavState" typeRef="AIRLINER_NavigationState_t"/>
+                            <Member name="ArmingState" typeRef="AIRLINER_ArmingState_t"/>
                             <Member name="AirSpeedMsgRcvCnt" typeRef="BaseType/uint32_LE"/>
                             <Member name="BatteryStatusMsgRcvCnt" typeRef="BaseType/uint32_LE"/>
                             <Member name="VAttMsgRcvCnt" typeRef="BaseType/uint32_LE"/>

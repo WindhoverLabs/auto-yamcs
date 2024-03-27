@@ -224,30 +224,30 @@ Some users, depending on the setup, might be in need of a mechanism to add data 
 
 tables:
   symbols:
-  - name: HK_PX4_SensorAccelMsg_t
+  - name: HK_AIRLINER_SensorAccelMsg_t
     elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
     byte_size: 84
-  - name: HK_PX4_SensorBaroMsg_t
+  - name: HK_AIRLINER_SensorBaroMsg_t
     elf: ../airliner/build/squeaky_weasel/default/target/exe/airliner
     byte_size: 24
 
   fields:
-    - symbol: HK_PX4_SensorAccelMsg_t
-      name: HK_PX4_SensorAccelMsg_t_Spare1
+    - symbol: HK_AIRLINER_SensorAccelMsg_t
+      name: HK_AIRLINER_SensorAccelMsg_t_Spare1
       byte_offset: 12
       type: uint32
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorAccelMsg_t
-      name: HK_PX4_SensorAccelMsg_t_Timestamp
+    - symbol: HK_AIRLINER_SensorAccelMsg_t
+      name: HK_AIRLINER_SensorAccelMsg_t_Timestamp
       byte_offset: 16
       type: uint64
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorAccelMsg_t
-      name: HK_PX4_SensorAccelMsg_t_ErrorCount
+    - symbol: HK_AIRLINER_SensorAccelMsg_t
+      name: HK_AIRLINER_SensorAccelMsg_t_ErrorCount
       byte_offset: 24
       type: uint64
       multiplicity: 0
@@ -255,51 +255,51 @@ tables:
 
 ...
 
-    - symbol: HK_PX4_SensorAccelMsg_t
-      name: HK_PX4_SensorGyroMsg_t_ZRaw
+    - symbol: HK_AIRLINER_SensorAccelMsg_t
+      name: HK_AIRLINER_SensorGyroMsg_t_ZRaw
       byte_offset: 68
       type: int16
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorAccelMsg_t
-      name: HK_PX4_SensorMagMsg_t_Timestamp
+    - symbol: HK_AIRLINER_SensorAccelMsg_t
+      name: HK_AIRLINER_SensorMagMsg_t_Timestamp
       byte_offset: 70
       type: uint64
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
 
-    - symbol: HK_PX4_SensorBaroMsg_t
-      name: HK_PX4_SensorAccelMsg_t_Spare1
+    - symbol: HK_AIRLINER_SensorBaroMsg_t
+      name: HK_AIRLINER_SensorAccelMsg_t_Spare1
       byte_offset: 12
       type: uint32
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorBaroMsg_t
-      name: HK_PX4_SensorBaroMsg_t_TimeStamp
+    - symbol: HK_AIRLINER_SensorBaroMsg_t
+      name: HK_AIRLINER_SensorBaroMsg_t_TimeStamp
       byte_offset: 16
       type: uint64
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorBaroMsg_t
-      name: HK_PX4_SensorBaroMsg_t_ErrorCount
+    - symbol: HK_AIRLINER_SensorBaroMsg_t
+      name: HK_AIRLINER_SensorBaroMsg_t_ErrorCount
       byte_offset: 24
       type: uint32
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorBaroMsg_t
-      name: HK_PX4_SensorBaroMsg_t_Pressure
+    - symbol: HK_AIRLINER_SensorBaroMsg_t
+      name: HK_AIRLINER_SensorBaroMsg_t_Pressure
       byte_offset: 28
       type: float
       multiplicity: 0
       little_endian: 1 # 1 means true; 0 means false
 
-    - symbol: HK_PX4_SensorBaroMsg_t
-      name: HK_PX4_SensorBaroMsg_t_Temperature
+    - symbol: HK_AIRLINER_SensorBaroMsg_t
+      name: HK_AIRLINER_SensorBaroMsg_t_Temperature
       byte_offset: 32
       type: float
       multiplicity: 0
@@ -308,12 +308,12 @@ tables:
   telemetry:
     - name: HK_COMBINED_PKT1_MID
       message_id: 0x0994
-      symbol: HK_PX4_SensorAccelMsg_t
+      symbol: HK_AIRLINER_SensorAccelMsg_t
       module: hk
 
     - name: HK_COMBINED_PKT2_MID
       message_id: 0x0995
-      symbol: HK_PX4_SensorBaroMsg_t
+      symbol: HK_AIRLINER_SensorBaroMsg_t
       module: hk
 ```
 
