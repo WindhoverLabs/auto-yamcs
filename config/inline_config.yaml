@@ -7208,11 +7208,11 @@ modules:
       MPU6050_STARTUP_TIMEOUT_MSEC:
         name: MPU6050_STARTUP_TIMEOUT_MSEC
         value: 1000
-      MPU6050_ACCEL_PX4_DEVICE_ID:
-        name: MPU6050_ACCEL_PX4_DEVICE_ID
+      MPU6050_ACCEL_AIRLINER_DEVICE_ID:
+        name: MPU6050_ACCEL_AIRLINER_DEVICE_ID
         value: 6789478
-      MPU6050_GYRO_PX4_DEVICE_ID:
-        name: MPU6050_GYRO_PX4_DEVICE_ID
+      MPU6050_GYRO_AIRLINER_DEVICE_ID:
+        name: MPU6050_GYRO_AIRLINER_DEVICE_ID
         value: 3467548
       MPU6050_ACCEL_INT_PUB_RATE:
         name: MPU6050_ACCEL_INT_PUB_RATE
@@ -7399,11 +7399,11 @@ modules:
       MPU9250_STARTUP_TIMEOUT_MSEC:
         name: MPU9250_STARTUP_TIMEOUT_MSEC
         value: 1000
-      MPU9250_ACCEL_PX4_DEVICE_ID:
-        name: MPU9250_ACCEL_PX4_DEVICE_ID
+      MPU9250_ACCEL_AIRLINER_DEVICE_ID:
+        name: MPU9250_ACCEL_AIRLINER_DEVICE_ID
         value: 6789478
-      MPU9250_GYRO_PX4_DEVICE_ID:
-        name: MPU9250_GYRO_PX4_DEVICE_ID
+      MPU9250_GYRO_AIRLINER_DEVICE_ID:
+        name: MPU9250_GYRO_AIRLINER_DEVICE_ID
         value: 3467548
       MPU9250_ACCEL_INT_PUB_RATE:
         name: MPU9250_ACCEL_INT_PUB_RATE
@@ -10719,290 +10719,290 @@ modules:
         value: 2
     definition: "../apps/vm"
 
-  px4lib:
+  airlinerlib:
     elf_files:
-      - ../../airliner/build/tutorial/cfs/target/target/exe/cf/apps/PX4LIB.so
-    short_name: px4lib
-    long_name: PX4 Library
+      - ../../airliner/build/tutorial/cfs/target/target/exe/cf/apps/AIRLINERLIB.so
+    short_name: airlinerlib
+    long_name: Airliner Library
     events: {}
     telemetry:
-      PX4_ACTUATOR_ARMED_MID:
+      AIRLINER_ACTUATOR_ARMED_MID:
         msgID: 0x0a05
-        struct: PX4_ActuatorArmedMsg_t
-      PX4_ACTUATOR_CONTROLS_0_MID:
+        struct: AIRLINER_ActuatorArmedMsg_t
+      AIRLINER_ACTUATOR_CONTROLS_0_MID:
         msgID: 0x0a06
-        struct: PX4_ActuatorControlsMsg_t
-      PX4_ACTUATOR_CONTROLS_1_MID:
+        struct: AIRLINER_ActuatorControlsMsg_t
+      AIRLINER_ACTUATOR_CONTROLS_1_MID:
         msgID: 0x0a5f
-        struct: PX4_ActuatorControlsMsg_t
-      PX4_ACTUATOR_CONTROLS_2_MID:
+        struct: AIRLINER_ActuatorControlsMsg_t
+      AIRLINER_ACTUATOR_CONTROLS_2_MID:
         msgID: 0x0a5d
-        struct: PX4_ActuatorControlsMsg_t
-      PX4_ACTUATOR_CONTROLS_3_MID:
+        struct: AIRLINER_ActuatorControlsMsg_t
+      AIRLINER_ACTUATOR_CONTROLS_3_MID:
         msgID: 0x0a5e
-        struct: PX4_ActuatorControlsMsg_t
-      PX4_ACTUATOR_DIRECT_MID:
+        struct: AIRLINER_ActuatorControlsMsg_t
+      AIRLINER_ACTUATOR_DIRECT_MID:
         msgID: 0x0a07
-        struct: PX4_ActuatorDirectMsg_t
-      PX4_ACTUATOR_OUTPUTS_MID:
+        struct: AIRLINER_ActuatorDirectMsg_t
+      AIRLINER_ACTUATOR_OUTPUTS_MID:
         msgID: 0x0a08
-        struct: PX4_ActuatorOutputsMsg_t
-      PX4_ADC_REPORT_MID:
+        struct: AIRLINER_ActuatorOutputsMsg_t
+      AIRLINER_ADC_REPORT_MID:
         msgID: 0x0a09
-        struct: PX4_ActuatorOutputsMsg_t
-      PX4_AIRSPEED_MID:
+        struct: AIRLINER_ActuatorOutputsMsg_t
+      AIRLINER_AIRSPEED_MID:
         msgID: 0x0a0a
-        struct: PX4_AirspeedMsg_t
-      PX4_ATT_POS_MOCAP_MID:
+        struct: AIRLINER_AirspeedMsg_t
+      AIRLINER_ATT_POS_MOCAP_MID:
         msgID: 0x0a0b
-        struct: PX4_AttPosMoCapMsg_t
-      PX4_BATTERY_STATUS_MID:
+        struct: AIRLINER_AttPosMoCapMsg_t
+      AIRLINER_BATTERY_STATUS_MID:
         msgID: 0x0a0c
-        struct: PX4_BatteryStatusMsg_t
-      PX4_CAMERA_TRIGGER_MID:
+        struct: AIRLINER_BatteryStatusMsg_t
+      AIRLINER_CAMERA_TRIGGER_MID:
         msgID: 0x0a0d
-        struct: PX4_CameraTriggerMsg_t
-      PX4_COMMANDER_STATE_MID:
+        struct: AIRLINER_CameraTriggerMsg_t
+      AIRLINER_COMMANDER_STATE_MID:
         msgID: 0x0a0e
-        struct: PX4_CommanderStateMsg_t
-      PX4_CONTROL_STATE_MID:
+        struct: AIRLINER_CommanderStateMsg_t
+      AIRLINER_CONTROL_STATE_MID:
         msgID: 0x0a0f
-        struct: PX4_ControlStateMsg_t
-      PX4_CPULOAD_MID:
+        struct: AIRLINER_ControlStateMsg_t
+      AIRLINER_CPULOAD_MID:
         msgID: 0x0a10
-        struct: PX4_CpuLoadMsg_t
-      PX4_DEBUG_KEY_VALUE_MID:
+        struct: AIRLINER_CpuLoadMsg_t
+      AIRLINER_DEBUG_KEY_VALUE_MID:
         msgID: 0x0a11
-        struct: PX4_DebugKeyValueMsg_t
-      PX4_DIFFERENTIAL_PRESSURE_MID:
+        struct: AIRLINER_DebugKeyValueMsg_t
+      AIRLINER_DIFFERENTIAL_PRESSURE_MID:
         msgID: 0x0a12
-        struct: PX4_DifferentialPressureMsg_t
-      PX4_DISTANCE_SENSOR_MID:
+        struct: AIRLINER_DifferentialPressureMsg_t
+      AIRLINER_DISTANCE_SENSOR_MID:
         msgID: 0x0a13
-        struct: PX4_DistanceSensorMsg_t
-      PX4_FW_POS_CTRL_STATUS_MID:
+        struct: AIRLINER_DistanceSensorMsg_t
+      AIRLINER_FW_POS_CTRL_STATUS_MID:
         msgID: 0x0a14
-        struct: PX4_FwPosCtrlStatusMsg_t
-      PX4_FW_VIRTUAL_ATTITUDE_SETPOINT_MID:
+        struct: AIRLINER_FwPosCtrlStatusMsg_t
+      AIRLINER_FW_VIRTUAL_ATTITUDE_SETPOINT_MID:
         msgID: 0x0a15
-        struct: PX4_FwVirtualAttitudeSetpointMsg_t
-      PX4_FW_VIRTUAL_RATES_SETPOINT_MID:
+        struct: AIRLINER_FwVirtualAttitudeSetpointMsg_t
+      AIRLINER_FW_VIRTUAL_RATES_SETPOINT_MID:
         msgID: 0x0a16
-        struct: PX4_FwVirtualRatesSetpointMsg_t
-      PX4_EKF2_INNOVATIONS_MID:
+        struct: AIRLINER_FwVirtualRatesSetpointMsg_t
+      AIRLINER_EKF2_INNOVATIONS_MID:
         msgID: 0x0a17
-        struct: PX4_Ekf2InnovationsMsg_t
-      PX4_EKF2_REPLAY_MID:
+        struct: AIRLINER_Ekf2InnovationsMsg_t
+      AIRLINER_EKF2_REPLAY_MID:
         msgID: 0x0a18
-        struct: PX4_Ekf2ReplayMsg_t
-      PX4_ESC_REPORT_MID:
+        struct: AIRLINER_Ekf2ReplayMsg_t
+      AIRLINER_ESC_REPORT_MID:
         msgID: 0x0a19
-        struct: PX4_EscReport_t
-      PX4_ESC_STATUS_MID:
+        struct: AIRLINER_EscReport_t
+      AIRLINER_ESC_STATUS_MID:
         msgID: 0x0a1a
-        struct: PX4_EscReportMsg_t
-      PX4_ESTIMATOR_STATUS_MID:
+        struct: AIRLINER_EscReportMsg_t
+      AIRLINER_ESTIMATOR_STATUS_MID:
         msgID: 0x0a1b
-        struct: PX4_EstimatorStatusMsg_t
-      PX4_FENCE_MID:
+        struct: AIRLINER_EstimatorStatusMsg_t
+      AIRLINER_FENCE_MID:
         msgID: 0x0a1c
-        struct: PX4_FenceMsg_t
-      PX4_FENCE_VERTEX_MID:
+        struct: AIRLINER_FenceMsg_t
+      AIRLINER_FENCE_VERTEX_MID:
         msgID: 0x0a1d
-        struct: PX4_FenceVertex_t
-      PX4_FILTERED_BOTTOM_FLOW_MID:
+        struct: AIRLINER_FenceVertex_t
+      AIRLINER_FILTERED_BOTTOM_FLOW_MID:
         msgID: 0x0a1e
-        struct: PX4_FilteredBottomFlowMsg_t
-      PX4_FOLLOW_TARGET_MID:
+        struct: AIRLINER_FilteredBottomFlowMsg_t
+      AIRLINER_FOLLOW_TARGET_MID:
         msgID: 0x0a1f
-        struct: PX4_FollowTargetMsg_t
-      PX4_GEOFENCE_RESULT_MID:
+        struct: AIRLINER_FollowTargetMsg_t
+      AIRLINER_GEOFENCE_RESULT_MID:
         msgID: 0x0a20
-        struct: PX4_GeofenceResultMsg_t
-      PX4_GPS_DUMP_MID:
+        struct: AIRLINER_GeofenceResultMsg_t
+      AIRLINER_GPS_DUMP_MID:
         msgID: 0x0a21
-        struct: PX4_GpsDumpMsg_t
-      PX4_GPS_INJECT_DATA_MID:
+        struct: AIRLINER_GpsDumpMsg_t
+      AIRLINER_GPS_INJECT_DATA_MID:
         msgID: 0x0a22
-        struct: PX4_GpsInjectDataMsg_t
-      PX4_HIL_SENSOR_MID:
+        struct: AIRLINER_GpsInjectDataMsg_t
+      AIRLINER_HIL_SENSOR_MID:
         msgID: 0x0a23
-        struct: PX4_HilSensorMsg_t
-      PX4_HOME_POSITION_MID:
+        struct: AIRLINER_HilSensorMsg_t
+      AIRLINER_HOME_POSITION_MID:
         msgID: 0x0a24
-        struct: PX4_HomePositionMsg_t
-      PX4_INPUT_RC_MID:
+        struct: AIRLINER_HomePositionMsg_t
+      AIRLINER_INPUT_RC_MID:
         msgID: 0x0a25
-        struct: PX4_InputRcMsg_t
-      PX4_LED_CONTROL_MID:
+        struct: AIRLINER_InputRcMsg_t
+      AIRLINER_LED_CONTROL_MID:
         msgID: 0x0a5c
-        struct: PX4_LedControlMsg_t
-      PX4_LOG_MESSAGE_MID:
+        struct: AIRLINER_LedControlMsg_t
+      AIRLINER_LOG_MESSAGE_MID:
         msgID: 0x0a26
-        struct: PX4_LogMessageMsg_t
-      PX4_MANUAL_CONTROL_SETPOINT_MID:
+        struct: AIRLINER_LogMessageMsg_t
+      AIRLINER_MANUAL_CONTROL_SETPOINT_MID:
         msgID: 0x0a27
-        struct: PX4_ManualControlSetpointMsg_t
-      PX4_MAVLINK_LOG_MID:
+        struct: AIRLINER_ManualControlSetpointMsg_t
+      AIRLINER_MAVLINK_LOG_MID:
         msgID: 0x0a28
-        struct: PX4_MavlinkLogMsg_t
-      PX4_MC_ATT_CTRL_STATUS_MID:
+        struct: AIRLINER_MavlinkLogMsg_t
+      AIRLINER_MC_ATT_CTRL_STATUS_MID:
         msgID: 0x0a29
-        struct: PX4_McAttCtrlStatusMsg_t
-      PX4_MC_VIRTUAL_ATTITUDE_SETPOINT_MID:
+        struct: AIRLINER_McAttCtrlStatusMsg_t
+      AIRLINER_MC_VIRTUAL_ATTITUDE_SETPOINT_MID:
         msgID: 0x0a2a
-        struct: PX4_McVirtualAttitudeSetpointMsg_t
-      PX4_MC_VIRTUAL_RATES_SETPOINT_MID:
+        struct: AIRLINER_McVirtualAttitudeSetpointMsg_t
+      AIRLINER_MC_VIRTUAL_RATES_SETPOINT_MID:
         msgID: 0x0a2b
-        struct: PX4_McVirtualRatesSetpointMsg_t
-      PX4_MISSION_MID:
+        struct: AIRLINER_McVirtualRatesSetpointMsg_t
+      AIRLINER_MISSION_MID:
         msgID: 0x0a2c
-        struct: PX4_MissionMsg_t
-      PX4_MISSION_RESULT_MID:
+        struct: AIRLINER_MissionMsg_t
+      AIRLINER_MISSION_RESULT_MID:
         msgID: 0x0a2d
-        struct: PX4_MissionResultMsg_t
-      PX4_MULTIROTOR_MOTOR_LIMITS_MID:
+        struct: AIRLINER_MissionResultMsg_t
+      AIRLINER_MULTIROTOR_MOTOR_LIMITS_MID:
         msgID: 0x0a2e
-        struct: PX4_MultirotorMotorLimitsMsg_t
-      PX4_OFFBOARD_CONTROL_MODE_MID:
+        struct: AIRLINER_MultirotorMotorLimitsMsg_t
+      AIRLINER_OFFBOARD_CONTROL_MODE_MID:
         msgID: 0x0a2f
-        struct: PX4_OffboardControlModeMsg_t
-      PX4_OPTICAL_FLOW_MID:
+        struct: AIRLINER_OffboardControlModeMsg_t
+      AIRLINER_OPTICAL_FLOW_MID:
         msgID: 0x0a30
-        struct: PX4_OpticalFlowMsg_t
-      PX4_OUTPUT_PWM_MID:
+        struct: AIRLINER_OpticalFlowMsg_t
+      AIRLINER_OUTPUT_PWM_MID:
         msgID: 0x0a31
-        struct: PX4_OutputPwmMsg_t
-      PX4_PARAMETER_UPDATE_MID:
+        struct: AIRLINER_OutputPwmMsg_t
+      AIRLINER_PARAMETER_UPDATE_MID:
         msgID: 0x0a32
-        struct: PX4_ParameterUpdateMsg_t
-      PX4_POSITION_SETPOINT_MID:
+        struct: AIRLINER_ParameterUpdateMsg_t
+      AIRLINER_POSITION_SETPOINT_MID:
         msgID: 0x0a33
-        struct: PX4_PositionSetpoint_t
-      PX4_POSITION_SETPOINT_TRIPLET_MID:
+        struct: AIRLINER_PositionSetpoint_t
+      AIRLINER_POSITION_SETPOINT_TRIPLET_MID:
         msgID: 0x0a34
-        struct: PX4_PositionSetpointTripletMsg_t
-      PX4_PWM_INPUT_MID:
+        struct: AIRLINER_PositionSetpointTripletMsg_t
+      AIRLINER_PWM_INPUT_MID:
         msgID: 0x0a35
-        struct: PX4_PwmInputMsg_t
-      PX4_QSHELL_REQ_MID:
+        struct: AIRLINER_PwmInputMsg_t
+      AIRLINER_QSHELL_REQ_MID:
         msgID: 0x0a36
-        struct: PX4_QShellReqMsg_t
-      PX4_RC_CHANNELS_MID:
+        struct: AIRLINER_QShellReqMsg_t
+      AIRLINER_RC_CHANNELS_MID:
         msgID: 0x0a37
-        struct: PX4_RcChannelsMsg_t
-      PX4_RC_PARAMETER_MAP_MID:
+        struct: AIRLINER_RcChannelsMsg_t
+      AIRLINER_RC_PARAMETER_MAP_MID:
         msgID: 0x0a38
-        struct: PX4_RcParameterMapMsg_t
-      PX4_SAFETY_MID:
+        struct: AIRLINER_RcParameterMapMsg_t
+      AIRLINER_SAFETY_MID:
         msgID: 0x0a39
-        struct: PX4_SafetyMsg_t
-      PX4_SATELLITE_INFO_MID:
+        struct: AIRLINER_SafetyMsg_t
+      AIRLINER_SATELLITE_INFO_MID:
         msgID: 0x0a3a
-        struct: PX4_SatelliteInfoMsg_t
-      PX4_SENSOR_ACCEL_MID:
+        struct: AIRLINER_SatelliteInfoMsg_t
+      AIRLINER_SENSOR_ACCEL_MID:
         msgID: 0x0a3b
-        struct: PX4_SensorAccelMsg_t
-      PX4_SENSOR_BARO_MID:
+        struct: AIRLINER_SensorAccelMsg_t
+      AIRLINER_SENSOR_BARO_MID:
         msgID: 0x0a3c
-        struct: PX4_SensorBaroMsg_t
-      PX4_SENSOR_COMBINED_MID:
+        struct: AIRLINER_SensorBaroMsg_t
+      AIRLINER_SENSOR_COMBINED_MID:
         msgID: 0x0a3d
-        struct: PX4_SensorCombinedMsg_t
-      PX4_SENSOR_GYRO_MID:
+        struct: AIRLINER_SensorCombinedMsg_t
+      AIRLINER_SENSOR_GYRO_MID:
         msgID: 0x0a3e
-        struct: PX4_SensorGyroMsg_t
-      PX4_SENSOR_MAG_MID:
+        struct: AIRLINER_SensorGyroMsg_t
+      AIRLINER_SENSOR_MAG_MID:
         msgID: 0x0a3f
-        struct: PX4_SensorMagMsg_t
-      PX4_SERVORAIL_STATUS_MID:
+        struct: AIRLINER_SensorMagMsg_t
+      AIRLINER_SERVORAIL_STATUS_MID:
         msgID: 0x0a40
-        struct: PX4_ServorailStatusMsg_t
-      PX4_SUBSYSTEM_INFO_MID:
+        struct: AIRLINER_ServorailStatusMsg_t
+      AIRLINER_SUBSYSTEM_INFO_MID:
         msgID: 0x0a41
-        struct: PX4_SubsystemInfoMsg_t
-      PX4_SYSTEM_POWER_MID:
+        struct: AIRLINER_SubsystemInfoMsg_t
+      AIRLINER_SYSTEM_POWER_MID:
         msgID: 0x0a42
-        struct: PX4_SystemPowerMsg_t
-      PX4_TECS_STATUS_MID:
+        struct: AIRLINER_SystemPowerMsg_t
+      AIRLINER_TECS_STATUS_MID:
         msgID: 0x0a43
-        struct: PX4_TecsStatusMsg_t
-      PX4_TELEMETRY_STATUS_MID:
+        struct: AIRLINER_TecsStatusMsg_t
+      AIRLINER_TELEMETRY_STATUS_MID:
         msgID: 0x0a44
-        struct: PX4_TelemetryStatusMsg_t
-      PX4_TEST_MOTOR_MID:
+        struct: AIRLINER_TelemetryStatusMsg_t
+      AIRLINER_TEST_MOTOR_MID:
         msgID: 0x0a45
-        struct: PX4_TestMotorMsg_t
-      PX4_TIME_OFFSET_MID:
+        struct: AIRLINER_TestMotorMsg_t
+      AIRLINER_TIME_OFFSET_MID:
         msgID: 0x0a46
-        struct: PX4_TimeOffsetMsg_t
-      PX4_TRANSPONDER_REPORT_MID:
+        struct: AIRLINER_TimeOffsetMsg_t
+      AIRLINER_TRANSPONDER_REPORT_MID:
         msgID: 0x0a47
-        struct: PX4_TransponderReportMsg_t
-      PX4_UAVCAN_PARAMETER_REQUEST_MID:
+        struct: AIRLINER_TransponderReportMsg_t
+      AIRLINER_UAVCAN_PARAMETER_REQUEST_MID:
         msgID: 0x0a48
-        struct: PX4_UavCanParameterRequestMsg_t
-      PX4_UAVCAN_PARAMETER_VALUE_MID:
+        struct: AIRLINER_UavCanParameterRequestMsg_t
+      AIRLINER_UAVCAN_PARAMETER_VALUE_MID:
         msgID: 0x0a49
-        struct: PX4_UavCanParameterValueMsg_t
-      PX4_VEHICLE_ATTITUDE_MID:
+        struct: AIRLINER_UavCanParameterValueMsg_t
+      AIRLINER_VEHICLE_ATTITUDE_MID:
         msgID: 0x0a4a
-        struct: PX4_VehicleAttitudeMsg_t
-      PX4_VEHICLE_ATTITUDE_SETPOINT_MID:
+        struct: AIRLINER_VehicleAttitudeMsg_t
+      AIRLINER_VEHICLE_ATTITUDE_SETPOINT_MID:
         msgID: 0x0a4b
-        struct: PX4_VehicleAttitudeSetpointMsg_t
-      PX4_VEHICLE_COMMAND_ACK_MID:
+        struct: AIRLINER_VehicleAttitudeSetpointMsg_t
+      AIRLINER_VEHICLE_COMMAND_ACK_MID:
         msgID: 0x0a4c
-        struct: PX4_VehicleCommandAckMsg_t
-      PX4_VEHICLE_COMMAND_MID:
+        struct: AIRLINER_VehicleCommandAckMsg_t
+      AIRLINER_VEHICLE_COMMAND_MID:
         msgID: 0x0a4d
-        struct: PX4_VehicleCommandMsg_t
-      PX4_VEHICLE_CONTROL_MODE_MID:
+        struct: AIRLINER_VehicleCommandMsg_t
+      AIRLINER_VEHICLE_CONTROL_MODE_MID:
         msgID: 0x0a4e
-        struct: PX4_VehicleControlModeMsg_t
-      PX4_VEHICLE_FORCE_SETPOINT_MID:
+        struct: AIRLINER_VehicleControlModeMsg_t
+      AIRLINER_VEHICLE_FORCE_SETPOINT_MID:
         msgID: 0x0a4f
-        struct: PX4_VehicleForceSetpointMsg_t
-      PX4_VEHICLE_GLOBAL_POSITION_MID:
+        struct: AIRLINER_VehicleForceSetpointMsg_t
+      AIRLINER_VEHICLE_GLOBAL_POSITION_MID:
         msgID: 0x0a50
-        struct: PX4_VehicleGlobalPositionMsg_t
-      PX4_VEHICLE_GLOBAL_VELOCITY_SETPOINT_MID:
+        struct: AIRLINER_VehicleGlobalPositionMsg_t
+      AIRLINER_VEHICLE_GLOBAL_VELOCITY_SETPOINT_MID:
         msgID: 0x0a51
-        struct: PX4_VehicleGlobalVelocitySetpointMsg_t
-      PX4_VEHICLE_GPS_POSITION_MID:
+        struct: AIRLINER_VehicleGlobalVelocitySetpointMsg_t
+      AIRLINER_VEHICLE_GPS_POSITION_MID:
         msgID: 0x0a52
-        struct: PX4_VehicleGpsPositionMsg_t
-      PX4_VEHICLE_LAND_DETECTED_MID:
+        struct: AIRLINER_VehicleGpsPositionMsg_t
+      AIRLINER_VEHICLE_LAND_DETECTED_MID:
         msgID: 0x0a53
-        struct: PX4_VehicleLandDetectedMsg_t
-      PX4_VEHICLE_LOCAL_POSITION_MID:
+        struct: AIRLINER_VehicleLandDetectedMsg_t
+      AIRLINER_VEHICLE_LOCAL_POSITION_MID:
         msgID: 0x0a54
-        struct: PX4_VehicleLocalPositionMsg_t
-      PX4_VEHICLE_LOCAL_POSITION_SETPOINT_MID:
+        struct: AIRLINER_VehicleLocalPositionMsg_t
+      AIRLINER_VEHICLE_LOCAL_POSITION_SETPOINT_MID:
         msgID: 0x0a55
-        struct: PX4_VehicleLocalPositionSetpointMsg_t
-      PX4_VEHICLE_RATES_SETPOINT_MID:
+        struct: AIRLINER_VehicleLocalPositionSetpointMsg_t
+      AIRLINER_VEHICLE_RATES_SETPOINT_MID:
         msgID: 0x0a56
-        struct: PX4_VehicleRatesSetpointMsg_t
-      PX4_VEHICLE_STATUS_MID:
+        struct: AIRLINER_VehicleRatesSetpointMsg_t
+      AIRLINER_VEHICLE_STATUS_MID:
         msgID: 0x0a57
-        struct: PX4_VehicleStatusMsg_t
-      PX4_VISION_POSITION_ESTIMATE_MID:
+        struct: AIRLINER_VehicleStatusMsg_t
+      AIRLINER_VISION_POSITION_ESTIMATE_MID:
         msgID: 0x0a58
-        struct: PX4_VisionPositionEstimateMsg_t
-      PX4_VTOL_VEHICLE_STATUS_MID:
+        struct: AIRLINER_VisionPositionEstimateMsg_t
+      AIRLINER_VTOL_VEHICLE_STATUS_MID:
         msgID: 0x0a59
-        struct: PX4_VtolVehicleStatusMsg_t
-      PX4_WIND_ESTIMATE_MID:
+        struct: AIRLINER_VtolVehicleStatusMsg_t
+      AIRLINER_WIND_ESTIMATE_MID:
         msgID: 0x0a5a
-        struct: PX4_WindEstimateMsg_t
-      PX4_SENSOR_CORRECTION_MID:
+        struct: AIRLINER_WindEstimateMsg_t
+      AIRLINER_SENSOR_CORRECTION_MID:
         msgID: 0x0a5b
-        struct: PX4_SensorCorrectionMsg_t
+        struct: AIRLINER_SensorCorrectionMsg_t
       FLOW_FRAME_MID:
         msgID: 0x0ce5
-        struct: PX4_OpticalFlowFrameMsg_t
+        struct: AIRLINER_OpticalFlowFrameMsg_t
     commands: {}
     perfids: {}
     config: {}
-    definition: "../apps/px4lib"
+    definition: "../apps/airlinerlib"
