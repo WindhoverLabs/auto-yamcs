@@ -18,6 +18,7 @@ sys.path.append(os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(_
 from xtce_generator.src.xtce import xtce_generator
 import tlm_cmd_merger
 
+
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
     subprocess.run(['rm', '-f', output_path])
     subprocess.run(['make', '-C', os.path.join(os.getcwd(), '../juicer')], check=True)
@@ -28,7 +29,8 @@ def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
         if my_file.exists() and my_file.is_file():
             logging.info('Running juicer on {0}'.format(my_file))
             subprocess.run(
-                ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v', verbosity],
+                ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v',
+                 verbosity],
                 check=True)
         else:
             logging.warning(f'Elf file "{my_file}" does not exist. Revise your configuration file.')
@@ -49,16 +51,18 @@ def get_elf_files(yaml_dict: dict):
                 elf_files.append(elf)
         if 'modules' in yaml_dict['modules'][module_key]:
             child_elfs = get_elf_files(yaml_dict['modules'][module_key])
-            if len(child_elfs)>0:
+            if len(child_elfs) > 0:
                 elf_files = elf_files + get_elf_files(yaml_dict['modules'][module_key])
 
     print(elf_files)
     return elf_files
 
+
 def get_cpu_id(yaml_dict: dict):
     if 'cpu_id' in yaml_dict:
         return yaml_dict['cpu_id']
     return ''
+
 
 def run_xtce_generator(sqlite_path: str, xtce_yaml: dict, verbosity: str, output_path, cpu_id):
     xtce_generator.generate_xtce(sqlite_path, xtce_yaml, output_path, cpu_id, verbosity)
@@ -186,10 +190,12 @@ def inline_mode_handler(args: argparse.Namespace):
     if args.override_yaml:
         run_msg_def_overrides(args.override_yaml, args.output_file)
 
-    xtce_config_data = read_yaml(args.xtce_config_yaml)
-
     merge_command_telemetry(args.inline_yaml_path, args.output_file)
-    run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, xtce_config_data['root_spacesystem'])
+
+    if args.xtce_config_yaml:
+        xtce_config_data = read_yaml(args.xtce_config_yaml)
+        run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path,
+                           xtce_config_data['root_spacesystem'])
 
 
 def singleton_mode_handler(args: argparse.Namespace):
@@ -226,6 +232,7 @@ def singleton_mode_handler(args: argparse.Namespace):
         xtce_config_data = None
 
     run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, cpu_id)
+
 
 def parse_cli() -> argparse.Namespace:
     """
@@ -273,7 +280,7 @@ def parse_cli() -> argparse.Namespace:
                                     'This script uses this config file '
                                     'as well to know which binary files to pass to juicer')
 
-    inline_parser.add_argument('--xtce_config_yaml', type=str, required=True,
+    inline_parser.add_argument('--xtce_config_yaml', type=str, required=False,
                                help='The yaml file that will be passed to xtce_generator. xtce_generator will use this'
                                     ' to map base containers for telemetry and commands.')
 
@@ -291,7 +298,7 @@ def parse_cli() -> argparse.Namespace:
                                     'a ground system.')
 
     singleton_parser.add_argument('--singleton_yaml_path', type=str, required=True, help='A single YAML file that '
-                                  'has everything auto-yamcs needs.')
+                                                                                         'has everything auto-yamcs needs.')
 
     return parser.parse_args()
 
