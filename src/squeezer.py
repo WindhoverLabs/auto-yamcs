@@ -176,6 +176,9 @@ def inline_mode_handler(args: argparse.Namespace):
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
+    yaml_dict["db"] = dict()
+    yaml_dict["db"]["sqlite"] = args.output_file
+
     if args.remap_yaml:
         yaml_remaps_dict = read_yaml(args.remap_yaml)
         yaml_remaps = __inline_get_remaps(yaml_remaps_dict)
@@ -197,6 +200,8 @@ def inline_mode_handler(args: argparse.Namespace):
         run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path,
                            xtce_config_data['root_spacesystem'])
 
+    yaml.dump(yaml_dict, open(args.inline_yaml_path, "w"))
+
 
 def singleton_mode_handler(args: argparse.Namespace):
     """
@@ -211,6 +216,10 @@ def singleton_mode_handler(args: argparse.Namespace):
     elfs = get_elf_files(yaml_dict)
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
+
+    yaml_dict["db"] = dict()
+    yaml_dict["db"]["sqlite"] = args.output_file
+
 
     cpu_id = get_cpu_id(yaml_dict)
 
@@ -232,6 +241,8 @@ def singleton_mode_handler(args: argparse.Namespace):
         xtce_config_data = None
 
     run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, cpu_id)
+
+    yaml.dump(yaml_dict, open(args.singleton_yaml_path, "w"))
 
 
 def parse_cli() -> argparse.Namespace:
