@@ -81,10 +81,10 @@ def write_dict_to_database(data_dict: dict, db_handle: sqlite_utils.Database):
                 data['module'] = module_key
                 db_handle['configurations'].insert(data, ignore=True)
 
-            elif table == 'performance_ids':
+            elif table == 'performance':
                 module_key = list(db_handle['modules'].rows_where("name =?", [data['symbol']]))[0]['id']
                 data['module'] = module_key
-                db_handle['performance_ids'].insert(data, ignore=True)
+                db_handle['performance'].insert(data, ignore=True)
 
 
 def mod_sql(sqlite_path: str, yaml_path: str):

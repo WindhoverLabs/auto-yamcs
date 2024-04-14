@@ -278,16 +278,11 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database,
     :param db_handle:
     :return:
     """
-    if module_elf:
-        # FIXME:Ugly hack since for PPD builds the "elf_files" key does not exist.
-        old_elf = module_elf
     # FIXME. This looks ugly; I don't like it. Will revisit.
     if 'modules' in def_overrides:
         for module in def_overrides['modules']:
             if 'elf_files' in def_overrides['modules'][module]:
                 module_elf = def_overrides['modules'][module]['elf_files'][0]
-                if module_elf:
-                    old_elf = module_elf
             if module_elf:
                 if 'msg_def_overrides' in def_overrides['modules'][module]:
                     for override in def_overrides['modules'][module]['msg_def_overrides']:
@@ -304,9 +299,7 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database,
                             process_enum_override(override, old_elf, db_handle)
 
             if 'modules' in def_overrides['modules'][module]:
-                if module_elf:
-                    old_elf = module_elf
-                process_def_overrides(def_overrides['modules'][module], db_handle, old_elf)
+                process_def_overrides(def_overrides['modules'][module], db_handle, module_elf)
                 module_elf = None
 
 

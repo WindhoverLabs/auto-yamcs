@@ -20,26 +20,34 @@ import tlm_cmd_merger
 
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
+    print("1 ***************")
     subprocess.run(['rm', '-f', output_path])
+    print("2 ***************")
     subprocess.run(['make', '-C', os.path.join(os.getcwd(), '../juicer')], check=True)
 
+    print("3 ***************")
     logging.info('Squeezing files...')
     for file_path in elf_files:
+        print("4 ***************")
         my_file = Path(file_path)
         if my_file.exists() and my_file.is_file():
+            print("5 ***************")
             logging.info('Running juicer on {0}'.format(my_file))
+            print('../juicer/build/juicer --input ' + file_path + ' --mode ' + mode + ' --output ' + output_path + ' -v ' + verbosity)
+            print("6 ***************")
             subprocess.run(
                 ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v',
                  verbosity],
                 check=True)
         else:
             logging.warning(f'Elf file "{my_file}" does not exist. Revise your configuration file.')
+    print("6 ***************")
 
 
-def merge_command_telemetry(yaml_path: str, sqlite_path: str):
+def merge_command_telemetry(yaml_path: str, module_path: str, sqlite_path: str):
     logging.info('Merging commands and telemetry into database.')
     # FIXME: Change the yaml_path to a yaml_dict; this way we avoid parsing the same YAML twice.
-    tlm_cmd_merger.merge_all(sqlite_path, yaml_path)
+    tlm_cmd_merger.merge_all(sqlite_path, module_path, yaml_path)
 
 
 def get_elf_files(yaml_dict: dict):
@@ -114,9 +122,12 @@ def __singleton_get_remap(yaml_dict: dict):
         if 'type_remaps' in yaml_dict['modules'][module_key]:
             for old_symbol, new_symbol in yaml_dict['modules'][module_key]['type_remaps'].items():
                 if old_symbol in remaps['type_remaps']:
-                    logging.error(f'The {old_symbol} remap appears twice in the config file.'
+                    if remaps['type_remaps'][old_symbol] != new_symbol:
+                        logging.error(f'In "{module_key}.type_remaps", {old_symbol} remap appears twice in the config file with different values.'
                                   f'Please review the configuration file.')
-                    raise Exception('Duplicate remapping in configuration file.')
+                        raise Exception('Conflicting remapping in configuration file.')
+                    else:
+                        logging.error(f'In "{module_key}.type_remaps", {old_symbol} remap appears tp be a duplicate.')
                 remaps['type_remaps'].update({old_symbol: new_symbol})
         if 'modules' in yaml_dict['modules'][module_key]:
             remaps['type_remaps'].update(__singleton_get_remap(yaml_dict['modules'][module_key])['type_remaps'])
@@ -160,24 +171,64 @@ def set_log_level(log_level: str):
     logging.getLogger().name = 'squeezer'
 
 
-def run_msg_def_overrides(yaml_path: str, sqlite_path: str):
+def run_msg_def_overrides(yaml_path: str, module_path: str, sqlite_path: str):
     yaml_overrides_dict = read_yaml(yaml_path)
+    module_dict = get_module_by_path(module_path, yaml_overrides_dict)
     db_handle = sqlite_utils.Database(sqlite_path)
     logging.info('Processing overrides...')
-    msg_def_overrides.process_def_overrides(yaml_overrides_dict, db_handle)
+    msg_def_overrides.process_def_overrides(module_dict, db_handle)
+
+
+def get_module_by_path(module_path: str, yaml_data: dict): 
+    module_yaml_dict = yaml_data    
+     
+    for module_name in module_path.split("/"):
+        if module_name != "":                
+            if "modules" in module_yaml_dict:
+                if module_name not in module_yaml_dict["modules"]:
+                    logging.error('"{0}" is not found. Aborting'.format(module_name))
+                    exit(-1)
+                else:
+                    module_yaml_dict = module_yaml_dict["modules"][module_name]
+            else:
+                logging.error('"{0}" is not found. Aborting'.format(module_name))
+                exit(-1)
+                
+    return module_yaml_dict
+
+
+def set_module_by_path(module_path: str, module_data, full_data: dict): 
+    #module_yaml_dict = yaml_data    
+    # 
+    #for module_name in module_path.split("/"):
+    #    if module_name != "":                
+    #        if "modules" in module_yaml_dict:
+    #            if module_name not in module_yaml_dict["modules"]:
+    #                logging.error('"{0}" is not found. Aborting'.format(module_name))
+    #                exit(-1)
+    #            else:
+    #                module_yaml_dict = module_yaml_dict["modules"][module_name]
+    #        else:
+    #            logging.error('"{0}" is not found. Aborting'.format(module_name))
+    #            exit(-1)
+                
+    return full_data
 
 
 def inline_mode_handler(args: argparse.Namespace):
-    logging.info('"inline" mode invoked.')
-    yaml_dict = read_yaml(args.inline_yaml_path)
     set_log_level(args.verbosity)
+    logging.info('"inline" mode invoked.')
+    
+    full_dict = read_yaml(args.inline_yaml_path)
+    
+    module_dict = get_module_by_path(args.module_path, full_dict)
 
-    elfs = get_elf_files(yaml_dict)
+    elfs = get_elf_files(module_dict)
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
-    yaml_dict["db"] = dict()
-    yaml_dict["db"]["sqlite"] = args.output_file
+    module_dict["db"] = dict()
+    module_dict["db"]["sqlite"] = args.output_file
 
     if args.remap_yaml:
         yaml_remaps_dict = read_yaml(args.remap_yaml)
@@ -200,7 +251,9 @@ def inline_mode_handler(args: argparse.Namespace):
         run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path,
                            xtce_config_data['root_spacesystem'])
 
-    yaml.dump(yaml_dict, open(args.inline_yaml_path, "w"))
+    set_module_by_path(args.module_path, module_dict, full_dict)
+        
+    yaml.dump(full_dict, open(args.inline_yaml_path, "w"))
 
 
 def singleton_mode_handler(args: argparse.Namespace):
@@ -210,39 +263,44 @@ def singleton_mode_handler(args: argparse.Namespace):
     :param args:
     :return:
     """
-    yaml_dict = read_yaml(args.singleton_yaml_path)
     set_log_level(args.verbosity)
-
-    elfs = get_elf_files(yaml_dict)
+    
+    full_dict = read_yaml(args.singleton_yaml_path)
+    
+    module_dict = get_module_by_path(args.module_path, full_dict)
+    
+    elfs = get_elf_files(module_dict)
 
     squeeze_files(elfs, args.output_file, args.juicer_mode, args.verbosity)
 
-    yaml_dict["db"] = dict()
-    yaml_dict["db"]["sqlite"] = args.output_file
+    module_dict["db"] = dict()
+    module_dict["db"]["sqlite"] = args.output_file
+ 
+    cpu_id = get_cpu_id(module_dict)
 
-
-    cpu_id = get_cpu_id(yaml_dict)
-
-    yaml_remaps = __singleton_get_remap(yaml_dict)
+    yaml_remaps = __singleton_get_remap(module_dict)
 
     if len(yaml_remaps['type_remaps']) > 0:
         remap_symbols.remap_symbols(args.output_file, yaml_remaps['type_remaps'])
     else:
         logging.warning('No type_remaps configuration found. No type_remapping was done done.')
+        
+    set_module_by_path(args.module_path, module_dict, full_dict)
+    
+    yaml.dump(full_dict, open(args.singleton_yaml_path, "w"))
 
-    run_msg_def_overrides(args.singleton_yaml_path, args.output_file)
-    merge_command_telemetry(args.singleton_yaml_path, args.output_file)
+    run_msg_def_overrides(args.singleton_yaml_path, args.module_path, args.output_file)
+    
+    merge_command_telemetry(args.singleton_yaml_path, args.module_path, args.output_file)
 
-    if 'xtce_config' in yaml_dict:
-        xtce_config_data = yaml_dict['xtce_config']
+    if 'xtce_config' in module_dict:
+        xtce_config_data = module_dict['xtce_config']
     else:
         logging.warning(f'The xtce configuration file "{args.singleton_yaml_path}" has no "xtce_config" key.'
                         'No configuration will be applied when generating xtce file.')
         xtce_config_data = None
 
     run_xtce_generator(args.output_file, xtce_config_data, args.verbosity, args.xtce_output_path, cpu_id)
-
-    yaml.dump(yaml_dict, open(args.singleton_yaml_path, "w"))
 
 
 def parse_cli() -> argparse.Namespace:
@@ -265,6 +323,9 @@ def parse_cli() -> argparse.Namespace:
 
     parent_parser.add_argument('--xtce_output_path', type=str, default=None,
                                help='The output path where to write the output XTCE to.')
+
+    parent_parser.add_argument('--module_path', type=str, default=None,
+                               help='The path of the module to parse, i.e. "cpd", "ppd", "simlink", or "reference".')
 
     subparsers = parser.add_subparsers(
         description='Mode to run squeezer.',
