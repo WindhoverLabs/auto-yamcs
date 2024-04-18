@@ -267,7 +267,19 @@ def process_symbol_override(symbol_override: dict, symbol_elf: str, db_handle: s
     else:
         logging.warning(f'The symbol "{symbol_override["parent"]}" does not exist in the database.'
                         f'Field override will not be processed.')
-
+        
+        
+def get_elf_file(registry: dict):
+    elf_file = None
+    
+    if 'modules' in registry:
+        for module in registry['modules']:
+            if 'elf_files' in registry['modules'][module]:
+                elf_file = registry['modules'][module]['elf_files'][0]
+                
+    return elf_file
+                
+                
 
 def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database, module_elf=None):
     """
@@ -278,11 +290,16 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database,
     :param db_handle:
     :return:
     """
-    # FIXME. This looks ugly; I don't like it. Will revisit.
+    
+    if module_elf is None:
+        module_elf = get_elf_file(def_overrides)
+        
+        if module_elf is None:
+            logging.error(f"The elf file was not found in the registry.")
+            return             
+    
     if 'modules' in def_overrides:
         for module in def_overrides['modules']:
-            if 'elf_files' in def_overrides['modules'][module]:
-                module_elf = def_overrides['modules'][module]['elf_files'][0]
             if module_elf:
                 if 'msg_def_overrides' in def_overrides['modules'][module]:
                     for override in def_overrides['modules'][module]['msg_def_overrides']:
@@ -294,9 +311,9 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database,
                 if 'msg_def_overrides' in def_overrides['modules'][module]:
                     for override in def_overrides['modules'][module]['msg_def_overrides']:
                         if override['type'] != 'enumeration':
-                            process_symbol_override(override, old_elf, db_handle)
+                            process_symbol_override(override, module_elf, db_handle)
                         else:
-                            process_enum_override(override, old_elf, db_handle)
+                            process_enum_override(override, module_elf, db_handle)
 
             if 'modules' in def_overrides['modules'][module]:
                 process_def_overrides(def_overrides['modules'][module], db_handle, module_elf)

@@ -20,28 +20,21 @@ import tlm_cmd_merger
 
 
 def squeeze_files(elf_files: list, output_path: str, mode: str, verbosity: str):
-    print("1 ***************")
     subprocess.run(['rm', '-f', output_path])
-    print("2 ***************")
     subprocess.run(['make', '-C', os.path.join(os.getcwd(), '../juicer')], check=True)
 
-    print("3 ***************")
     logging.info('Squeezing files...')
     for file_path in elf_files:
-        print("4 ***************")
         my_file = Path(file_path)
         if my_file.exists() and my_file.is_file():
-            print("5 ***************")
             logging.info('Running juicer on {0}'.format(my_file))
             print('../juicer/build/juicer --input ' + file_path + ' --mode ' + mode + ' --output ' + output_path + ' -v ' + verbosity)
-            print("6 ***************")
             subprocess.run(
                 ['../juicer/build/juicer', '--input', file_path, '--mode', mode, '--output', output_path, '-v',
                  verbosity],
                 check=True)
         else:
             logging.warning(f'Elf file "{my_file}" does not exist. Revise your configuration file.')
-    print("6 ***************")
 
 
 def merge_command_telemetry(yaml_path: str, module_path: str, sqlite_path: str):
