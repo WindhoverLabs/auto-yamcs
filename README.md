@@ -61,14 +61,14 @@ pip3 install yamlpath
 ```
 
 
-2. Make a `bebop2/sitl` build for airliner:
+2. Make a `gemini2-sitl-ppd` build for airliner:
 ```
-git clone https://github.com/WindhoverLabs/airliner.git
+git clone --branch 178_easy_build https://github.com/WindhoverLabs/airliner.git
 cd airliner
 make submodule-update
 make python-env 
-make bebop2/sitl
-source venv/bin/activate                                                    
+source venv/bin/activate
+make gemini2-sitl-ppd                                                    
 ```
 
 5. Install auto-yamcs dependencies
@@ -83,8 +83,8 @@ for more flexible ways of using the tool. If you are a first-time user, then *do
 Assuming auto-yamcs is being used alongside `airliner` flight software, users may build what is known as the __commander workspace__
 
 ```
-cd airliner/build/bebop2/sitl/target
-make commander_workspace
+cd airliner
+make gemini2-sitl-ppd-workspace 
 ```
 This _will_ take a while. The commander workspace auto-generates everything needed for the ground system;
 XTCE definitions, configuration, YAMCS Studio Displays, etc.
@@ -101,10 +101,10 @@ Specially when parsing the `airliner` code base, this can take a couple of minut
 the following messages at the end:
 ```
 INFO:xtce_generator:Writing xtce object to file...
-INFO:xtce_generator:XTCE file has been written to "airliner/build/bebop2/sitl/target/commander_workspace/mdb/cfs.xml"
+INFO:xtce_generator:XTCE file has been written to "airliner/build/fixedwing/gemini2/sitl_commander_workspace/mdb/ppd.xml"
 ```
 
-As you can see auto-yamcs writes an XTCE file called `cfs.xml` to worskapce configuration.
+As you can see auto-yamcs writes an XTCE file called `ppd.xml` to worskapce configuration.
 
 6. Run YAMCS  
    **NOTE**:Ensure you have the `JAVA_HOME` environment variable set on your system.
