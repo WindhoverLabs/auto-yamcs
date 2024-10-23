@@ -317,7 +317,16 @@ def process_def_overrides(def_overrides: dict, db_handle: sqlite_utils.Database,
 
             if 'modules' in def_overrides['modules'][module]:
                 process_def_overrides(def_overrides['modules'][module], db_handle, module_elf)
-                module_elf = None
+                # FIXME:We will use the old elf for now to deal with the edge case such as
+                #       core:
+                #         elf_files:
+                #         - airliner/build/vehicle/target/target/exe/airliner
+                #         modules:
+                #           cfe:
+                #              elf_files: null
+                # Here "core" has elf_files, but the actual core modules do not
+                # This is why we have "module_elf = None" comment out for now
+                # module_elf = None
 
 
 def read_yaml(yaml_file: str) -> dict:
